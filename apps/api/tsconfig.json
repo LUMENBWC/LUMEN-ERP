@@ -1,0 +1,13 @@
+{
+  "extends": "@erp/config/typescript/nestjs.json",
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "target": "ES2023",
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "removeComments": true,
+    "allowSyntheticDefaultImports": true
+  }
+}
