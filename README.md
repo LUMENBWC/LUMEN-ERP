@@ -28,6 +28,15 @@ pnpm dev                # sobe apps/web e apps/api em paralelo
 - Web: http://localhost:3000
 - API: http://localhost:3001/api/v1 (health-check em `/api/v1/health`, docs em `/api/v1/docs`)
 
+### Banco de dados (primeira vez)
+
+```bash
+pnpm --filter @erp/api exec prisma migrate deploy   # aplica as migrations
+pnpm --filter @erp/api exec prisma db seed          # popula permissões, papéis e empresa demo
+```
+
+Ver `docs/modules/nucleo-multitenant.md` e [ADR-0002](docs/decisions/ADR-0002-papeis-postgres-rls.md) para o racional de `app_api`/`prisma_migrator` e RLS.
+
 ## Scripts
 
 | Script            | Descrição                                      |

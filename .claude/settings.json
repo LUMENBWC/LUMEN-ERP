@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/caina/OneDrive/Documentos/**)",
+      "Bash(mv .env.bak .env)",
+      "Bash(pnpm run *)",
+      "Bash(node -e ' *)",
+      "PowerShell(Get-Content \"$env:APPDATA\\\\Docker\\\\settings-store.json\" -Raw)",
+      "PowerShell(Stop-Process -Force -ErrorAction SilentlyContinue)",
+      "PowerShell(wsl --shutdown)",
+      "PowerShell(\"stopped\")",
+      "PowerShell(Start-Process \"$env:LOCALAPPDATA\\\\Programs\\\\DockerDesktop\\\\Docker Desktop.exe\")"
+    ]
+  }
+}

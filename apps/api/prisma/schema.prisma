@@ -1,0 +1,728 @@
+generator client {
+  provider               = "prisma-client"
+  output                 = "../generated/prisma"
+  moduleFormat           = "cjs"
+  generatedFileExtension = "ts"
+  importFileExtension    = ""
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum TipoPessoa {
+  FISICA
+  JURIDICA
+}
+
+enum UnidadeMedida {
+  UN
+  KG
+  G
+  L
+  ML
+  M
+  CX
+  PC
+}
+
+enum TipoMovimentacaoEstoque {
+  ENTRADA_COMPRA
+  SAIDA_VENDA
+  AJUSTE_MANUAL
+  PERDA
+}
+
+enum StatusOrcamento {
+  RASCUNHO
+  ENVIADO
+  APROVADO
+  RECUSADO
+  EXPIRADO
+  CONVERTIDO
+}
+
+enum StatusVenda {
+  CONCLUIDA
+  CANCELADA
+}
+
+enum FormaPagamento {
+  DINHEIRO
+  PIX
+  DEBITO
+  CREDITO
+  CREDITO_PARCELADO
+  A_PRAZO
+}
+
+enum StatusConta {
+  ABERTO
+  PAGO
+  PARCIAL
+  VENCIDO
+  CANCELADO
+}
+
+enum StatusCaixaSessao {
+  ABERTO
+  FECHADO
+}
+
+enum TipoMovimentoCaixa {
+  ABERTURA
+  SUPRIMENTO
+  SANGRIA
+  VENDA
+  FECHAMENTO
+}
+
+// ---------------------------------------------------------------------------
+// Núcleo / Tenancy
+// ---------------------------------------------------------------------------
+
+model Empresa {
+  id                String    @id @default(uuid(7)) @db.Uuid
+  razaoSocial       String
+  nomeFantasia      String?
+  documento         String    @unique
+  regimeTributario  String?
+  inscricaoEstadual String?
+  logradouro        String?
+  numero            String?
+  complemento       String?
+  bairro            String?
+  cidade            String?
+  uf                String?   @db.VarChar(2)
+  cep               String?
+  plano             String    @default("trial")
+  ativo             Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+
+  filiais              Filial[]
+  usuarios             Usuario[]
+  papeis               Papel[]
+  auditLogs            AuditLog[]
+  categorias           Categoria[]
+  produtos             Produto[]
+  movimentacoesEstoque MovimentacaoEstoque[]
+  clientes             Cliente[]
+  fornecedores         Fornecedor[]
+  fornecedorProdutos   FornecedorProduto[]
+  orcamentos           Orcamento[]
+  orcamentoItens       OrcamentoItem[]
+  vendas               Venda[]
+  vendaItens           VendaItem[]
+  vendaPagamentos      VendaPagamento[]
+  contasReceber        ContaReceber[]
+  recebimentos         RecebimentoRecebivel[]
+  contasPagar          ContaPagar[]
+  pagamentos           PagamentoPagavel[]
+  categoriasDespesa    CategoriaDespesa[]
+  caixaSessoes         CaixaSessao[]
+  movimentosCaixa      MovimentoCaixa[]
+
+  @@map("empresas")
+}
+
+model Filial {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  empresaId   String    @db.Uuid
+  nome        String
+  documento   String?
+  logradouro  String?
+  numero      String?
+  complemento String?
+  bairro      String?
+  cidade      String?
+  uf          String?   @db.VarChar(2)
+  cep         String?
+  ativo       Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  empresa      Empresa       @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  usuarios     Usuario[]
+  caixaSessoes CaixaSessao[]
+
+  @@index([empresaId])
+  @@map("filiais")
+}
+
+model Usuario {
+  id         String    @id @default(uuid(7)) @db.Uuid
+  empresaId  String    @db.Uuid
+  filialId   String?   @db.Uuid
+  authUserId String    @unique @db.Uuid
+  nome       String
+  email      String
+  ativo      Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  empresa              Empresa                @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  filial               Filial?                @relation(fields: [filialId], references: [id], onDelete: SetNull)
+  papeis               UsuarioPapel[]
+  auditLogs            AuditLog[]
+  movimentacoesEstoque MovimentacaoEstoque[]
+  vendas               Venda[]
+  recebimentos         RecebimentoRecebivel[]
+  pagamentos           PagamentoPagavel[]
+  caixaSessoesAbertas  CaixaSessao[]
+  movimentosCaixa      MovimentoCaixa[]
+
+  @@unique([empresaId, email])
+  @@index([empresaId])
+  @@map("usuarios")
+}
+
+model Papel {
+  id        String    @id @default(uuid(7)) @db.Uuid
+  empresaId String    @db.Uuid
+  nome      String
+  descricao String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  empresa    Empresa          @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  permissoes PapelPermissao[]
+  usuarios   UsuarioPapel[]
+
+  @@unique([empresaId, nome])
+  @@index([empresaId])
+  @@map("papeis")
+}
+
+model Permissao {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  chave     String   @unique
+  descricao String?
+  createdAt DateTime @default(now())
+
+  papeis PapelPermissao[]
+
+  @@map("permissoes")
+}
+
+model PapelPermissao {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  empresaId   String   @db.Uuid
+  papelId     String   @db.Uuid
+  permissaoId String   @db.Uuid
+  createdAt   DateTime @default(now())
+
+  papel     Papel     @relation(fields: [papelId], references: [id], onDelete: Cascade)
+  permissao Permissao @relation(fields: [permissaoId], references: [id], onDelete: Cascade)
+
+  @@unique([papelId, permissaoId])
+  @@index([empresaId])
+  @@map("papel_permissoes")
+}
+
+model UsuarioPapel {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  empresaId String   @db.Uuid
+  usuarioId String   @db.Uuid
+  papelId   String   @db.Uuid
+  createdAt DateTime @default(now())
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  papel   Papel   @relation(fields: [papelId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, papelId])
+  @@index([empresaId])
+  @@map("usuario_papeis")
+}
+
+model AuditLog {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  empresaId   String   @db.Uuid
+  usuarioId   String?  @db.Uuid
+  entidade    String
+  entidadeId  String
+  acao        String
+  dadosAntes  Json?
+  dadosDepois Json?
+  ip          String?
+  createdAt   DateTime @default(now())
+
+  empresa Empresa  @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  usuario Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+
+  @@index([empresaId])
+  @@index([empresaId, entidade, entidadeId])
+  @@map("audit_logs")
+}
+
+// ---------------------------------------------------------------------------
+// Produtos & Estoque
+// ---------------------------------------------------------------------------
+
+model Categoria {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  empresaId   String    @db.Uuid
+  nome        String
+  ativo       Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  createdById String?   @db.Uuid
+  updatedById String?   @db.Uuid
+
+  empresa  Empresa   @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  produtos Produto[]
+
+  @@unique([empresaId, nome])
+  @@index([empresaId])
+  @@map("categorias")
+}
+
+model Produto {
+  id            String        @id @default(uuid(7)) @db.Uuid
+  empresaId     String        @db.Uuid
+  filialId      String?       @db.Uuid
+  categoriaId   String?       @db.Uuid
+  nome          String
+  descricao     String?
+  sku           String
+  codigoBarras  String?
+  unidadeMedida UnidadeMedida @default(UN)
+  precoCusto    Decimal       @default(0) @db.Decimal(14, 2)
+  precoVenda    Decimal       @default(0) @db.Decimal(14, 2)
+  margemLucro   Decimal       @default(0) @db.Decimal(7, 4)
+  estoqueAtual  Decimal       @default(0) @db.Decimal(14, 3)
+  estoqueMinimo Decimal       @default(0) @db.Decimal(14, 3)
+  ncm           String?
+  cfop          String?
+  cst           String?
+  ativo         Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+  createdById   String?       @db.Uuid
+  updatedById   String?       @db.Uuid
+
+  empresa              Empresa               @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  categoria            Categoria?            @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
+  movimentacoesEstoque MovimentacaoEstoque[]
+  fornecedores         FornecedorProduto[]
+  orcamentoItens       OrcamentoItem[]
+  vendaItens           VendaItem[]
+
+  @@unique([empresaId, sku])
+  @@unique([empresaId, codigoBarras])
+  @@index([empresaId])
+  @@index([empresaId, ativo])
+  @@map("produtos")
+}
+
+model MovimentacaoEstoque {
+  id            String                  @id @default(uuid(7)) @db.Uuid
+  empresaId     String                  @db.Uuid
+  produtoId     String                  @db.Uuid
+  fornecedorId  String?                 @db.Uuid
+  tipo          TipoMovimentacaoEstoque
+  quantidade    Decimal                 @db.Decimal(14, 3)
+  custoUnitario Decimal?                @db.Decimal(14, 2)
+  saldoApos     Decimal                 @db.Decimal(14, 3)
+  origemTipo    String?
+  origemId      String?                 @db.Uuid
+  motivo        String?
+  usuarioId     String                  @db.Uuid
+  data          DateTime                @default(now())
+  createdAt     DateTime                @default(now())
+
+  empresa    Empresa     @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  produto    Produto     @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+  fornecedor Fornecedor? @relation(fields: [fornecedorId], references: [id], onDelete: SetNull)
+  usuario    Usuario     @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+
+  @@index([empresaId])
+  @@index([empresaId, produtoId])
+  @@index([empresaId, tipo])
+  @@map("movimentacoes_estoque")
+}
+
+// ---------------------------------------------------------------------------
+// Parceiros
+// ---------------------------------------------------------------------------
+
+model Cliente {
+  id            String     @id @default(uuid(7)) @db.Uuid
+  empresaId     String     @db.Uuid
+  tipoPessoa    TipoPessoa @default(FISICA)
+  nome          String
+  documento     String
+  telefone      String?
+  whatsapp      String?
+  email         String?
+  logradouro    String?
+  numero        String?
+  complemento   String?
+  bairro        String?
+  cidade        String?
+  uf            String?    @db.VarChar(2)
+  cep           String?
+  limiteCredito Decimal    @default(0) @db.Decimal(14, 2)
+  observacoes   String?
+  ativo         Boolean    @default(true)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime?
+  createdById   String?    @db.Uuid
+  updatedById   String?    @db.Uuid
+
+  empresa       Empresa        @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  orcamentos    Orcamento[]
+  vendas        Venda[]
+  contasReceber ContaReceber[]
+
+  @@unique([empresaId, documento])
+  @@index([empresaId])
+  @@map("clientes")
+}
+
+model Fornecedor {
+  id          String     @id @default(uuid(7)) @db.Uuid
+  empresaId   String     @db.Uuid
+  tipoPessoa  TipoPessoa @default(JURIDICA)
+  nome        String
+  documento   String
+  telefone    String?
+  email       String?
+  logradouro  String?
+  numero      String?
+  complemento String?
+  bairro      String?
+  cidade      String?
+  uf          String?    @db.VarChar(2)
+  cep         String?
+  observacoes String?
+  ativo       Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
+  createdById String?    @db.Uuid
+  updatedById String?    @db.Uuid
+
+  empresa              Empresa               @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  produtos             FornecedorProduto[]
+  movimentacoesEstoque MovimentacaoEstoque[]
+  contasPagar          ContaPagar[]
+
+  @@unique([empresaId, documento])
+  @@index([empresaId])
+  @@map("fornecedores")
+}
+
+model FornecedorProduto {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  empresaId    String   @db.Uuid
+  fornecedorId String   @db.Uuid
+  produtoId    String   @db.Uuid
+  createdAt    DateTime @default(now())
+
+  fornecedor Fornecedor @relation(fields: [fornecedorId], references: [id], onDelete: Cascade)
+  produto    Produto    @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  empresa    Empresa    @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+
+  @@unique([fornecedorId, produtoId])
+  @@index([empresaId])
+  @@map("fornecedor_produtos")
+}
+
+// ---------------------------------------------------------------------------
+// Orçamentos
+// ---------------------------------------------------------------------------
+
+model Orcamento {
+  id            String          @id @default(uuid(7)) @db.Uuid
+  empresaId     String          @db.Uuid
+  filialId      String?         @db.Uuid
+  clienteId     String          @db.Uuid
+  status        StatusOrcamento @default(RASCUNHO)
+  descontoGeral Decimal         @default(0) @db.Decimal(14, 2)
+  subtotal      Decimal         @default(0) @db.Decimal(14, 2)
+  total         Decimal         @default(0) @db.Decimal(14, 2)
+  validade      DateTime?
+  observacoes   String?
+  pdfUrl        String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  deletedAt     DateTime?
+  createdById   String?         @db.Uuid
+  updatedById   String?         @db.Uuid
+
+  empresa Empresa         @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  cliente Cliente         @relation(fields: [clienteId], references: [id], onDelete: Restrict)
+  itens   OrcamentoItem[]
+  venda   Venda?
+
+  @@index([empresaId])
+  @@index([empresaId, status])
+  @@map("orcamentos")
+}
+
+model OrcamentoItem {
+  id            String   @id @default(uuid(7)) @db.Uuid
+  empresaId     String   @db.Uuid
+  orcamentoId   String   @db.Uuid
+  produtoId     String   @db.Uuid
+  quantidade    Decimal  @db.Decimal(14, 3)
+  precoUnitario Decimal  @db.Decimal(14, 2)
+  desconto      Decimal  @default(0) @db.Decimal(14, 2)
+  total         Decimal  @db.Decimal(14, 2)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  empresa   Empresa   @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  orcamento Orcamento @relation(fields: [orcamentoId], references: [id], onDelete: Cascade)
+  produto   Produto   @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+
+  @@index([empresaId])
+  @@index([orcamentoId])
+  @@map("orcamento_itens")
+}
+
+// ---------------------------------------------------------------------------
+// Vendas
+// ---------------------------------------------------------------------------
+
+model Venda {
+  id            String      @id @default(uuid(7)) @db.Uuid
+  empresaId     String      @db.Uuid
+  filialId      String?     @db.Uuid
+  clienteId     String?     @db.Uuid
+  orcamentoId   String?     @unique @db.Uuid
+  caixaSessaoId String?     @db.Uuid
+  status        StatusVenda @default(CONCLUIDA)
+  subtotal      Decimal     @default(0) @db.Decimal(14, 2)
+  descontoGeral Decimal     @default(0) @db.Decimal(14, 2)
+  total         Decimal     @default(0) @db.Decimal(14, 2)
+  custoTotal    Decimal     @default(0) @db.Decimal(14, 2)
+  usuarioId     String      @db.Uuid
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  deletedAt     DateTime?
+
+  empresa       Empresa          @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  cliente       Cliente?         @relation(fields: [clienteId], references: [id], onDelete: SetNull)
+  orcamento     Orcamento?       @relation(fields: [orcamentoId], references: [id], onDelete: SetNull)
+  caixaSessao   CaixaSessao?     @relation(fields: [caixaSessaoId], references: [id], onDelete: SetNull)
+  usuario       Usuario          @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+  itens         VendaItem[]
+  pagamentos    VendaPagamento[]
+  contasReceber ContaReceber[]
+
+  @@index([empresaId])
+  @@index([empresaId, status])
+  @@map("vendas")
+}
+
+model VendaItem {
+  id            String   @id @default(uuid(7)) @db.Uuid
+  empresaId     String   @db.Uuid
+  vendaId       String   @db.Uuid
+  produtoId     String   @db.Uuid
+  quantidade    Decimal  @db.Decimal(14, 3)
+  precoUnitario Decimal  @db.Decimal(14, 2)
+  desconto      Decimal  @default(0) @db.Decimal(14, 2)
+  custoUnitario Decimal  @default(0) @db.Decimal(14, 2)
+  total         Decimal  @db.Decimal(14, 2)
+  createdAt     DateTime @default(now())
+
+  empresa Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  venda   Venda   @relation(fields: [vendaId], references: [id], onDelete: Cascade)
+  produto Produto @relation(fields: [produtoId], references: [id], onDelete: Restrict)
+
+  @@index([empresaId])
+  @@index([vendaId])
+  @@map("venda_itens")
+}
+
+model VendaPagamento {
+  id             String         @id @default(uuid(7)) @db.Uuid
+  empresaId      String         @db.Uuid
+  vendaId        String         @db.Uuid
+  formaPagamento FormaPagamento
+  valor          Decimal        @db.Decimal(14, 2)
+  parcelas       Int?
+  bandeira       String?
+  createdAt      DateTime       @default(now())
+
+  empresa Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  venda   Venda   @relation(fields: [vendaId], references: [id], onDelete: Cascade)
+
+  @@index([empresaId])
+  @@index([vendaId])
+  @@map("venda_pagamentos")
+}
+
+// ---------------------------------------------------------------------------
+// Financeiro
+// ---------------------------------------------------------------------------
+
+model ContaReceber {
+  id            String      @id @default(uuid(7)) @db.Uuid
+  empresaId     String      @db.Uuid
+  vendaId       String?     @db.Uuid
+  clienteId     String?     @db.Uuid
+  descricao     String
+  valorTotal    Decimal     @db.Decimal(14, 2)
+  valorRecebido Decimal     @default(0) @db.Decimal(14, 2)
+  vencimento    DateTime
+  status        StatusConta @default(ABERTO)
+  parcelaNumero Int?
+  parcelaTotal  Int?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  deletedAt     DateTime?
+
+  empresa      Empresa                @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  venda        Venda?                 @relation(fields: [vendaId], references: [id], onDelete: SetNull)
+  cliente      Cliente?               @relation(fields: [clienteId], references: [id], onDelete: SetNull)
+  recebimentos RecebimentoRecebivel[]
+
+  @@index([empresaId])
+  @@index([empresaId, status])
+  @@index([empresaId, vencimento])
+  @@map("contas_receber")
+}
+
+model RecebimentoRecebivel {
+  id             String         @id @default(uuid(7)) @db.Uuid
+  empresaId      String         @db.Uuid
+  contaReceberId String         @db.Uuid
+  valor          Decimal        @db.Decimal(14, 2)
+  data           DateTime       @default(now())
+  formaPagamento FormaPagamento
+  usuarioId      String         @db.Uuid
+  createdAt      DateTime       @default(now())
+
+  empresa      Empresa      @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  contaReceber ContaReceber @relation(fields: [contaReceberId], references: [id], onDelete: Cascade)
+  usuario      Usuario      @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+
+  @@index([empresaId])
+  @@index([contaReceberId])
+  @@map("recebimentos_recebivel")
+}
+
+model CategoriaDespesa {
+  id        String    @id @default(uuid(7)) @db.Uuid
+  empresaId String    @db.Uuid
+  nome      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  empresa     Empresa      @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  contasPagar ContaPagar[]
+
+  @@unique([empresaId, nome])
+  @@index([empresaId])
+  @@map("categorias_despesa")
+}
+
+model ContaPagar {
+  id                 String      @id @default(uuid(7)) @db.Uuid
+  empresaId          String      @db.Uuid
+  fornecedorId       String?     @db.Uuid
+  categoriaDespesaId String?     @db.Uuid
+  descricao          String
+  valorTotal         Decimal     @db.Decimal(14, 2)
+  valorPago          Decimal     @default(0) @db.Decimal(14, 2)
+  vencimento         DateTime
+  status             StatusConta @default(ABERTO)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  deletedAt          DateTime?
+  createdById        String?     @db.Uuid
+  updatedById        String?     @db.Uuid
+
+  empresa          Empresa            @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  fornecedor       Fornecedor?        @relation(fields: [fornecedorId], references: [id], onDelete: SetNull)
+  categoriaDespesa CategoriaDespesa?  @relation(fields: [categoriaDespesaId], references: [id], onDelete: SetNull)
+  pagamentos       PagamentoPagavel[]
+
+  @@index([empresaId])
+  @@index([empresaId, status])
+  @@index([empresaId, vencimento])
+  @@map("contas_pagar")
+}
+
+model PagamentoPagavel {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  empresaId    String   @db.Uuid
+  contaPagarId String   @db.Uuid
+  valor        Decimal  @db.Decimal(14, 2)
+  data         DateTime @default(now())
+  usuarioId    String   @db.Uuid
+  createdAt    DateTime @default(now())
+
+  empresa    Empresa    @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  contaPagar ContaPagar @relation(fields: [contaPagarId], references: [id], onDelete: Cascade)
+  usuario    Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+
+  @@index([empresaId])
+  @@index([contaPagarId])
+  @@map("pagamentos_pagavel")
+}
+
+// ---------------------------------------------------------------------------
+// Caixa
+// ---------------------------------------------------------------------------
+
+model CaixaSessao {
+  id                       String            @id @default(uuid(7)) @db.Uuid
+  empresaId                String            @db.Uuid
+  filialId                 String?           @db.Uuid
+  usuarioAberturaId        String            @db.Uuid
+  valorAbertura            Decimal           @db.Decimal(14, 2)
+  valorFechamentoInformado Decimal?          @db.Decimal(14, 2)
+  valorFechamentoEsperado  Decimal?          @db.Decimal(14, 2)
+  diferenca                Decimal?          @db.Decimal(14, 2)
+  status                   StatusCaixaSessao @default(ABERTO)
+  abertoEm                 DateTime          @default(now())
+  fechadoEm                DateTime?
+
+  empresa         Empresa          @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  filial          Filial?          @relation(fields: [filialId], references: [id], onDelete: SetNull)
+  usuarioAbertura Usuario          @relation(fields: [usuarioAberturaId], references: [id], onDelete: Restrict)
+  vendas          Venda[]
+  movimentos      MovimentoCaixa[]
+
+  @@index([empresaId])
+  @@index([empresaId, status])
+  @@map("caixa_sessoes")
+}
+
+model MovimentoCaixa {
+  id            String             @id @default(uuid(7)) @db.Uuid
+  empresaId     String             @db.Uuid
+  caixaSessaoId String             @db.Uuid
+  tipo          TipoMovimentoCaixa
+  valor         Decimal            @db.Decimal(14, 2)
+  descricao     String?
+  origemTipo    String?
+  origemId      String?            @db.Uuid
+  usuarioId     String             @db.Uuid
+  data          DateTime           @default(now())
+
+  empresa     Empresa     @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  caixaSessao CaixaSessao @relation(fields: [caixaSessaoId], references: [id], onDelete: Cascade)
+  usuario     Usuario     @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+
+  @@index([empresaId])
+  @@index([caixaSessaoId])
+  @@map("movimentos_caixa")
+}

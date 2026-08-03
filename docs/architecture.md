@@ -27,7 +27,7 @@ Casos de uso dependem de **interfaces (ports)**, nunca diretamente do Prisma —
 Isolamento de dados por empresa em duas camadas de defesa:
 
 1. **Aplicação:** um `TenantContext` (request-scoped) resolve `empresaId`/`filialId`/`usuarioId`/permissões a partir do JWT. Uma Prisma Client Extension injeta automaticamente `empresaId` em leituras e escritas dos models de negócio.
-2. **Banco:** Row Level Security (RLS) no Postgres como defesa em profundidade, caso haja falha na camada de aplicação.
+2. **Banco:** Row Level Security (RLS) no Postgres como defesa em profundidade, caso haja falha na camada de aplicação. Para que RLS tenha efeito real, a API conecta como o papel `app_api` (sem `BYPASSRLS`) — não como `postgres`, que ignora RLS por padrão no Supabase. Migrations rodam com um papel separado, `prisma_migrator`. Isolamento é resolvido via `current_setting('app.empresa_id', true)`, definida por transação a partir do `TenantContext`. Ver ADR-0002.
 
 `empresaId` nunca é aceito vindo do cliente — é sempre derivado do token.
 
