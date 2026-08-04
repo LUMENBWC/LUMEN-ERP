@@ -1,6 +1,6 @@
 {
-  "apps/api/**/*.ts": ["eslint --fix --config apps/api/eslint.config.mjs", "prettier --write"],
-  "apps/web/**/*.{ts,tsx}": ["eslint --fix --config apps/web/eslint.config.mjs", "prettier --write"],
-  "packages/**/*.{js,json}": ["prettier --write"],
-  "**/*.{md,yml,yaml}": ["prettier --write"]
+  "apps/api/**/*.ts": ["pnpm --filter @erp/api exec eslint --fix --config eslint.config.mjs", "pnpm exec prettier --write"],
+  "apps/web/**/*.{ts,tsx}": ["pnpm --filter @erp/web exec eslint --fix --config eslint.config.mjs", "pnpm exec prettier --write"],
+  "packages/**/*.{js,json}": ["pnpm exec prettier --write"],
+  "**/*.{md,yml,yaml}": ["pnpm exec prettier --write"]
 }
