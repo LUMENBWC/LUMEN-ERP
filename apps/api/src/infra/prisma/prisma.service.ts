@@ -17,6 +17,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
   constructor(configService: ConfigService) {
     const pool = new Pool({ connectionString: configService.getOrThrow<string>('DATABASE_URL') });
+    // node-postgres requires a listener on the pool - otherwise an idle
+    // pooled connection dropped server-side (e.g. Supavisor's idle timeout)
+    // emits an unhandled 'error' that can crash the process instead of just
+    // evicting that one connection. See https://node-postgres.com/apis/pool.
+    pool.on('error', (err) => {
+      this.logger.error('Conexão ociosa do pool descartada pelo Postgres.', err);
+    });
     const adapter = new PrismaPg(pool, { disposeExternalPool: true });
     super({ adapter });
     this.pgPool = pool;
