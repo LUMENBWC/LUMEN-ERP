@@ -6,9 +6,10 @@
 
 - `@supabase/server/core`'s `verifyAuth` valida o JWT do Supabase Auth contra o JWKS público do projeto (`SUPABASE_JWKS_URL`, chaves assimétricas ES256) — sem precisar de nenhum segredo.
 - **`SupabaseAuthGuard`** (`src/common/auth/supabase-auth.guard.ts`): valida o JWT, resolve o `TenantContext` via `resolveTenantContext` e anexa em `request.tenantContext`. Aplicado globalmente (`APP_GUARD`).
-- **`resolveTenantContext`** (`src/common/tenant/resolve-tenant-context.ts`): dado o `sub` do JWT, resolve `empresaId`, dados do usuário e o conjunto de permissões, em uma transação de duas etapas (ver migration `20260803224008_usuarios_self_lookup` e [ADR-0002](../decisions/ADR-0002-papeis-postgres-rls.md)):
-  1. define `app.auth_user_id`, busca `usuarios` pela policy `self_lookup`.
-  2. agora que `empresaId` é conhecido, define `app.empresa_id` e lê papéis/permissões pela policy `tenant_isolation` normal.
+- **`resolveTenantContext`** (`src/common/tenant/resolve-tenant-context.ts`): dado o `sub` do JWT, resolve `empresaId`, dados do usuário e o conjunto de permissões, em **duas transações separadas, em dois pools `pg` separados** (ver migration `20260803224008_usuarios_self_lookup`, [ADR-0002](../decisions/ADR-0002-papeis-postgres-rls.md) e [ADR-0003](../decisions/ADR-0003-supavisor-guc-bootstrap-pool.md)):
+  1. no `prisma.authBootstrapPool`, define `app.auth_user_id` e busca `usuarios` pela policy `self_lookup`.
+  2. no `prisma.pgPool` (o mesmo usado pelo Prisma para tudo mais), agora que `empresaId` é conhecido, define `app.empresa_id` e lê papéis/permissões pela policy `tenant_isolation` normal.
+     Os dois pools existem porque o Supavisor (pooler da Supabase) corrompe `current_setting()` quando uma mesma conexão física já viu mais de um nome de variável de sessão customizada — ver ADR-0003 para os detalhes e para as regras de quem pode usar cada pool.
 - **`PermissionsGuard`** + `@RequirePermissions('produtos.criar', ...)`: nega acesso se o `TenantContext` não tiver alguma das permissões exigidas. Aplicado globalmente, mas só age em rotas decoradas.
 - **`@Public()`**: isenta uma rota do `SupabaseAuthGuard` (usado em `/health`).
 - **`@CurrentTenant()`**: decorator de parâmetro que extrai o `TenantContext` da request.

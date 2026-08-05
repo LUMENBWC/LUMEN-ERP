@@ -13,37 +13,65 @@ export interface TenantContext {
 
 /**
  * Bootstraps identity for a verified Supabase Auth user: which empresa they
- * belong to and which permissions they hold. Runs as `app_api` inside a
- * single transaction, in two steps because RLS gates each step differently
- * (see migration 20260803224008_usuarios_self_lookup and ADR-0002):
+ * belong to and which permissions they hold. Two separate transactions on
+ * two separate `pg` pools, because RLS gates each step differently (see
+ * migration 20260803224008_usuarios_self_lookup and ADR-0002):
  *
- * 1. Set `app.auth_user_id` and look up `usuarios` via the self_lookup
- *    policy - `app.empresa_id` isn't known yet at this point.
- * 2. Now that `empresaId` is known, set `app.empresa_id` and read the
- *    user's papeis/permissoes through the normal tenant_isolation policy.
+ * 1. On `prisma.authBootstrapPool`, set `app.auth_user_id` and look up
+ *    `usuarios` via the self_lookup policy - `app.empresa_id` isn't known
+ *    yet at this point.
+ * 2. Now that `empresaId` is known, on `prisma.pgPool` set `app.empresa_id`
+ *    and read the user's papeis/permissoes through the normal
+ *    tenant_isolation policy.
  *
- * Issues these queries directly against the underlying `pg` pool
- * (`prisma.$queryRaw`/model queries) rather than through Prisma: repeated
- * calls to the same Prisma query inside `prisma.$transaction()` were
- * observed to intermittently receive an empty string in place of the
- * `set_config`-assigned session variable after the first call, on an
- * otherwise-idle long-running NestJS process (not reproducible in a
- * standalone script making the same calls). Root cause not confirmed
- * upstream (Prisma 7 driver-adapter query compilation is very new); talking
- * to `pg` directly sidesteps it entirely.
+ * These MUST stay on two separate pools, each dedicated to a single custom
+ * GUC name - see ADR-0003 and the doc comments on both pools in
+ * `PrismaService`. Confirmed by direct load testing: once a pooled Postgres
+ * backend behind Supavisor has been used to set two *different* local GUC
+ * names (even across separate transactions), `current_setting()` starts
+ * returning `''` instead of the value just set, breaking every subsequent
+ * query gated by an RLS policy that reads it - this is what caused the
+ * intermittent `invalid input syntax for type uuid: ""` 500s on `/me`.
+ *
+ * Also bypasses Prisma's query layer (raw `pg` instead of
+ * `prisma.$queryRaw`/model queries): needed exclusive, hand-controlled
+ * connections to reproduce and pin down the above, and there's no upside to
+ * routing back through Prisma now that it's understood.
  */
 export async function resolveTenantContext(
   prisma: PrismaService,
   authUserId: string,
 ): Promise<TenantContext | null> {
-  const pool = prisma.pgPool;
-  const client = await pool.connect();
+  const usuario = await lookupUsuarioByAuthUserId(prisma, authUserId);
+  if (!usuario) {
+    return null;
+  }
 
+  const { papeis, permissoes } = await lookupPapeisEPermissoes(
+    prisma,
+    usuario.id,
+    usuario.empresaId,
+  );
+
+  return {
+    authUserId,
+    usuarioId: usuario.id,
+    empresaId: usuario.empresaId,
+    filialId: usuario.filialId,
+    nome: usuario.nome,
+    email: usuario.email,
+    papeis,
+    permissoes,
+  };
+}
+
+async function lookupUsuarioByAuthUserId(prisma: PrismaService, authUserId: string) {
+  const client = await prisma.authBootstrapPool.connect();
   try {
     await client.query('BEGIN');
     await client.query("SELECT set_config('app.auth_user_id', $1, true)", [authUserId]);
 
-    const usuarioResult = await client.query<{
+    const result = await client.query<{
       id: string;
       empresaId: string;
       filialId: string | null;
@@ -56,44 +84,46 @@ export async function resolveTenantContext(
        LIMIT 1`,
       [authUserId],
     );
-    const usuario = usuarioResult.rows[0];
 
-    if (!usuario) {
-      await client.query('COMMIT');
-      return null;
-    }
+    await client.query('COMMIT');
+    return result.rows[0] ?? null;
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => undefined);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
 
-    await client.query("SELECT set_config('app.empresa_id', $1, true)", [usuario.empresaId]);
+async function lookupPapeisEPermissoes(
+  prisma: PrismaService,
+  usuarioId: string,
+  empresaId: string,
+) {
+  const client = await prisma.pgPool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query("SELECT set_config('app.empresa_id', $1, true)", [empresaId]);
 
-    const permissaoResult = await client.query<{ papelNome: string; chave: string }>(
+    const result = await client.query<{ papelNome: string; chave: string }>(
       `SELECT p.nome AS "papelNome", perm.chave
        FROM usuario_papeis up
        JOIN papeis p ON p.id = up."papelId"
        JOIN papel_permissoes pp ON pp."papelId" = p.id
        JOIN permissoes perm ON perm.id = pp."permissaoId"
        WHERE up."usuarioId" = $1::uuid`,
-      [usuario.id],
+      [usuarioId],
     );
 
     await client.query('COMMIT');
 
     const permissoes = new Set<string>();
     const papeis = new Set<string>();
-    for (const row of permissaoResult.rows) {
+    for (const row of result.rows) {
       papeis.add(row.papelNome);
       permissoes.add(row.chave);
     }
-
-    return {
-      authUserId,
-      usuarioId: usuario.id,
-      empresaId: usuario.empresaId,
-      filialId: usuario.filialId,
-      nome: usuario.nome,
-      email: usuario.email,
-      papeis: Array.from(papeis),
-      permissoes,
-    };
+    return { papeis: Array.from(papeis), permissoes };
   } catch (error) {
     await client.query('ROLLBACK').catch(() => undefined);
     throw error;
