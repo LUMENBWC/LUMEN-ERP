@@ -4,6 +4,14 @@ ERP SaaS multiempresa para pequenas e médias empresas — produtos, estoque, cl
 
 Ver a especificação completa e o plano de etapas em `docs/architecture.md` e `docs/decisions/`.
 
+## Progresso
+
+- ✅ Etapa 0 — Fundação (monorepo, CI, Docker)
+- ✅ Etapa 1 — Banco & Núcleo Multi-tenant ([docs](docs/modules/nucleo-multitenant.md))
+- ✅ Etapa 2 — Autenticação & Autorização ([docs](docs/modules/autenticacao-autorizacao.md))
+- ✅ Etapa 3 — Usuários & Permissões ([docs](docs/modules/usuarios.md))
+- ⬜ Etapa 4 — Produtos & Categorias
+
 ## Stack
 
 - **Frontend** (`apps/web`): Next.js 15, React, TypeScript, Tailwind CSS, shadcn/ui, TanStack Query, Zustand, React Hook Form, Zod.
@@ -39,13 +47,13 @@ Ver `docs/modules/nucleo-multitenant.md` e [ADR-0002](docs/decisions/ADR-0002-pa
 
 ## Scripts
 
-| Script            | Descrição                                      |
-| ----------------- | ----------------------------------------------- |
-| `pnpm dev`        | Sobe todas as apps em modo desenvolvimento       |
-| `pnpm build`      | Build de produção de todas as apps               |
-| `pnpm lint`       | Lint em todo o monorepo                          |
-| `pnpm typecheck`  | Checagem de tipos em todo o monorepo             |
-| `pnpm test`       | Testes de todas as apps                          |
+| Script           | Descrição                                  |
+| ---------------- | ------------------------------------------ |
+| `pnpm dev`       | Sobe todas as apps em modo desenvolvimento |
+| `pnpm build`     | Build de produção de todas as apps         |
+| `pnpm lint`      | Lint em todo o monorepo                    |
+| `pnpm typecheck` | Checagem de tipos em todo o monorepo       |
+| `pnpm test`      | Testes de todas as apps                    |
 
 ## Estrutura
 

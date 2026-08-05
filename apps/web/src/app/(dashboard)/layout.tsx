@@ -1,4 +1,6 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { apiFetch } from '@/lib/api/server';
 import { createClient } from '@/lib/supabase/server';
 import { LogoutButton } from './logout-button';
 
@@ -12,10 +14,23 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect('/login');
   }
 
+  const meRes = await apiFetch('/me');
+  const permissoes: string[] = meRes.ok ? ((await meRes.json()).permissoes ?? []) : [];
+  const podeGerenciarUsuarios = permissoes.includes('usuarios.gerenciar');
+
   return (
     <div className="min-h-screen">
       <header className="flex items-center justify-between border-b px-6 py-4">
-        <span className="font-semibold">ERP SaaS</span>
+        <nav className="flex items-center gap-4">
+          <Link href="/dashboard" className="font-semibold">
+            ERP SaaS
+          </Link>
+          {podeGerenciarUsuarios && (
+            <Link href="/usuarios" className="text-muted-foreground hover:text-foreground text-sm">
+              Usuários
+            </Link>
+          )}
+        </nav>
         <LogoutButton />
       </header>
       <main className="p-6">{children}</main>

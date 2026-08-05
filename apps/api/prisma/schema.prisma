@@ -157,19 +157,27 @@ model Filial {
 }
 
 model Usuario {
-  id         String    @id @default(uuid(7)) @db.Uuid
-  empresaId  String    @db.Uuid
-  filialId   String?   @db.Uuid
-  authUserId String    @unique @db.Uuid
-  nome       String
-  email      String
-  ativo      Boolean   @default(true)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  deletedAt  DateTime?
+  id          String    @id @default(uuid(7)) @db.Uuid
+  empresaId   String    @db.Uuid
+  filialId    String?   @db.Uuid
+  authUserId  String    @unique @db.Uuid
+  nome        String
+  email       String
+  ativo       Boolean   @default(true)
+  createdById String?   @db.Uuid
+  updatedById String?   @db.Uuid
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 
   empresa              Empresa                @relation(fields: [empresaId], references: [id], onDelete: Cascade)
   filial               Filial?                @relation(fields: [filialId], references: [id], onDelete: SetNull)
+  criadoPor            Usuario?               @relation("UsuarioCriadoPor", fields: [createdById], references: [id], onDelete: SetNull)
+  atualizadoPor        Usuario?               @relation("UsuarioAtualizadoPor", fields: [updatedById], references: [id], onDelete: SetNull)
+  usuariosCriados      Usuario[]              @relation("UsuarioCriadoPor")
+  usuariosAtualizados  Usuario[]              @relation("UsuarioAtualizadoPor")
+  papeisCriados        Papel[]                @relation("PapelCriadoPor")
+  papeisAtualizados    Papel[]                @relation("PapelAtualizadoPor")
   papeis               UsuarioPapel[]
   auditLogs            AuditLog[]
   movimentacoesEstoque MovimentacaoEstoque[]
@@ -181,24 +189,32 @@ model Usuario {
 
   @@unique([empresaId, email])
   @@index([empresaId])
+  @@index([createdById])
+  @@index([updatedById])
   @@map("usuarios")
 }
 
 model Papel {
-  id        String    @id @default(uuid(7)) @db.Uuid
-  empresaId String    @db.Uuid
-  nome      String
-  descricao String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  id            String    @id @default(uuid(7)) @db.Uuid
+  empresaId     String    @db.Uuid
+  nome          String
+  descricao     String?
+  createdById   String?   @db.Uuid
+  updatedById   String?   @db.Uuid
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
 
-  empresa    Empresa          @relation(fields: [empresaId], references: [id], onDelete: Cascade)
-  permissoes PapelPermissao[]
-  usuarios   UsuarioPapel[]
+  empresa       Empresa          @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  criadoPor     Usuario?         @relation("PapelCriadoPor", fields: [createdById], references: [id], onDelete: SetNull)
+  atualizadoPor Usuario?         @relation("PapelAtualizadoPor", fields: [updatedById], references: [id], onDelete: SetNull)
+  permissoes    PapelPermissao[]
+  usuarios      UsuarioPapel[]
 
   @@unique([empresaId, nome])
   @@index([empresaId])
+  @@index([createdById])
+  @@index([updatedById])
   @@map("papeis")
 }
 
