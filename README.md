@@ -13,7 +13,8 @@ Ver a especificação completa e o plano de etapas em `docs/architecture.md` e `
 - ✅ Etapa 4 — Produtos & Categorias ([docs](docs/modules/produtos.md))
 - ✅ Etapa 5 — Estoque (Movimentações) ([docs](docs/modules/estoque.md))
 - ✅ Etapa 6 — Clientes ([docs](docs/modules/clientes.md))
-- ⬜ Etapa 7 — Fornecedores
+- ✅ Etapa 7 — Fornecedores ([docs](docs/modules/fornecedores.md))
+- ⬜ Etapa 8 — Orçamentos
 
 ## Stack
 

@@ -51,6 +51,7 @@ export interface RegistrarDeltaInput {
 
 export interface ListarMovimentacoesFiltro {
   produtoId?: string;
+  fornecedorId?: string;
   tipo?: TipoMovimentacaoValue;
   dataInicio?: Date;
   dataFim?: Date;
@@ -70,6 +71,7 @@ export interface EstoqueRepositoryPort {
    * resultante nunca corra contra uma escrita concorrente no mesmo produto.
    */
   obterProdutoComLock(produtoId: string): Promise<ProdutoParaMovimentacao | null>;
+  fornecedorExiste(fornecedorId: string): Promise<boolean>;
   registrarEntrada(input: RegistrarEntradaInput, usuarioId: string): Promise<MovimentacaoResumo>;
   registrarDelta(input: RegistrarDeltaInput, usuarioId: string): Promise<MovimentacaoResumo>;
   listar(filtro: ListarMovimentacoesFiltro): Promise<ListarMovimentacoesResultado>;

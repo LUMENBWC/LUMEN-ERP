@@ -86,6 +86,11 @@ export class PrismaEstoqueRepository implements EstoqueRepositoryPort {
     return rows[0] ?? null;
   }
 
+  async fornecedorExiste(fornecedorId: string): Promise<boolean> {
+    const count = await this.tx.fornecedor.count({ where: { id: fornecedorId } });
+    return count > 0;
+  }
+
   async registrarEntrada(
     input: RegistrarEntradaInput,
     usuarioId: string,
@@ -143,6 +148,7 @@ export class PrismaEstoqueRepository implements EstoqueRepositoryPort {
   async listar(filtro: ListarMovimentacoesFiltro): Promise<ListarMovimentacoesResultado> {
     const where: Prisma.MovimentacaoEstoqueWhereInput = {
       ...(filtro.produtoId ? { produtoId: filtro.produtoId } : {}),
+      ...(filtro.fornecedorId ? { fornecedorId: filtro.fornecedorId } : {}),
       ...(filtro.tipo ? { tipo: filtro.tipo } : {}),
       ...(filtro.dataInicio || filtro.dataFim
         ? {

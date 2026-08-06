@@ -8,7 +8,7 @@ import {
 } from '../../../../infra/prisma/tenant-transaction-runner';
 import { calcularMargemLucro } from '../../../produtos/domain/calcular-margem-lucro';
 import { calcularCustoMedioPonderado } from '../../domain/calcular-custo-medio-ponderado';
-import { ProdutoNaoEncontradoError } from '../../domain/estoque.errors';
+import { FornecedorInvalidoError, ProdutoNaoEncontradoError } from '../../domain/estoque.errors';
 import type { RegistrarEntradaDto } from '../dto/registrar-entrada.dto';
 import {
   ESTOQUE_REPOSITORY_FACTORY,
@@ -31,6 +31,9 @@ export class RegistrarEntradaUseCase {
       const produto = await repo.obterProdutoComLock(dto.produtoId);
       if (!produto) {
         throw new ProdutoNaoEncontradoError();
+      }
+      if (dto.fornecedorId && !(await repo.fornecedorExiste(dto.fornecedorId))) {
+        throw new FornecedorInvalidoError();
       }
 
       const quantidade = new Prisma.Decimal(dto.quantidade);

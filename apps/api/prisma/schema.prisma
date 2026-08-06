@@ -170,28 +170,30 @@ model Usuario {
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
 
-  empresa               Empresa                @relation(fields: [empresaId], references: [id], onDelete: Cascade)
-  filial                Filial?                @relation(fields: [filialId], references: [id], onDelete: SetNull)
-  criadoPor             Usuario?               @relation("UsuarioCriadoPor", fields: [createdById], references: [id], onDelete: SetNull)
-  atualizadoPor         Usuario?               @relation("UsuarioAtualizadoPor", fields: [updatedById], references: [id], onDelete: SetNull)
-  usuariosCriados       Usuario[]              @relation("UsuarioCriadoPor")
-  usuariosAtualizados   Usuario[]              @relation("UsuarioAtualizadoPor")
-  papeisCriados         Papel[]                @relation("PapelCriadoPor")
-  papeisAtualizados     Papel[]                @relation("PapelAtualizadoPor")
-  categoriasCriadas     Categoria[]            @relation("CategoriaCriadoPor")
-  categoriasAtualizadas Categoria[]            @relation("CategoriaAtualizadoPor")
-  produtosCriados       Produto[]              @relation("ProdutoCriadoPor")
-  produtosAtualizados   Produto[]              @relation("ProdutoAtualizadoPor")
-  clientesCriados       Cliente[]              @relation("ClienteCriadoPor")
-  clientesAtualizados   Cliente[]              @relation("ClienteAtualizadoPor")
-  papeis                UsuarioPapel[]
-  auditLogs             AuditLog[]
-  movimentacoesEstoque  MovimentacaoEstoque[]
-  vendas                Venda[]
-  recebimentos          RecebimentoRecebivel[]
-  pagamentos            PagamentoPagavel[]
-  caixaSessoesAbertas   CaixaSessao[]
-  movimentosCaixa       MovimentoCaixa[]
+  empresa                 Empresa                @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  filial                  Filial?                @relation(fields: [filialId], references: [id], onDelete: SetNull)
+  criadoPor               Usuario?               @relation("UsuarioCriadoPor", fields: [createdById], references: [id], onDelete: SetNull)
+  atualizadoPor           Usuario?               @relation("UsuarioAtualizadoPor", fields: [updatedById], references: [id], onDelete: SetNull)
+  usuariosCriados         Usuario[]              @relation("UsuarioCriadoPor")
+  usuariosAtualizados     Usuario[]              @relation("UsuarioAtualizadoPor")
+  papeisCriados           Papel[]                @relation("PapelCriadoPor")
+  papeisAtualizados       Papel[]                @relation("PapelAtualizadoPor")
+  categoriasCriadas       Categoria[]            @relation("CategoriaCriadoPor")
+  categoriasAtualizadas   Categoria[]            @relation("CategoriaAtualizadoPor")
+  produtosCriados         Produto[]              @relation("ProdutoCriadoPor")
+  produtosAtualizados     Produto[]              @relation("ProdutoAtualizadoPor")
+  clientesCriados         Cliente[]              @relation("ClienteCriadoPor")
+  clientesAtualizados     Cliente[]              @relation("ClienteAtualizadoPor")
+  fornecedoresCriados     Fornecedor[]           @relation("FornecedorCriadoPor")
+  fornecedoresAtualizados Fornecedor[]           @relation("FornecedorAtualizadoPor")
+  papeis                  UsuarioPapel[]
+  auditLogs               AuditLog[]
+  movimentacoesEstoque    MovimentacaoEstoque[]
+  vendas                  Venda[]
+  recebimentos            RecebimentoRecebivel[]
+  pagamentos              PagamentoPagavel[]
+  caixaSessoesAbertas     CaixaSessao[]
+  movimentosCaixa         MovimentoCaixa[]
 
   @@unique([empresaId, email])
   @@index([empresaId])
@@ -456,9 +458,13 @@ model Fornecedor {
   produtos             FornecedorProduto[]
   movimentacoesEstoque MovimentacaoEstoque[]
   contasPagar          ContaPagar[]
+  criadoPor            Usuario?              @relation("FornecedorCriadoPor", fields: [createdById], references: [id], onDelete: SetNull)
+  atualizadoPor        Usuario?              @relation("FornecedorAtualizadoPor", fields: [updatedById], references: [id], onDelete: SetNull)
 
   @@unique([empresaId, documento])
   @@index([empresaId])
+  @@index([createdById])
+  @@index([updatedById])
   @@map("fornecedores")
 }
 

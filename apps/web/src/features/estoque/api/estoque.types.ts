@@ -25,6 +25,7 @@ export interface ListarMovimentacoesResultado {
 
 export interface ListarMovimentacoesParams {
   produtoId?: string;
+  fornecedorId?: string;
   tipo?: TipoMovimentacao;
   dataInicio?: string;
   dataFim?: string;

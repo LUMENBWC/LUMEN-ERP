@@ -7,6 +7,7 @@ import { PrismaModule } from './infra/prisma/prisma.module';
 import { CategoriasModule } from './modules/categorias/presentation/categorias.module';
 import { ClientesModule } from './modules/clientes/presentation/clientes.module';
 import { EstoqueModule } from './modules/estoque/presentation/estoque.module';
+import { FornecedoresModule } from './modules/fornecedores/presentation/fornecedores.module';
 import { HealthModule } from './modules/health/health.module';
 import { MeModule } from './modules/me/me.module';
 import { PapeisModule } from './modules/papeis/presentation/papeis.module';
@@ -30,6 +31,7 @@ import { UsuariosModule } from './modules/usuarios/presentation/usuarios.module'
     ProdutosModule,
     EstoqueModule,
     ClientesModule,
+    FornecedoresModule,
   ],
 })
 export class AppModule {}

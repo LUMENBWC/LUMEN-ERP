@@ -20,7 +20,7 @@ Mesmo padrão de camadas das etapas anteriores (domain/application/infra/present
 - `/estoque`: histórico geral da empresa, filtro por produto/tipo, paginado. Três diálogos separados (`EntradaDialog`, `AjusteDialog`, `PerdaDialog`) em vez de um único formulário dinâmico — cada operação tem campos/validação genuinamente diferentes, um componente por operação ficou mais simples que um resolver Zod trocando de schema em runtime.
 - Detalhe do produto (`/produtos/:id`) ganhou uma seção "Histórico de movimentações" (`ProdutoHistoricoEstoque`, últimos 10 registros).
 - Nav do dashboard mostra "Estoque" só para quem tem `estoque.ler`.
-- Sem seletor de fornecedor no formulário de entrada ainda — o módulo `Fornecedores` só chega na Etapa 7; o campo `fornecedorId` já existe no schema/DTO (nullable) para quando isso acontecer, mas a UI não tem de onde listar fornecedores ainda.
+- **Atualização (Etapa 7)**: seletor de fornecedor (opcional) adicionado ao formulário de entrada, e `GET /estoque/movimentacoes` ganhou o filtro `fornecedorId` — usado pelo "histórico de compras" no detalhe do fornecedor. `fornecedorId` também passou a ser validado ao registrar uma entrada (`FornecedorInvalidoError`).
 
 ## Decisões / limitações conhecidas
 

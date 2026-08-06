@@ -15,6 +15,7 @@ export function createFakeTxRunner(): TenantTransactionRunner {
 export function createMockRepo(): jest.Mocked<EstoqueRepositoryPort> {
   return {
     obterProdutoComLock: jest.fn(),
+    fornecedorExiste: jest.fn(),
     registrarEntrada: jest.fn(),
     registrarDelta: jest.fn(),
     listar: jest.fn(),

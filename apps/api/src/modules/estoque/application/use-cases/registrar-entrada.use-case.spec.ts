@@ -1,5 +1,5 @@
 import { Prisma } from '../../../../../generated/prisma/client';
-import { ProdutoNaoEncontradoError } from '../../domain/estoque.errors';
+import { FornecedorInvalidoError, ProdutoNaoEncontradoError } from '../../domain/estoque.errors';
 import type { RegistrarEntradaDto } from '../dto/registrar-entrada.dto';
 import { RegistrarEntradaUseCase } from './registrar-entrada.use-case';
 import {
@@ -58,6 +58,22 @@ describe('RegistrarEntradaUseCase', () => {
     await expect(useCase.execute(TENANT_FIXTURE, dto)).rejects.toBeInstanceOf(
       ProdutoNaoEncontradoError,
     );
+    expect(repo.registrarEntrada).not.toHaveBeenCalled();
+  });
+
+  it('rejeita fornecedor inexistente quando informado', async () => {
+    const repo = createMockRepo();
+    repo.obterProdutoComLock.mockResolvedValue(produtoParaMovimentacaoFixture());
+    repo.fornecedorExiste.mockResolvedValue(false);
+    const useCase = new RegistrarEntradaUseCase(
+      createFakeTxRunner(),
+      () => repo,
+      createMockAuditLog(),
+    );
+
+    await expect(
+      useCase.execute(TENANT_FIXTURE, { ...dto, fornecedorId: 'fornecedor-1' }),
+    ).rejects.toBeInstanceOf(FornecedorInvalidoError);
     expect(repo.registrarEntrada).not.toHaveBeenCalled();
   });
 });

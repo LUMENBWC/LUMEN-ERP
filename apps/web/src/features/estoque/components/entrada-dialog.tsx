@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useFornecedores } from '@/features/fornecedores/api/fornecedores.queries';
 import { useProdutos } from '@/features/produtos/api/produtos.queries';
 import { ApiError } from '@/lib/api/client';
 import { useRegistrarEntrada } from '../api/estoque.queries';
@@ -29,6 +30,7 @@ import { registrarEntradaSchema, type RegistrarEntradaInput } from '../schemas/m
 export function EntradaDialog({ trigger }: { trigger: React.ReactElement }) {
   const [open, setOpen] = useState(false);
   const { data: produtos } = useProdutos({ ativo: true, page: 1, perPage: 100 });
+  const { data: fornecedores } = useFornecedores({ ativo: true, page: 1, perPage: 100 });
   const registrarEntrada = useRegistrarEntrada();
   const {
     register,
@@ -42,6 +44,7 @@ export function EntradaDialog({ trigger }: { trigger: React.ReactElement }) {
     defaultValues: { produtoId: '', fornecedorId: null, motivo: null },
   });
   const produtoId = watch('produtoId');
+  const fornecedorId = watch('fornecedorId');
 
   async function onSubmit(input: RegistrarEntradaInput) {
     await registrarEntrada.mutateAsync(input);
@@ -93,6 +96,31 @@ export function EntradaDialog({ trigger }: { trigger: React.ReactElement }) {
             {errors.produtoId && (
               <p className="text-destructive text-xs">{errors.produtoId.message}</p>
             )}
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="fornecedorId">Fornecedor (opcional)</Label>
+            <Select
+              items={[
+                { value: 'nenhum', label: 'Nenhum' },
+                ...(fornecedores?.items ?? []).map((f) => ({ value: f.id, label: f.nome })),
+              ]}
+              value={fornecedorId ?? 'nenhum'}
+              onValueChange={(v) =>
+                setValue('fornecedorId', v === 'nenhum' || v === null ? null : v)
+              }
+            >
+              <SelectTrigger id="fornecedorId" className="w-full">
+                <SelectValue placeholder="Nenhum" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="nenhum">Nenhum</SelectItem>
+                {fornecedores?.items.map((f) => (
+                  <SelectItem key={f.id} value={f.id}>
+                    {f.nome}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">

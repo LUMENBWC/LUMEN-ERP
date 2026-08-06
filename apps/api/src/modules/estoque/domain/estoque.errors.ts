@@ -6,6 +6,12 @@ export class ProdutoNaoEncontradoError extends EstoqueDomainError {
   }
 }
 
+export class FornecedorInvalidoError extends EstoqueDomainError {
+  constructor() {
+    super('Fornecedor não encontrado.');
+  }
+}
+
 export class EstoqueInsuficienteError extends EstoqueDomainError {
   constructor() {
     super(
