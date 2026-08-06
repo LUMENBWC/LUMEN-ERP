@@ -10,6 +10,12 @@ const API_PREFIX = 'api/v1';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Sem isso, onModuleDestroy() (que fecha pgPool/authBootstrapPool - ver
+  // ADR-0003) nunca roda em SIGTERM/SIGINT, incluindo todo restart do
+  // `nest start --watch` a cada arquivo salvo em dev: as conexões antigas
+  // ficam penduradas no Supavisor em vez de fechadas de forma limpa.
+  app.enableShutdownHooks();
+
   app.use(helmet());
   app.enableCors();
   app.setGlobalPrefix(API_PREFIX);

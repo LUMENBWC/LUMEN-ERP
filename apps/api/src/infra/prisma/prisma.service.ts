@@ -46,6 +46,19 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     authBootstrapPool.on('error', (err) => {
       this.logger.error('Conexão ociosa do authBootstrapPool descartada pelo Postgres.', err);
     });
+    // Quem faz checkout de uma conexão (`resolveTenantContext.ts` e
+    // `run-in-tenant-context.ts`) roda `DISCARD ALL` com `await` explícito
+    // antes do BEGIN - boa higiene contra planos preparados/locks/temp
+    // tables sobrando entre reusos do Supavisor. Um listener no evento
+    // 'acquire' foi tentado primeiro, mas provou-se não confiável: o
+    // handler é fire-and-forget e não há garantia de que sua query termine
+    // (ou sequer seja enfileirada) antes da próxima query do próprio
+    // chamador na mesma conexão. Isso NÃO é a defesa contra
+    // `invalid input syntax for type uuid: ""` - essa é uma correção nas
+    // próprias policies RLS (ver ADR-0005): `DISCARD ALL`/`RESET ALL` não
+    // limpam um GUC customizado já definido como `''` numa conexão física,
+    // então a defesa real precisa estar onde o valor é lido, não em
+    // higiene de conexão do lado do cliente.
     const adapter = new PrismaPg(pool, { disposeExternalPool: true });
     super({ adapter });
     this.pgPool = pool;

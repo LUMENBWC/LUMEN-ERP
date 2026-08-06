@@ -30,7 +30,15 @@
       "Bash(rm -f \"C:/Users/caina/AppData/Local/Temp/bashcmds.json\")",
       "Bash(mkdir -p \"/c/Users/caina/AppData/Local/Temp/claude/c--Users-caina-OneDrive-Documentos-lumen-LUMEN-ERP/5b8376d0-7f5c-42e2-b269-b1422b319e68/scratchpad/supabase-server-inspect\")",
       "Bash(npm pack *)",
-      "Bash(tar -xzf *.tgz)"
+      "Bash(tar -xzf *.tgz)",
+      "Bash(xargs -I{} echo {})",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/api/v1/me)",
+      "Bash(curl -s http://localhost:3001/api/v1/me)",
+      "Bash(curl -s -o /dev/null -w \"health: %{http_code}\\\\n\" http://localhost:3001/api/v1/health)",
+      "Bash(curl -s -o /dev/null -w \"api health: %{http_code}\\\\n\" http://localhost:3001/api/v1/health)",
+      "Bash(curl -s -o /dev/null -w \"web: %{http_code}\\\\n\" http://localhost:3000)",
+      "Bash(curl -s -o /dev/null -w \"api: %{http_code}\\\\n\" http://localhost:3001/api/v1/health)",
+      "Bash(node -e \"console.log\\(require.resolve\\('zod'\\)\\)\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\caina\\AppData\\Local\\Temp"

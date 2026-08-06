@@ -10,7 +10,8 @@ Ver a especificação completa e o plano de etapas em `docs/architecture.md` e `
 - ✅ Etapa 1 — Banco & Núcleo Multi-tenant ([docs](docs/modules/nucleo-multitenant.md))
 - ✅ Etapa 2 — Autenticação & Autorização ([docs](docs/modules/autenticacao-autorizacao.md))
 - ✅ Etapa 3 — Usuários & Permissões ([docs](docs/modules/usuarios.md))
-- ⬜ Etapa 4 — Produtos & Categorias
+- ✅ Etapa 4 — Produtos & Categorias ([docs](docs/modules/produtos.md))
+- ⬜ Etapa 5 — Estoque (Movimentações)
 
 ## Stack
 

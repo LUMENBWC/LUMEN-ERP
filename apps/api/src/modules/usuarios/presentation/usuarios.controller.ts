@@ -74,33 +74,30 @@ export class UsuariosController {
 
   @Patch(':id')
   @RequirePermissions('usuarios.gerenciar')
-  @UsePipes(new ZodValidationPipe(atualizarUsuarioSchema))
   atualizar(
     @CurrentTenant() tenant: TenantContext,
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: AtualizarUsuarioDto,
+    @Body(new ZodValidationPipe(atualizarUsuarioSchema)) dto: AtualizarUsuarioDto,
   ) {
     return this.atualizarUsuario.execute(tenant, id, dto);
   }
 
   @Patch(':id/ativo')
   @RequirePermissions('usuarios.gerenciar')
-  @UsePipes(new ZodValidationPipe(definirAtivoSchema))
   definirAtivo(
     @CurrentTenant() tenant: TenantContext,
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: { ativo: boolean },
+    @Body(new ZodValidationPipe(definirAtivoSchema)) dto: { ativo: boolean },
   ) {
     return this.definirAtivoUsuario.execute(tenant, id, dto.ativo);
   }
 
   @Post(':id/papeis')
   @RequirePermissions('usuarios.gerenciarPermissoes')
-  @UsePipes(new ZodValidationPipe(atribuirPapelSchema))
   atribuir(
     @CurrentTenant() tenant: TenantContext,
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: { papelId: string },
+    @Body(new ZodValidationPipe(atribuirPapelSchema)) dto: { papelId: string },
   ) {
     return this.atribuirPapel.execute(tenant, id, dto.papelId);
   }

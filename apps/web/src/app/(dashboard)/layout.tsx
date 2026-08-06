@@ -17,6 +17,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const meRes = await apiFetch('/me');
   const permissoes: string[] = meRes.ok ? ((await meRes.json()).permissoes ?? []) : [];
   const podeGerenciarUsuarios = permissoes.includes('usuarios.gerenciar');
+  const podeVerProdutos = permissoes.includes('produtos.ler');
 
   return (
     <div className="min-h-screen">
@@ -25,6 +26,22 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <Link href="/dashboard" className="font-semibold">
             ERP SaaS
           </Link>
+          {podeVerProdutos && (
+            <>
+              <Link
+                href="/produtos"
+                className="text-muted-foreground hover:text-foreground text-sm"
+              >
+                Produtos
+              </Link>
+              <Link
+                href="/categorias"
+                className="text-muted-foreground hover:text-foreground text-sm"
+              >
+                Categorias
+              </Link>
+            </>
+          )}
           {podeGerenciarUsuarios && (
             <Link href="/usuarios" className="text-muted-foreground hover:text-foreground text-sm">
               Usuários

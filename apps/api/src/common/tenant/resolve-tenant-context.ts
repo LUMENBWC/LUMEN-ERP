@@ -68,6 +68,14 @@ export async function resolveTenantContext(
 async function lookupUsuarioByAuthUserId(prisma: PrismaService, authUserId: string) {
   const client = await prisma.authBootstrapPool.connect();
   try {
+    // Connection hygiene, not the fix for `invalid input syntax for type
+    // uuid: ""` (see ADR-0005 - that's a NULLIF guard in the RLS policies
+    // themselves, since DISCARD ALL/RESET ALL can't clean a custom GUC
+    // already stuck at ''). Must be awaited here, before BEGIN, not left to
+    // the pool's 'acquire' event - that fires-and-forgets, with no
+    // ordering guarantee against this function's own next query on the
+    // same client. DISCARD ALL can't run inside a transaction block.
+    await client.query('DISCARD ALL');
     await client.query('BEGIN');
     await client.query("SELECT set_config('app.auth_user_id', $1, true)", [authUserId]);
 
@@ -102,6 +110,7 @@ async function lookupPapeisEPermissoes(
 ) {
   const client = await prisma.pgPool.connect();
   try {
+    await client.query('DISCARD ALL');
     await client.query('BEGIN');
     await client.query("SELECT set_config('app.empresa_id', $1, true)", [empresaId]);
 

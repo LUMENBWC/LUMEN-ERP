@@ -29,6 +29,22 @@ export async function runInTenantContext<T>(
   empresaId: string,
   fn: (tx: TenantScopedPrismaClient) => Promise<T>,
 ): Promise<T> {
+  // Connection hygiene, not the fix for `invalid input syntax for type
+  // uuid: ""` (see ADR-0005 - that's a NULLIF guard in the RLS policies
+  // themselves, since DISCARD ALL/RESET ALL can't clean a custom GUC
+  // already stuck at ''). DISCARD ALL can't run inside a transaction
+  // block, and Prisma's interactive $transaction doesn't give us a hook
+  // that runs before its own BEGIN - so it's issued here, on its own round
+  // trip, immediately before starting the transaction. `pg.Pool` hands out
+  // its most-recently-released idle client first, so this reliably lands
+  // on the same connection $transaction acquires next in the
+  // (low-concurrency) common case; unlike the 'acquire' event this at
+  // least has correct ordering guarantees for its own connection when it
+  // does line up.
+  const warmup = await prisma.pgPool.connect();
+  await warmup.query('DISCARD ALL');
+  warmup.release();
+
   const scoped = scopeClient(prisma, empresaId);
   return scoped.$transaction(async (tx) => {
     await tx.$executeRaw`SELECT set_config('app.empresa_id', ${empresaId}, true)`;
