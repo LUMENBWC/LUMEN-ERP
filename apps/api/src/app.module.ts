@@ -5,6 +5,7 @@ import { AuditModule } from './common/audit/audit.module';
 import { AuthModule } from './common/auth/auth.module';
 import { PrismaModule } from './infra/prisma/prisma.module';
 import { CategoriasModule } from './modules/categorias/presentation/categorias.module';
+import { EstoqueModule } from './modules/estoque/presentation/estoque.module';
 import { HealthModule } from './modules/health/health.module';
 import { MeModule } from './modules/me/me.module';
 import { PapeisModule } from './modules/papeis/presentation/papeis.module';
@@ -26,6 +27,7 @@ import { UsuariosModule } from './modules/usuarios/presentation/usuarios.module'
     PapeisModule,
     CategoriasModule,
     ProdutosModule,
+    EstoqueModule,
   ],
 })
 export class AppModule {}

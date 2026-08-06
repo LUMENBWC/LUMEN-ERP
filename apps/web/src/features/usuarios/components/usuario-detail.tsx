@@ -115,14 +115,14 @@ function PapeisManager({
   const { data: todosPapeis } = usePapeis();
   const atribuirPapel = useAtribuirPapel(usuarioId);
   const removerPapel = useRemoverPapel(usuarioId);
-  const [novoPapelId, setNovoPapelId] = useState<string | undefined>(undefined);
+  const [novoPapelId, setNovoPapelId] = useState('');
 
   const idsAtuais = new Set(papeisAtuais.map((p) => p.id));
   const disponiveis = (todosPapeis ?? []).filter((p) => !idsAtuais.has(p.id));
 
   useEffect(() => {
     if (novoPapelId && idsAtuais.has(novoPapelId)) {
-      setNovoPapelId(undefined);
+      setNovoPapelId('');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [papeisAtuais]);
@@ -155,7 +155,11 @@ function PapeisManager({
 
       {disponiveis.length > 0 && (
         <div className="flex items-center gap-2">
-          <Select value={novoPapelId} onValueChange={(v) => setNovoPapelId(v ?? undefined)}>
+          <Select
+            items={disponiveis.map((papel) => ({ value: papel.id, label: papel.nome }))}
+            value={novoPapelId}
+            onValueChange={(v) => setNovoPapelId(v ?? '')}
+          >
             <SelectTrigger className="w-48">
               <SelectValue placeholder="Adicionar papel..." />
             </SelectTrigger>

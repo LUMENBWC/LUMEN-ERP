@@ -69,6 +69,11 @@ export function ProdutosList() {
           className="max-w-xs"
         />
         <Select
+          items={[
+            { value: 'todos', label: 'Todos os status' },
+            { value: 'true', label: 'Ativos' },
+            { value: 'false', label: 'Inativos' },
+          ]}
           value={ativo === undefined ? 'todos' : String(ativo)}
           onValueChange={(v) => setAtivo(v === 'todos' || v === null ? undefined : v === 'true')}
         >
@@ -82,6 +87,10 @@ export function ProdutosList() {
           </SelectContent>
         </Select>
         <Select
+          items={[
+            { value: 'todas', label: 'Todas as categorias' },
+            ...(categorias?.items ?? []).map((c) => ({ value: c.id, label: c.nome })),
+          ]}
           value={categoriaId ?? 'todas'}
           onValueChange={(v) => setCategoriaId(v === 'todas' || v === null ? undefined : v)}
         >

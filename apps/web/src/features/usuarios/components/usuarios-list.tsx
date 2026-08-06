@@ -56,6 +56,11 @@ export function UsuariosList() {
           className="max-w-xs"
         />
         <Select
+          items={[
+            { value: 'todos', label: 'Todos os status' },
+            { value: 'true', label: 'Ativos' },
+            { value: 'false', label: 'Inativos' },
+          ]}
           value={ativo === undefined ? 'todos' : String(ativo)}
           onValueChange={(v) => setAtivo(v === 'todos' || v === null ? undefined : v === 'true')}
         >
@@ -69,6 +74,10 @@ export function UsuariosList() {
           </SelectContent>
         </Select>
         <Select
+          items={[
+            { value: 'todos', label: 'Todos os papéis' },
+            ...(papeisData ?? []).map((papel) => ({ value: papel.id, label: papel.nome })),
+          ]}
           value={papelId ?? 'todos'}
           onValueChange={(v) => setPapelId(v === 'todos' || v === null ? undefined : v)}
         >

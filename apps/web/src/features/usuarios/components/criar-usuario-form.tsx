@@ -29,7 +29,7 @@ export function CriarUsuarioForm() {
     formState: { errors },
   } = useForm<CriarUsuarioInput>({
     resolver: zodResolver(criarUsuarioSchema),
-    defaultValues: { filialId: null },
+    defaultValues: { filialId: null, papelId: '' },
   });
 
   const papelId = watch('papelId');
@@ -76,6 +76,7 @@ export function CriarUsuarioForm() {
       <div className="space-y-1">
         <Label htmlFor="papelId">Papel inicial</Label>
         <Select
+          items={(papeis ?? []).map((papel) => ({ value: papel.id, label: papel.nome }))}
           value={papelId}
           onValueChange={(v) => v && setValue('papelId', v, { shouldValidate: true })}
         >

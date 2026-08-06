@@ -11,7 +11,8 @@ Ver a especificação completa e o plano de etapas em `docs/architecture.md` e `
 - ✅ Etapa 2 — Autenticação & Autorização ([docs](docs/modules/autenticacao-autorizacao.md))
 - ✅ Etapa 3 — Usuários & Permissões ([docs](docs/modules/usuarios.md))
 - ✅ Etapa 4 — Produtos & Categorias ([docs](docs/modules/produtos.md))
-- ⬜ Etapa 5 — Estoque (Movimentações)
+- ✅ Etapa 5 — Estoque (Movimentações) ([docs](docs/modules/estoque.md))
+- ⬜ Etapa 6 — Clientes
 
 ## Stack
 

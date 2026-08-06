@@ -18,6 +18,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const permissoes: string[] = meRes.ok ? ((await meRes.json()).permissoes ?? []) : [];
   const podeGerenciarUsuarios = permissoes.includes('usuarios.gerenciar');
   const podeVerProdutos = permissoes.includes('produtos.ler');
+  const podeVerEstoque = permissoes.includes('estoque.ler');
 
   return (
     <div className="min-h-screen">
@@ -41,6 +42,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 Categorias
               </Link>
             </>
+          )}
+          {podeVerEstoque && (
+            <Link href="/estoque" className="text-muted-foreground hover:text-foreground text-sm">
+              Estoque
+            </Link>
           )}
           {podeGerenciarUsuarios && (
             <Link href="/usuarios" className="text-muted-foreground hover:text-foreground text-sm">

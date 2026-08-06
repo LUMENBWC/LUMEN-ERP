@@ -75,6 +75,10 @@ export function CategoriaFormDialog({ categoria, trigger }: Props) {
           <div className="space-y-1">
             <Label htmlFor="categoriaPaiId">Categoria pai (opcional)</Label>
             <Select
+              items={[
+                { value: 'nenhuma', label: 'Nenhuma (categoria raiz)' },
+                ...opcoesPai.map((c) => ({ value: c.id, label: c.nome })),
+              ]}
               value={categoriaPaiId ?? 'nenhuma'}
               onValueChange={(v) =>
                 setValue('categoriaPaiId', v === 'nenhuma' || v === null ? null : v)

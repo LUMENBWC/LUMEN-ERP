@@ -81,6 +81,7 @@ export function ProdutoForm({
         <div className="space-y-1">
           <Label htmlFor="unidadeMedida">Unidade de medida</Label>
           <Select
+            items={UNIDADES_MEDIDA.map((u) => ({ value: u, label: u }))}
             value={unidadeMedida}
             onValueChange={(v) =>
               v && setValue('unidadeMedida', v as CriarProdutoInput['unidadeMedida'])
@@ -101,6 +102,10 @@ export function ProdutoForm({
         <div className="space-y-1">
           <Label htmlFor="categoriaId">Categoria</Label>
           <Select
+            items={[
+              { value: 'nenhuma', label: 'Sem categoria' },
+              ...(categorias?.items ?? []).map((c) => ({ value: c.id, label: c.nome })),
+            ]}
             value={categoriaId ?? 'nenhuma'}
             onValueChange={(v) => setValue('categoriaId', v === 'nenhuma' || v === null ? null : v)}
           >

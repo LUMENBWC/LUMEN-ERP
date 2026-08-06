@@ -17,7 +17,9 @@ const prisma = new PrismaClient({ adapter });
 function requireEnv(name: string): string {
   const value = process.env[name];
   if (!value) {
-    throw new Error(`Variável de ambiente ${name} não definida - preencha o .env antes de rodar o seed.`);
+    throw new Error(
+      `Variável de ambiente ${name} não definida - preencha o .env antes de rodar o seed.`,
+    );
   }
   return value;
 }
@@ -26,7 +28,14 @@ const PERMISSOES = [
   { chave: 'produtos.ler', descricao: 'Ver produtos e categorias' },
   { chave: 'produtos.gerenciar', descricao: 'Criar, editar e excluir produtos e categorias' },
   { chave: 'estoque.ler', descricao: 'Ver histórico de movimentações de estoque' },
-  { chave: 'estoque.ajustar', descricao: 'Registrar entradas, ajustes manuais e perdas de estoque' },
+  {
+    chave: 'estoque.ajustar',
+    descricao: 'Registrar entradas, ajustes manuais e perdas de estoque',
+  },
+  {
+    chave: 'estoque.ajustarNegativo',
+    descricao: 'Registrar ajuste manual ou perda que deixa o estoque do produto negativo',
+  },
   { chave: 'clientes.ler', descricao: 'Ver clientes' },
   { chave: 'clientes.gerenciar', descricao: 'Criar, editar e excluir clientes' },
   { chave: 'fornecedores.ler', descricao: 'Ver fornecedores' },
@@ -57,8 +66,21 @@ const PAPEIS: Record<string, readonly string[]> = {
     'caixa.abrir',
     'caixa.fechar',
   ],
-  ESTOQUE: ['produtos.ler', 'produtos.gerenciar', 'estoque.ler', 'estoque.ajustar', 'fornecedores.ler'],
-  CAIXA: ['caixa.abrir', 'caixa.fechar', 'caixa.movimentar', 'vendas.criar', 'clientes.ler', 'produtos.ler'],
+  ESTOQUE: [
+    'produtos.ler',
+    'produtos.gerenciar',
+    'estoque.ler',
+    'estoque.ajustar',
+    'fornecedores.ler',
+  ],
+  CAIXA: [
+    'caixa.abrir',
+    'caixa.fechar',
+    'caixa.movimentar',
+    'vendas.criar',
+    'clientes.ler',
+    'produtos.ler',
+  ],
   VENDEDOR: [
     'vendas.criar',
     'orcamentos.ler',
@@ -107,7 +129,9 @@ async function main(): Promise<void> {
     for (const chave of chaves) {
       const permissaoId = permissaoIdByChave.get(chave);
       if (!permissaoId) {
-        throw new Error(`Permissão "${chave}" referenciada pelo papel "${nomePapel}" não existe no catálogo.`);
+        throw new Error(
+          `Permissão "${chave}" referenciada pelo papel "${nomePapel}" não existe no catálogo.`,
+        );
       }
       await prisma.papelPermissao.upsert({
         where: { papelId_permissaoId: { papelId: papel.id, permissaoId } },

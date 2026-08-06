@@ -1,6 +1,7 @@
 'use client';
 
 import { Switch } from '@/components/ui/switch';
+import { ProdutoHistoricoEstoque } from '@/features/estoque/components/produto-historico-estoque';
 import { useAtualizarProduto, useDefinirAtivoProduto, useProduto } from '../api/produtos.queries';
 import { formatarMoeda } from '../lib/formatar-moeda';
 import type { CriarProdutoInput } from '../schemas/produto.schema';
@@ -77,6 +78,8 @@ export function ProdutoDetail({ produtoId }: { produtoId: string }) {
         Estoque atual não é editável aqui - só muda via movimentações de estoque (entrada, saída,
         ajuste, perda).
       </p>
+
+      <ProdutoHistoricoEstoque produtoId={produtoId} />
     </div>
   );
 }
