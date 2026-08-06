@@ -14,7 +14,8 @@ Ver a especificação completa e o plano de etapas em `docs/architecture.md` e `
 - ✅ Etapa 5 — Estoque (Movimentações) ([docs](docs/modules/estoque.md))
 - ✅ Etapa 6 — Clientes ([docs](docs/modules/clientes.md))
 - ✅ Etapa 7 — Fornecedores ([docs](docs/modules/fornecedores.md))
-- ⬜ Etapa 8 — Orçamentos
+- ✅ Etapa 8 — Orçamentos ([docs](docs/modules/orcamentos.md))
+- ⬜ Etapa 9 — PDV / Frente de Caixa
 
 ## Stack
 

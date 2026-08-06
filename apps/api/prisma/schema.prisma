@@ -186,6 +186,8 @@ model Usuario {
   clientesAtualizados     Cliente[]              @relation("ClienteAtualizadoPor")
   fornecedoresCriados     Fornecedor[]           @relation("FornecedorCriadoPor")
   fornecedoresAtualizados Fornecedor[]           @relation("FornecedorAtualizadoPor")
+  orcamentosCriados       Orcamento[]            @relation("OrcamentoCriadoPor")
+  orcamentosAtualizados   Orcamento[]            @relation("OrcamentoAtualizadoPor")
   papeis                  UsuarioPapel[]
   auditLogs               AuditLog[]
   movimentacoesEstoque    MovimentacaoEstoque[]
@@ -506,13 +508,17 @@ model Orcamento {
   createdById   String?         @db.Uuid
   updatedById   String?         @db.Uuid
 
-  empresa Empresa         @relation(fields: [empresaId], references: [id], onDelete: Cascade)
-  cliente Cliente         @relation(fields: [clienteId], references: [id], onDelete: Restrict)
-  itens   OrcamentoItem[]
-  venda   Venda?
+  empresa       Empresa         @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  cliente       Cliente         @relation(fields: [clienteId], references: [id], onDelete: Restrict)
+  itens         OrcamentoItem[]
+  venda         Venda?
+  criadoPor     Usuario?        @relation("OrcamentoCriadoPor", fields: [createdById], references: [id], onDelete: SetNull)
+  atualizadoPor Usuario?        @relation("OrcamentoAtualizadoPor", fields: [updatedById], references: [id], onDelete: SetNull)
 
   @@index([empresaId])
   @@index([empresaId, status])
+  @@index([createdById])
+  @@index([updatedById])
   @@map("orcamentos")
 }
 

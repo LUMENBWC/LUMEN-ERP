@@ -10,6 +10,7 @@ import { EstoqueModule } from './modules/estoque/presentation/estoque.module';
 import { FornecedoresModule } from './modules/fornecedores/presentation/fornecedores.module';
 import { HealthModule } from './modules/health/health.module';
 import { MeModule } from './modules/me/me.module';
+import { OrcamentosModule } from './modules/orcamentos/presentation/orcamentos.module';
 import { PapeisModule } from './modules/papeis/presentation/papeis.module';
 import { ProdutosModule } from './modules/produtos/presentation/produtos.module';
 import { UsuariosModule } from './modules/usuarios/presentation/usuarios.module';
@@ -32,6 +33,7 @@ import { UsuariosModule } from './modules/usuarios/presentation/usuarios.module'
     EstoqueModule,
     ClientesModule,
     FornecedoresModule,
+    OrcamentosModule,
   ],
 })
 export class AppModule {}
