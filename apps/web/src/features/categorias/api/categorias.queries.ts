@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import type { CriarCategoriaInput } from '../schemas/categoria.schema';
 import { categoriasApi } from './categorias.api';
 import type { ListarCategoriasParams } from './categorias.types';
@@ -29,7 +30,10 @@ export function useCriarCategoria() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: CriarCategoriaInput) => categoriasApi.criar(input),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: categoriasKeys.all }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: categoriasKeys.all });
+      toast.success('Categoria criada com sucesso.');
+    },
   });
 }
 
@@ -40,6 +44,7 @@ export function useAtualizarCategoria(id: string) {
     onSuccess: (categoria) => {
       queryClient.setQueryData(categoriasKeys.detail(id), categoria);
       queryClient.invalidateQueries({ queryKey: categoriasKeys.all });
+      toast.success('Categoria atualizada com sucesso.');
     },
   });
 }

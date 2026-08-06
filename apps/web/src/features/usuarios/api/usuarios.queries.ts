@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import type { CriarUsuarioInput } from '../schemas/usuario.schema';
 import { papeisApi, usuariosApi } from './usuarios.api';
 import type { ListarUsuariosParams } from './usuarios.types';
@@ -42,7 +43,10 @@ export function useCriarUsuario() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: CriarUsuarioInput) => usuariosApi.criar(input),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: usuariosKeys.all }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: usuariosKeys.all });
+      toast.success('Usuário criado com sucesso.');
+    },
   });
 }
 
@@ -53,6 +57,7 @@ export function useAtualizarUsuario(id: string) {
     onSuccess: (usuario) => {
       queryClient.setQueryData(usuariosKeys.detail(id), usuario);
       queryClient.invalidateQueries({ queryKey: usuariosKeys.all });
+      toast.success('Usuário atualizado com sucesso.');
     },
   });
 }
@@ -75,6 +80,7 @@ export function useAtribuirPapel(id: string) {
     onSuccess: (usuario) => {
       queryClient.setQueryData(usuariosKeys.detail(id), usuario);
       queryClient.invalidateQueries({ queryKey: usuariosKeys.all });
+      toast.success('Papel atribuído com sucesso.');
     },
   });
 }
@@ -86,6 +92,7 @@ export function useRemoverPapel(id: string) {
     onSuccess: (usuario) => {
       queryClient.setQueryData(usuariosKeys.detail(id), usuario);
       queryClient.invalidateQueries({ queryKey: usuariosKeys.all });
+      toast.success('Papel removido com sucesso.');
     },
   });
 }

@@ -182,6 +182,8 @@ model Usuario {
   categoriasAtualizadas Categoria[]            @relation("CategoriaAtualizadoPor")
   produtosCriados       Produto[]              @relation("ProdutoCriadoPor")
   produtosAtualizados   Produto[]              @relation("ProdutoAtualizadoPor")
+  clientesCriados       Cliente[]              @relation("ClienteCriadoPor")
+  clientesAtualizados   Cliente[]              @relation("ClienteAtualizadoPor")
   papeis                UsuarioPapel[]
   auditLogs             AuditLog[]
   movimentacoesEstoque  MovimentacaoEstoque[]
@@ -417,9 +419,13 @@ model Cliente {
   orcamentos    Orcamento[]
   vendas        Venda[]
   contasReceber ContaReceber[]
+  criadoPor     Usuario?       @relation("ClienteCriadoPor", fields: [createdById], references: [id], onDelete: SetNull)
+  atualizadoPor Usuario?       @relation("ClienteAtualizadoPor", fields: [updatedById], references: [id], onDelete: SetNull)
 
   @@unique([empresaId, documento])
   @@index([empresaId])
+  @@index([createdById])
+  @@index([updatedById])
   @@map("clientes")
 }
 

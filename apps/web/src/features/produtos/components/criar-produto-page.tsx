@@ -10,8 +10,8 @@ export function CriarProdutoPage() {
   const criarProduto = useCriarProduto();
 
   async function handleSubmit(input: CriarProdutoInput) {
-    const produto = await criarProduto.mutateAsync(input);
-    router.push(`/produtos/${produto.id}`);
+    await criarProduto.mutateAsync(input);
+    router.push('/produtos');
   }
 
   return (

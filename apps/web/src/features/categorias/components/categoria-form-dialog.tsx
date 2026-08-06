@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,6 +32,7 @@ interface Props {
 }
 
 export function CategoriaFormDialog({ categoria, trigger }: Props) {
+  const [open, setOpen] = useState(false);
   const { data: raizes } = useCategorias({ apenasRaiz: true, ativo: true, page: 1, perPage: 100 });
   const criar = useCriarCategoria();
   const atualizar = useAtualizarCategoria(categoria?.id ?? '');
@@ -57,10 +59,17 @@ export function CategoriaFormDialog({ categoria, trigger }: Props) {
   async function onSubmit(input: CriarCategoriaInput) {
     await mutation.mutateAsync(input);
     reset(input);
+    setOpen(false);
   }
 
   return (
-    <Dialog onOpenChange={(open) => !open && reset()}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (!nextOpen) reset();
+      }}
+    >
       <DialogTrigger render={trigger} />
       <DialogContent>
         <DialogHeader>

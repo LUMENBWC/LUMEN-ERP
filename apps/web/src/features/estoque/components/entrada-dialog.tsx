@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,6 +27,7 @@ import { useRegistrarEntrada } from '../api/estoque.queries';
 import { registrarEntradaSchema, type RegistrarEntradaInput } from '../schemas/movimentacao.schema';
 
 export function EntradaDialog({ trigger }: { trigger: React.ReactElement }) {
+  const [open, setOpen] = useState(false);
   const { data: produtos } = useProdutos({ ativo: true, page: 1, perPage: 100 });
   const registrarEntrada = useRegistrarEntrada();
   const {
@@ -50,10 +52,17 @@ export function EntradaDialog({ trigger }: { trigger: React.ReactElement }) {
       quantidade: undefined,
       custoUnitario: undefined,
     });
+    setOpen(false);
   }
 
   return (
-    <Dialog onOpenChange={(open) => !open && reset()}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (!nextOpen) reset();
+      }}
+    >
       <DialogTrigger render={trigger} />
       <DialogContent>
         <DialogHeader>

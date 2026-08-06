@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import type {
   RegistrarAjusteInput,
   RegistrarEntradaInput,
@@ -33,7 +34,10 @@ export function useRegistrarEntrada() {
   const invalidate = useInvalidateEstoqueEProdutos();
   return useMutation({
     mutationFn: (input: RegistrarEntradaInput) => estoqueApi.registrarEntrada(input),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      toast.success('Entrada registrada com sucesso.');
+    },
   });
 }
 
@@ -41,7 +45,10 @@ export function useRegistrarAjuste() {
   const invalidate = useInvalidateEstoqueEProdutos();
   return useMutation({
     mutationFn: (input: RegistrarAjusteInput) => estoqueApi.registrarAjuste(input),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      toast.success('Ajuste registrado com sucesso.');
+    },
   });
 }
 
@@ -49,6 +56,9 @@ export function useRegistrarPerda() {
   const invalidate = useInvalidateEstoqueEProdutos();
   return useMutation({
     mutationFn: (input: RegistrarPerdaInput) => estoqueApi.registrarPerda(input),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      toast.success('Perda registrada com sucesso.');
+    },
   });
 }

@@ -36,8 +36,8 @@ export function CriarUsuarioForm() {
 
   async function onSubmit(input: CriarUsuarioInput) {
     try {
-      const usuario = await criarUsuario.mutateAsync(input);
-      router.push(`/usuarios/${usuario.id}`);
+      await criarUsuario.mutateAsync(input);
+      router.push('/usuarios');
     } catch {
       // erro exibido abaixo via criarUsuario.error
     }
