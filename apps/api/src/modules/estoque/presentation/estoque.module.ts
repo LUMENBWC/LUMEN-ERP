@@ -20,5 +20,6 @@ import { EstoqueController } from './estoque.controller';
         new PrismaEstoqueRepository(tx, empresaId),
     },
   ],
+  exports: [ESTOQUE_REPOSITORY_FACTORY],
 })
 export class EstoqueModule {}

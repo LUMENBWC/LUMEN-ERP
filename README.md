@@ -15,7 +15,8 @@ Ver a especificação completa e o plano de etapas em `docs/architecture.md` e `
 - ✅ Etapa 6 — Clientes ([docs](docs/modules/clientes.md))
 - ✅ Etapa 7 — Fornecedores ([docs](docs/modules/fornecedores.md))
 - ✅ Etapa 8 — Orçamentos ([docs](docs/modules/orcamentos.md))
-- ⬜ Etapa 9 — PDV / Frente de Caixa
+- ✅ Etapa 9 — PDV / Frente de Caixa ([docs](docs/modules/pdv.md))
+- ⬜ Etapa 10 — Caixa
 
 ## Stack
 

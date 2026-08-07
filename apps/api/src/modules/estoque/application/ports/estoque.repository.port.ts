@@ -41,12 +41,15 @@ export interface RegistrarEntradaInput {
 
 export interface RegistrarDeltaInput {
   produtoId: string;
-  tipo: Extract<TipoMovimentacaoValue, 'AJUSTE_MANUAL' | 'PERDA'>;
+  tipo: Extract<TipoMovimentacaoValue, 'AJUSTE_MANUAL' | 'PERDA' | 'SAIDA_VENDA'>;
   /** Sinalizado: positivo aumenta o estoque, negativo reduz. */
   delta: Prisma.Decimal;
   /** Já calculado e validado pelo use-case a partir do produto lido sob lock. */
   saldoApos: Prisma.Decimal;
-  motivo: string;
+  motivo: string | null;
+  /** Rastreabilidade para SAIDA_VENDA (aponta pra Venda que gerou o movimento). */
+  origemTipo?: string;
+  origemId?: string;
 }
 
 export interface ListarMovimentacoesFiltro {

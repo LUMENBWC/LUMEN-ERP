@@ -38,7 +38,8 @@
       "Bash(curl -s -o /dev/null -w \"api health: %{http_code}\\\\n\" http://localhost:3001/api/v1/health)",
       "Bash(curl -s -o /dev/null -w \"web: %{http_code}\\\\n\" http://localhost:3000)",
       "Bash(curl -s -o /dev/null -w \"api: %{http_code}\\\\n\" http://localhost:3001/api/v1/health)",
-      "Bash(node -e \"console.log\\(require.resolve\\('zod'\\)\\)\")"
+      "Bash(node -e \"console.log\\(require.resolve\\('zod'\\)\\)\")",
+      "Bash(xxd)"
     ],
     "additionalDirectories": [
       "C:\\Users\\caina\\AppData\\Local\\Temp"

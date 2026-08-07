@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuditModule } from './common/audit/audit.module';
 import { AuthModule } from './common/auth/auth.module';
 import { PrismaModule } from './infra/prisma/prisma.module';
+import { CaixaModule } from './modules/caixa/presentation/caixa.module';
 import { CategoriasModule } from './modules/categorias/presentation/categorias.module';
 import { ClientesModule } from './modules/clientes/presentation/clientes.module';
 import { EstoqueModule } from './modules/estoque/presentation/estoque.module';
@@ -14,6 +15,7 @@ import { OrcamentosModule } from './modules/orcamentos/presentation/orcamentos.m
 import { PapeisModule } from './modules/papeis/presentation/papeis.module';
 import { ProdutosModule } from './modules/produtos/presentation/produtos.module';
 import { UsuariosModule } from './modules/usuarios/presentation/usuarios.module';
+import { VendasModule } from './modules/vendas/presentation/vendas.module';
 
 @Module({
   imports: [
@@ -34,6 +36,8 @@ import { UsuariosModule } from './modules/usuarios/presentation/usuarios.module'
     ClientesModule,
     FornecedoresModule,
     OrcamentosModule,
+    CaixaModule,
+    VendasModule,
   ],
 })
 export class AppModule {}

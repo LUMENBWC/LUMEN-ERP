@@ -137,6 +137,8 @@ export class PrismaEstoqueRepository implements EstoqueRepositoryPort {
         quantidade: input.delta,
         saldoApos: input.saldoApos,
         motivo: input.motivo,
+        origemTipo: input.origemTipo ?? null,
+        origemId: input.origemId ?? null,
         usuarioId,
       },
       include: INCLUDE_RESUMO,
