@@ -16,7 +16,8 @@ Ver a especificação completa e o plano de etapas em `docs/architecture.md` e `
 - ✅ Etapa 7 — Fornecedores ([docs](docs/modules/fornecedores.md))
 - ✅ Etapa 8 — Orçamentos ([docs](docs/modules/orcamentos.md))
 - ✅ Etapa 9 — PDV / Frente de Caixa ([docs](docs/modules/pdv.md))
-- ⬜ Etapa 10 — Caixa
+- ✅ Etapa 10 — Caixa ([docs](docs/modules/caixa.md))
+- ⬜ Etapa 11 — Financeiro
 
 ## Stack
 

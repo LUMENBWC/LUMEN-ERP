@@ -60,5 +60,11 @@ export async function apiJson<T>(path: string, init: RequestInit = {}): Promise<
   if (response.status === 204) {
     return undefined as T;
   }
-  return (await response.json()) as T;
+  // Corpo vazio (Content-Length: 0) não é JSON válido - acontece em rotas
+  // que retornam void (ex.: cancelar, sangria, suprimento) com status 200
+  // em vez de 204, porque o Nest/Express não escreve corpo nenhum quando o
+  // handler resolve `undefined`. `response.json()` direto quebraria com
+  // "Unexpected end of JSON input" nesse caso.
+  const text = await response.text();
+  return (text ? JSON.parse(text) : undefined) as T;
 }

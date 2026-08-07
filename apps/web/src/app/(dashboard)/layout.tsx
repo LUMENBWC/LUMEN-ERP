@@ -23,6 +23,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const podeVerFornecedores = permissoes.includes('fornecedores.ler');
   const podeVerOrcamentos = permissoes.includes('orcamentos.ler');
   const podeVerVendas = permissoes.includes('vendas.criar');
+  const podeVerCaixa = permissoes.includes('caixa.abrir');
 
   return (
     <div className="min-h-screen">
@@ -82,6 +83,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 Vendas
               </Link>
             </>
+          )}
+          {podeVerCaixa && (
+            <Link href="/caixa" className="text-muted-foreground hover:text-foreground text-sm">
+              Caixa
+            </Link>
           )}
           {podeGerenciarUsuarios && (
             <Link href="/usuarios" className="text-muted-foreground hover:text-foreground text-sm">

@@ -39,7 +39,11 @@
       "Bash(curl -s -o /dev/null -w \"web: %{http_code}\\\\n\" http://localhost:3000)",
       "Bash(curl -s -o /dev/null -w \"api: %{http_code}\\\\n\" http://localhost:3001/api/v1/health)",
       "Bash(node -e \"console.log\\(require.resolve\\('zod'\\)\\)\")",
-      "Bash(xxd)"
+      "Bash(xxd)",
+      "Bash(git commit -m ' *)",
+      "Bash(curl -s -D - -X POST -H 'Authorization: Bearer __CMDSUB_OUTPUT__' http://localhost:3001/api/v1/vendas/00000000-0000-0000-0000-000000000000/cancelar -o /dev/null)",
+      "Bash(curl -s -H 'Authorization: Bearer __CMDSUB_OUTPUT__' http://localhost:3001/api/v1/caixa/sessoes/atual)",
+      "Bash(curl -s -D - -X POST -H 'Authorization: Bearer __CMDSUB_OUTPUT__' -H 'Content-Type: application/json' -d '{\"valor\":1,\"motivo\":\"teste debug\"}' http://localhost:3001/api/v1/caixa/sangria)"
     ],
     "additionalDirectories": [
       "C:\\Users\\caina\\AppData\\Local\\Temp"
