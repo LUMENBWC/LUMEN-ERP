@@ -8,6 +8,7 @@ import { CaixaModule } from './modules/caixa/presentation/caixa.module';
 import { CategoriasModule } from './modules/categorias/presentation/categorias.module';
 import { ClientesModule } from './modules/clientes/presentation/clientes.module';
 import { EstoqueModule } from './modules/estoque/presentation/estoque.module';
+import { FinanceiroModule } from './modules/financeiro/presentation/financeiro.module';
 import { FornecedoresModule } from './modules/fornecedores/presentation/fornecedores.module';
 import { HealthModule } from './modules/health/health.module';
 import { MeModule } from './modules/me/me.module';
@@ -38,6 +39,7 @@ import { VendasModule } from './modules/vendas/presentation/vendas.module';
     OrcamentosModule,
     CaixaModule,
     VendasModule,
+    FinanceiroModule,
   ],
 })
 export class AppModule {}

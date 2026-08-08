@@ -188,6 +188,8 @@ model Usuario {
   fornecedoresAtualizados Fornecedor[]           @relation("FornecedorAtualizadoPor")
   orcamentosCriados       Orcamento[]            @relation("OrcamentoCriadoPor")
   orcamentosAtualizados   Orcamento[]            @relation("OrcamentoAtualizadoPor")
+  contasPagarCriadas      ContaPagar[]           @relation("ContaPagarCriadoPor")
+  contasPagarAtualizadas  ContaPagar[]           @relation("ContaPagarAtualizadoPor")
   papeis                  UsuarioPapel[]
   auditLogs               AuditLog[]
   movimentacoesEstoque    MovimentacaoEstoque[]
@@ -703,10 +705,14 @@ model ContaPagar {
   fornecedor       Fornecedor?        @relation(fields: [fornecedorId], references: [id], onDelete: SetNull)
   categoriaDespesa CategoriaDespesa?  @relation(fields: [categoriaDespesaId], references: [id], onDelete: SetNull)
   pagamentos       PagamentoPagavel[]
+  criadoPor        Usuario?           @relation("ContaPagarCriadoPor", fields: [createdById], references: [id], onDelete: SetNull)
+  atualizadoPor    Usuario?           @relation("ContaPagarAtualizadoPor", fields: [updatedById], references: [id], onDelete: SetNull)
 
   @@index([empresaId])
   @@index([empresaId, status])
   @@index([empresaId, vencimento])
+  @@index([createdById])
+  @@index([updatedById])
   @@map("contas_pagar")
 }
 
