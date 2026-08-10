@@ -43,10 +43,12 @@
       "Bash(git commit -m ' *)",
       "Bash(curl -s -D - -X POST -H 'Authorization: Bearer __CMDSUB_OUTPUT__' http://localhost:3001/api/v1/vendas/00000000-0000-0000-0000-000000000000/cancelar -o /dev/null)",
       "Bash(curl -s -H 'Authorization: Bearer __CMDSUB_OUTPUT__' http://localhost:3001/api/v1/caixa/sessoes/atual)",
-      "Bash(curl -s -D - -X POST -H 'Authorization: Bearer __CMDSUB_OUTPUT__' -H 'Content-Type: application/json' -d '{\"valor\":1,\"motivo\":\"teste debug\"}' http://localhost:3001/api/v1/caixa/sangria)"
+      "Bash(curl -s -D - -X POST -H 'Authorization: Bearer __CMDSUB_OUTPUT__' -H 'Content-Type: application/json' -d '{\"valor\":1,\"motivo\":\"teste debug\"}' http://localhost:3001/api/v1/caixa/sangria)",
+      "Bash(mkdir -p src/modules/dashboard/domain src/modules/dashboard/application/dto src/modules/dashboard/application/ports src/modules/dashboard/application/use-cases src/modules/dashboard/infra src/modules/dashboard/presentation)"
     ],
     "additionalDirectories": [
-      "C:\\Users\\caina\\AppData\\Local\\Temp"
+      "C:\\Users\\caina\\AppData\\Local\\Temp",
+      "C:\\Users\\caina\\OneDrive\\Documentos\\lumen\\LUMEN-ERP\\apps\\api\\src\\modules\\dashboard"
     ]
   }
 }

@@ -18,7 +18,7 @@ Ver a especificação completa e o plano de etapas em `docs/architecture.md` e `
 - ✅ Etapa 9 — PDV / Frente de Caixa ([docs](docs/modules/pdv.md))
 - ✅ Etapa 10 — Caixa ([docs](docs/modules/caixa.md))
 - ✅ Etapa 11 — Financeiro ([docs](docs/modules/financeiro.md))
-- ⬜ Etapa 12 — Dashboard
+- ✅ Etapa 12 — Dashboard ([docs](docs/modules/dashboard.md))
 
 ## Stack
 

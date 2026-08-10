@@ -1,3 +1,4 @@
+import { DashboardFinanceiro } from '@/features/dashboard/components/dashboard-financeiro';
 import { apiFetch } from '@/lib/api/server';
 
 interface Me {
@@ -20,12 +21,17 @@ export default async function DashboardPage() {
   }
 
   const me: Me = await res.json();
+  const podeVerFinanceiro = me.permissoes.includes('financeiro.ler');
 
   return (
-    <div className="space-y-2">
-      <h1 className="text-xl font-semibold">Olá, {me.nome}</h1>
-      <p className="text-muted-foreground text-sm">{me.email}</p>
-      <p className="text-sm">Papéis: {me.papeis.join(', ') || '—'}</p>
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h1 className="text-xl font-semibold">Olá, {me.nome}</h1>
+        <p className="text-muted-foreground text-sm">{me.email}</p>
+        <p className="text-sm">Papéis: {me.papeis.join(', ') || '—'}</p>
+      </div>
+
+      {podeVerFinanceiro && <DashboardFinanceiro />}
     </div>
   );
 }
