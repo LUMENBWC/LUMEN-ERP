@@ -19,6 +19,7 @@ Ver a especificação completa e o plano de etapas em `docs/architecture.md` e `
 - ✅ Etapa 10 — Caixa ([docs](docs/modules/caixa.md))
 - ✅ Etapa 11 — Financeiro ([docs](docs/modules/financeiro.md))
 - ✅ Etapa 12 — Dashboard ([docs](docs/modules/dashboard.md))
+- ✅ Etapa 13 — Pontos de extensão ([docs](docs/modules/pontos-extensao.md))
 
 ## Stack
 

@@ -4,6 +4,10 @@ import { ConfigModule } from '@nestjs/config';
 import { AuditModule } from './common/audit/audit.module';
 import { AuthModule } from './common/auth/auth.module';
 import { PrismaModule } from './infra/prisma/prisma.module';
+import { FiscalProviderModule } from './infra/providers/fiscal/fiscal-provider.module';
+import { ShippingProviderModule } from './infra/providers/logistica/shipping-provider.module';
+import { MessagingProviderModule } from './infra/providers/mensageria/messaging-provider.module';
+import { PaymentGatewayProviderModule } from './infra/providers/pagamentos/payment-gateway-provider.module';
 import { CaixaModule } from './modules/caixa/presentation/caixa.module';
 import { CategoriasModule } from './modules/categorias/presentation/categorias.module';
 import { ClientesModule } from './modules/clientes/presentation/clientes.module';
@@ -28,6 +32,10 @@ import { VendasModule } from './modules/vendas/presentation/vendas.module';
     PrismaModule,
     AuditModule,
     AuthModule,
+    FiscalProviderModule,
+    PaymentGatewayProviderModule,
+    MessagingProviderModule,
+    ShippingProviderModule,
     HealthModule,
     MeModule,
     UsuariosModule,
