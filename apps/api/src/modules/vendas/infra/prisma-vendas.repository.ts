@@ -144,6 +144,7 @@ export class PrismaVendasRepository implements VendasRepositoryPort {
       data: {
         empresaId: this.empresaId,
         clienteId: input.clienteId,
+        orcamentoId: input.orcamentoId,
         caixaSessaoId: input.caixaSessaoId,
         subtotal: input.subtotal,
         descontoGeral: input.descontoGeral,

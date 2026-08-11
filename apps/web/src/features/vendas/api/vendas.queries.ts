@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import type { FinalizarVendaInput, ListarVendasParams } from './vendas.types';
+import type {
+  ConverterOrcamentoInput,
+  FinalizarVendaInput,
+  ListarVendasParams,
+} from './vendas.types';
 import { vendasApi } from './vendas.api';
 
 const vendasKeys = {
@@ -32,6 +36,18 @@ export function useFinalizarVenda() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: vendasKeys.all });
       toast.success('Venda finalizada com sucesso.');
+    },
+  });
+}
+
+export function useConverterOrcamento() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: ConverterOrcamentoInput) => vendasApi.converter(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: vendasKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['orcamentos'] });
+      toast.success('Orçamento convertido em venda.');
     },
   });
 }

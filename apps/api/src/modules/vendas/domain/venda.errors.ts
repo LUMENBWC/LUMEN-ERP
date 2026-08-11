@@ -47,3 +47,15 @@ export class VendaJaCanceladaError extends VendaDomainError {
     super('Esta venda já foi cancelada.');
   }
 }
+
+export class OrcamentoInvalidoError extends VendaDomainError {
+  constructor() {
+    super('Orçamento não encontrado.');
+  }
+}
+
+export class OrcamentoNaoConversivelError extends VendaDomainError {
+  constructor() {
+    super('Só é possível converter em venda um orçamento com status APROVADO.');
+  }
+}

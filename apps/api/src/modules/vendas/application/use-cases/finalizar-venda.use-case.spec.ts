@@ -4,11 +4,14 @@ import {
   createMockRepo as createMockCaixaRepo,
 } from '../../../caixa/application/use-cases/test-helpers';
 import { createMockRepo as createMockEstoqueRepo } from '../../../estoque/application/use-cases/test-helpers';
+import { orcamentoFixture } from '../../../orcamentos/application/use-cases/test-helpers';
 import {
   CaixaFechadoError,
   ClienteInvalidoError,
   DescontoNaoAutorizadoError,
   EstoqueInsuficienteError,
+  OrcamentoInvalidoError,
+  OrcamentoNaoConversivelError,
   PagamentoDivergenteError,
   ProdutoInvalidoError,
 } from '../../domain/venda.errors';
@@ -18,6 +21,7 @@ import {
   TENANT_FIXTURE,
   createFakeTxRunner,
   createMockAuditLog,
+  createMockOrcamentosRepo,
   createMockVendasRepo,
   produtoParaVendaFixture,
   vendaDetalhadaFixture,
@@ -25,6 +29,7 @@ import {
 
 function baseDto(overrides: Partial<FinalizarVendaDto> = {}): FinalizarVendaDto {
   return {
+    orcamentoId: null,
     clienteId: null,
     itens: [{ produtoId: 'produto-1', quantidade: 10, precoUnitario: 10, desconto: 0 }],
     descontoGeral: 0,
@@ -37,6 +42,7 @@ function setupUseCase() {
   const vendasRepo = createMockVendasRepo();
   const estoqueRepo = createMockEstoqueRepo();
   const caixaRepo = createMockCaixaRepo();
+  const orcamentosRepo = createMockOrcamentosRepo();
   const auditLog = createMockAuditLog();
 
   vendasRepo.obterProdutosComLock.mockResolvedValue(
@@ -49,10 +55,11 @@ function setupUseCase() {
     () => vendasRepo,
     () => estoqueRepo,
     () => caixaRepo,
+    () => orcamentosRepo,
     auditLog,
   );
 
-  return { useCase, vendasRepo, estoqueRepo, caixaRepo, auditLog };
+  return { useCase, vendasRepo, estoqueRepo, caixaRepo, orcamentosRepo, auditLog };
 }
 
 describe('FinalizarVendaUseCase', () => {
@@ -183,5 +190,55 @@ describe('FinalizarVendaUseCase', () => {
       }),
       TENANT_FIXTURE.usuarioId,
     );
+  });
+
+  describe('conversão de orçamento em venda', () => {
+    function dtoConversao(overrides: Partial<FinalizarVendaDto> = {}): FinalizarVendaDto {
+      return baseDto({
+        orcamentoId: 'orcamento-1',
+        itens: [],
+        pagamentos: [{ formaPagamento: 'DINHEIRO', valor: 100, parcelas: 1, bandeira: null }],
+        ...overrides,
+      });
+    }
+
+    it('converte um orçamento aprovado, reaproveitando itens/cliente/desconto dele', async () => {
+      const { useCase, vendasRepo, orcamentosRepo, caixaRepo } = setupUseCase();
+      orcamentosRepo.obterPorId.mockResolvedValue(orcamentoFixture({ status: 'APROVADO' }));
+      vendasRepo.clienteExiste.mockResolvedValue(true);
+      caixaRepo.sessaoAbertaDaEmpresa.mockResolvedValue(caixaSessaoFixture());
+
+      const resultado = await useCase.execute(TENANT_FIXTURE, dtoConversao());
+
+      expect(resultado.id).toBe('venda-1');
+      expect(vendasRepo.criar).toHaveBeenCalledWith(
+        expect.objectContaining({ clienteId: 'cliente-1', orcamentoId: 'orcamento-1' }),
+        TENANT_FIXTURE.usuarioId,
+      );
+      expect(orcamentosRepo.atualizarStatus).toHaveBeenCalledWith(
+        'orcamento-1',
+        'CONVERTIDO',
+        TENANT_FIXTURE.usuarioId,
+      );
+    });
+
+    it('rejeita quando o orçamento não existe', async () => {
+      const { useCase, orcamentosRepo } = setupUseCase();
+      orcamentosRepo.obterPorId.mockResolvedValue(null);
+
+      await expect(useCase.execute(TENANT_FIXTURE, dtoConversao())).rejects.toBeInstanceOf(
+        OrcamentoInvalidoError,
+      );
+    });
+
+    it('rejeita quando o orçamento não está com status APROVADO', async () => {
+      const { useCase, orcamentosRepo } = setupUseCase();
+      orcamentosRepo.obterPorId.mockResolvedValue(orcamentoFixture({ status: 'RASCUNHO' }));
+
+      await expect(useCase.execute(TENANT_FIXTURE, dtoConversao())).rejects.toBeInstanceOf(
+        OrcamentoNaoConversivelError,
+      );
+      expect(orcamentosRepo.atualizarStatus).not.toHaveBeenCalled();
+    });
   });
 });

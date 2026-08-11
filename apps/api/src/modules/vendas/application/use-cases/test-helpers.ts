@@ -12,6 +12,8 @@ export function createFakeTxRunner(): TenantTransactionRunner {
   return { run: (_empresaId, fn) => fn(undefined as never) };
 }
 
+export { createMockRepo as createMockOrcamentosRepo } from '../../../orcamentos/application/use-cases/test-helpers';
+
 export function createMockVendasRepo(): jest.Mocked<VendasRepositoryPort> {
   return {
     clienteExiste: jest.fn(),

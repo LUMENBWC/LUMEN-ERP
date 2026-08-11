@@ -3,12 +3,18 @@ import type { Response } from 'express';
 import { randomUUID } from 'node:crypto';
 import {
   ClienteInvalidoError,
+  OrcamentoInvalidoError,
   ProdutoInvalidoError,
   VendaDomainError,
   VendaNaoEncontradaError,
 } from '../domain/venda.errors';
 
-const NOT_FOUND_ERRORS = [VendaNaoEncontradaError, ClienteInvalidoError, ProdutoInvalidoError];
+const NOT_FOUND_ERRORS = [
+  VendaNaoEncontradaError,
+  ClienteInvalidoError,
+  ProdutoInvalidoError,
+  OrcamentoInvalidoError,
+];
 
 @Catch(VendaDomainError)
 export class VendaDomainErrorFilter implements ExceptionFilter {

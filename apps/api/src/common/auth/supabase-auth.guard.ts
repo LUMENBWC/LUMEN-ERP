@@ -15,6 +15,17 @@ import { toWebRequest } from './to-web-request';
 
 type RequestWithTenant = Request & { tenantContext: TenantContext };
 
+/**
+ * Só tem efeito quando NODE_ENV=test (nunca em produção) - os specs e2e de
+ * fluxo de negócio (apps/api/test) não têm como emitir um JWT real assinado
+ * pelo Supabase pra cada usuário de teste que provisionam, então autenticam
+ * via esse header em vez disso. Uma requisição sem esse header segue o
+ * caminho normal de verificação de JWT mesmo em teste - é assim que
+ * `autenticacao.e2e-spec.ts` continua testando a verificação de JWT de
+ * verdade (ver ADR correspondente em docs/decisions).
+ */
+export const TEST_AUTH_HEADER = 'x-test-auth-user-id';
+
 @Injectable()
 export class SupabaseAuthGuard implements CanActivate {
   constructor(
@@ -33,22 +44,7 @@ export class SupabaseAuthGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest<RequestWithTenant>();
 
-    const { data: auth, error } = await verifyAuth(toWebRequest(request), { auth: 'user' });
-    if (error) {
-      throw new UnauthorizedException('Credenciais inválidas.');
-    }
-
-    const authData = auth as unknown as {
-      user?: { id: string };
-      userClaims?: { id?: string; sub?: string };
-      jwtClaims?: { sub?: string };
-    };
-    const authUserId =
-      authData.user?.id ??
-      authData.userClaims?.id ??
-      authData.userClaims?.sub ??
-      authData.jwtClaims?.sub;
-
+    const authUserId = await this.resolveAuthUserId(request);
     if (!authUserId) {
       throw new UnauthorizedException('Credenciais inválidas.');
     }
@@ -60,5 +56,31 @@ export class SupabaseAuthGuard implements CanActivate {
 
     request.tenantContext = tenant;
     return true;
+  }
+
+  private async resolveAuthUserId(request: Request): Promise<string | undefined> {
+    if (process.env.NODE_ENV === 'test') {
+      const testAuthUserId = request.headers?.[TEST_AUTH_HEADER];
+      if (typeof testAuthUserId === 'string' && testAuthUserId) {
+        return testAuthUserId;
+      }
+    }
+
+    const { data: auth, error } = await verifyAuth(toWebRequest(request), { auth: 'user' });
+    if (error) {
+      return undefined;
+    }
+
+    const authData = auth as unknown as {
+      user?: { id: string };
+      userClaims?: { id?: string; sub?: string };
+      jwtClaims?: { sub?: string };
+    };
+    return (
+      authData.user?.id ??
+      authData.userClaims?.id ??
+      authData.userClaims?.sub ??
+      authData.jwtClaims?.sub
+    );
   }
 }

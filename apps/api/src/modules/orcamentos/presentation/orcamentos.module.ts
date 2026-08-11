@@ -31,5 +31,6 @@ import { OrcamentosController } from './orcamentos.controller';
     },
     { provide: PDF_STORAGE_PORT, useClass: SupabasePdfStorage },
   ],
+  exports: [ORCAMENTOS_REPOSITORY_FACTORY],
 })
 export class OrcamentosModule {}

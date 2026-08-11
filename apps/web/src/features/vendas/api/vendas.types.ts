@@ -72,3 +72,8 @@ export interface FinalizarVendaInput {
   descontoGeral: number;
   pagamentos: PagamentoVendaInput[];
 }
+
+export interface ConverterOrcamentoInput {
+  orcamentoId: string;
+  pagamentos: PagamentoVendaInput[];
+}

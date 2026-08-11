@@ -7,7 +7,8 @@ Monorepo (pnpm workspaces + Turborepo) com duas aplicações e pacotes compartil
 - `apps/web` — Next.js 15 (App Router), UI em shadcn/ui + Tailwind.
 - `apps/api` — NestJS + Prisma, API REST versionada (`/api/v1`), documentada via Swagger.
 - `packages/config` — ESLint, TypeScript e Prettier compartilhados entre as apps.
-- `packages/shared` (a partir da Etapa 4+) — tipos e schemas Zod compartilhados entre front e back.
+
+Um `packages/shared` para tipos/schemas Zod compartilhados entre front e back foi cogitado na Etapa 0, mas não chegou a ser criado — cada app mantém seus próprios schemas Zod (`apps/api/src/modules/*/application/dto/`, `apps/web/src/features/*/schemas/`), estruturalmente equivalentes mas duplicados. Não bloqueou nenhuma etapa; revisitar só se a duplicação começar a divergir na prática.
 
 Banco de dados: **Supabase PostgreSQL** (único ambiente de dados, tanto em dev quanto em produção — não há Postgres local). Autenticação via **Supabase Auth**; a API valida o JWT via JWKS.
 

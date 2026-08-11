@@ -20,6 +20,7 @@ Ver a especificação completa e o plano de etapas em `docs/architecture.md` e `
 - ✅ Etapa 11 — Financeiro ([docs](docs/modules/financeiro.md))
 - ✅ Etapa 12 — Dashboard ([docs](docs/modules/dashboard.md))
 - ✅ Etapa 13 — Pontos de extensão ([docs](docs/modules/pontos-extensao.md))
+- ✅ Etapa 14 — Endurecimento ([docs](docs/modules/endurecimento.md))
 
 ## Stack
 
@@ -56,13 +57,14 @@ Ver `docs/modules/nucleo-multitenant.md` e [ADR-0002](docs/decisions/ADR-0002-pa
 
 ## Scripts
 
-| Script           | Descrição                                  |
-| ---------------- | ------------------------------------------ |
-| `pnpm dev`       | Sobe todas as apps em modo desenvolvimento |
-| `pnpm build`     | Build de produção de todas as apps         |
-| `pnpm lint`      | Lint em todo o monorepo                    |
-| `pnpm typecheck` | Checagem de tipos em todo o monorepo       |
-| `pnpm test`      | Testes de todas as apps                    |
+| Script                            | Descrição                                                                                        |
+| --------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `pnpm dev`                        | Sobe todas as apps em modo desenvolvimento                                                       |
+| `pnpm build`                      | Build de produção de todas as apps                                                               |
+| `pnpm lint`                       | Lint em todo o monorepo                                                                          |
+| `pnpm typecheck`                  | Checagem de tipos em todo o monorepo                                                             |
+| `pnpm test`                       | Testes de todas as apps                                                                          |
+| `pnpm --filter @erp/api test:e2e` | Testes e2e da API (Postgres/RLS reais — ver [`endurecimento.md`](docs/modules/endurecimento.md)) |
 
 ## Estrutura
 

@@ -89,7 +89,7 @@ export function OrcamentoForm({
         <Label htmlFor="clienteId">Cliente</Label>
         <Select
           items={(clientes?.items ?? []).map((c) => ({ value: c.id, label: c.nome }))}
-          value={clienteId}
+          value={clienteId || ''}
           onValueChange={(v) => v && setValue('clienteId', v)}
         >
           <SelectTrigger id="clienteId" className="w-full">

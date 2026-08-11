@@ -18,6 +18,7 @@ import {
 } from '../api/orcamentos.queries';
 import type { CriarOrcamentoInput } from '../schemas/orcamento.schema';
 import { STATUS_LABEL, STATUS_VARIANT } from '../lib/status-orcamento';
+import { ConverterOrcamentoDialog } from './converter-orcamento-dialog';
 import { OrcamentoForm } from './orcamento-form';
 import { OrcamentoStatusActions } from './orcamento-status-actions';
 
@@ -70,6 +71,9 @@ export function OrcamentoDetail({ orcamentoId }: { orcamentoId: string }) {
           >
             {gerarPdf.isPending ? 'Gerando PDF...' : 'Baixar PDF'}
           </Button>
+          {orcamento.status === 'APROVADO' && (
+            <ConverterOrcamentoDialog orcamentoId={orcamento.id} total={Number(orcamento.total)} />
+          )}
           <OrcamentoStatusActions
             orcamento={orcamento}
             onCancelled={() => router.push('/orcamentos')}

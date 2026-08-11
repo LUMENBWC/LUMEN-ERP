@@ -42,6 +42,7 @@ export interface ContaReceberParaSalvar {
 
 export interface SalvarVendaInput {
   clienteId: string | null;
+  orcamentoId: string | null;
   caixaSessaoId: string | null;
   itens: ItemVendaParaSalvar[];
   pagamentos: PagamentoParaSalvar[];

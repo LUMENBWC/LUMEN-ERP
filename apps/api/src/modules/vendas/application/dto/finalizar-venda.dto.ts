@@ -14,11 +14,20 @@ const pagamentoVendaSchema = z.object({
   bandeira: z.string().trim().max(50).nullable().optional().default(null),
 });
 
-export const finalizarVendaSchema = z.object({
-  clienteId: z.string().uuid().nullable().optional().default(null),
-  itens: z.array(itemVendaSchema).min(1, 'A venda precisa de ao menos um item.'),
-  descontoGeral: z.number().nonnegative('Desconto geral não pode ser negativo.').default(0),
-  pagamentos: z.array(pagamentoVendaSchema).min(1, 'Informe ao menos uma forma de pagamento.'),
-});
+export const finalizarVendaSchema = z
+  .object({
+    // Quando informado, a venda é gerada a partir de um orçamento aprovado
+    // (clienteId/itens/descontoGeral vêm do orçamento, não do corpo da
+    // requisição - "reaproveitando os itens", spec Seção 3.5).
+    orcamentoId: z.string().uuid().nullable().optional().default(null),
+    clienteId: z.string().uuid().nullable().optional().default(null),
+    itens: z.array(itemVendaSchema).optional().default([]),
+    descontoGeral: z.number().nonnegative('Desconto geral não pode ser negativo.').default(0),
+    pagamentos: z.array(pagamentoVendaSchema).min(1, 'Informe ao menos uma forma de pagamento.'),
+  })
+  .refine((data) => data.orcamentoId !== null || data.itens.length > 0, {
+    message: 'A venda precisa de ao menos um item.',
+    path: ['itens'],
+  });
 
 export type FinalizarVendaDto = z.infer<typeof finalizarVendaSchema>;

@@ -15,6 +15,10 @@ import {
   ESTOQUE_REPOSITORY_FACTORY,
   type EstoqueRepositoryFactory,
 } from '../../../estoque/application/ports/estoque-repository.factory';
+import {
+  ORCAMENTOS_REPOSITORY_FACTORY,
+  type OrcamentosRepositoryFactory,
+} from '../../../orcamentos/application/ports/orcamentos-repository.factory';
 import { calcularParcelas } from '../../domain/calcular-parcelas';
 import { calcularTotaisVenda, type ItemVendaInput } from '../../domain/calcular-totais-venda';
 import { garantirPagamentosValidos } from '../../domain/garantir-pagamentos-validos';
@@ -23,6 +27,8 @@ import {
   ClienteInvalidoError,
   DescontoNaoAutorizadoError,
   EstoqueInsuficienteError,
+  OrcamentoInvalidoError,
+  OrcamentoNaoConversivelError,
   ProdutoInvalidoError,
 } from '../../domain/venda.errors';
 import type { FinalizarVendaDto } from '../dto/finalizar-venda.dto';
@@ -39,6 +45,13 @@ import type {
 const FORMAS_A_VISTA = new Set(['DINHEIRO', 'PIX', 'DEBITO', 'CREDITO']);
 const FORMAS_PARCELADAS = new Set(['CREDITO_PARCELADO', 'A_PRAZO']);
 
+interface ItemOrigem {
+  produtoId: string;
+  quantidade: number;
+  precoUnitario: number;
+  desconto: number;
+}
+
 @Injectable()
 export class FinalizarVendaUseCase {
   constructor(
@@ -47,6 +60,8 @@ export class FinalizarVendaUseCase {
     @Inject(ESTOQUE_REPOSITORY_FACTORY)
     private readonly estoqueRepoFactory: EstoqueRepositoryFactory,
     @Inject(CAIXA_REPOSITORY_FACTORY) private readonly caixaRepoFactory: CaixaRepositoryFactory,
+    @Inject(ORCAMENTOS_REPOSITORY_FACTORY)
+    private readonly orcamentosRepoFactory: OrcamentosRepositoryFactory,
     private readonly auditLog: AuditLogService,
   ) {}
 
@@ -56,16 +71,40 @@ export class FinalizarVendaUseCase {
       const estoqueRepo = this.estoqueRepoFactory(tx, tenant.empresaId);
       const caixaRepo = this.caixaRepoFactory(tx, tenant.empresaId);
 
-      if (dto.clienteId && !(await vendasRepo.clienteExiste(dto.clienteId))) {
+      let clienteId = dto.clienteId;
+      let itensOrigem: ItemOrigem[] = dto.itens;
+      let descontoGeral = dto.descontoGeral;
+
+      if (dto.orcamentoId) {
+        const orcamentosRepo = this.orcamentosRepoFactory(tx, tenant.empresaId);
+        const orcamento = await orcamentosRepo.obterPorId(dto.orcamentoId);
+        if (!orcamento) {
+          throw new OrcamentoInvalidoError();
+        }
+        if (orcamento.status !== 'APROVADO') {
+          throw new OrcamentoNaoConversivelError();
+        }
+
+        clienteId = orcamento.clienteId;
+        itensOrigem = orcamento.itens.map((item) => ({
+          produtoId: item.produtoId,
+          quantidade: item.quantidade.toNumber(),
+          precoUnitario: item.precoUnitario.toNumber(),
+          desconto: item.desconto.toNumber(),
+        }));
+        descontoGeral = orcamento.descontoGeral.toNumber();
+      }
+
+      if (clienteId && !(await vendasRepo.clienteExiste(clienteId))) {
         throw new ClienteInvalidoError();
       }
 
-      const temDesconto = dto.descontoGeral > 0 || dto.itens.some((item) => item.desconto > 0);
+      const temDesconto = descontoGeral > 0 || itensOrigem.some((item) => item.desconto > 0);
       if (temDesconto && !tenant.permissoes.has('vendas.aplicarDesconto')) {
         throw new DescontoNaoAutorizadoError();
       }
 
-      const produtoIds = [...new Set(dto.itens.map((item) => item.produtoId))].sort();
+      const produtoIds = [...new Set(itensOrigem.map((item) => item.produtoId))].sort();
       const produtos = await vendasRepo.obterProdutosComLock(produtoIds);
       for (const produtoId of produtoIds) {
         if (!produtos.has(produtoId)) {
@@ -73,7 +112,7 @@ export class FinalizarVendaUseCase {
         }
       }
 
-      const itensParaCalculo: ItemVendaInput[] = dto.itens.map((item) => {
+      const itensParaCalculo: ItemVendaInput[] = itensOrigem.map((item) => {
         const produto = produtos.get(item.produtoId)!;
         return {
           produtoId: item.produtoId,
@@ -100,7 +139,7 @@ export class FinalizarVendaUseCase {
 
       const { itens, subtotal, total, custoTotal } = calcularTotaisVenda(
         itensParaCalculo,
-        new Prisma.Decimal(dto.descontoGeral),
+        new Prisma.Decimal(descontoGeral),
       );
 
       const pagamentos: PagamentoParaSalvar[] = dto.pagamentos.map((pagamento) => ({
@@ -160,18 +199,24 @@ export class FinalizarVendaUseCase {
 
       const venda = await vendasRepo.criar(
         {
-          clienteId: dto.clienteId,
+          clienteId,
+          orcamentoId: dto.orcamentoId,
           caixaSessaoId,
           itens: itens.map((item) => ({ ...item, produtoId: item.produtoId })),
           pagamentos,
           contasReceber,
-          descontoGeral: new Prisma.Decimal(dto.descontoGeral),
+          descontoGeral: new Prisma.Decimal(descontoGeral),
           subtotal,
           total,
           custoTotal,
         },
         tenant.usuarioId,
       );
+
+      if (dto.orcamentoId) {
+        const orcamentosRepo = this.orcamentosRepoFactory(tx, tenant.empresaId);
+        await orcamentosRepo.atualizarStatus(dto.orcamentoId, 'CONVERTIDO', tenant.usuarioId);
+      }
 
       for (const item of itens) {
         await estoqueRepo.registrarDelta(

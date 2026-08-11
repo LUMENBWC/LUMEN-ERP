@@ -1,5 +1,6 @@
 import { apiJson } from '@/lib/api/client';
 import type {
+  ConverterOrcamentoInput,
   FinalizarVendaInput,
   ListarVendasParams,
   ListarVendasResultado,
@@ -35,4 +36,12 @@ export const vendasApi = {
       }),
     }),
   cancelar: (id: string) => apiJson<void>(`/vendas/${id}/cancelar`, { method: 'POST' }),
+  converter: (input: ConverterOrcamentoInput) =>
+    apiJson<VendaDetalhada>('/vendas', {
+      method: 'POST',
+      body: JSON.stringify({
+        orcamentoId: input.orcamentoId,
+        pagamentos: input.pagamentos,
+      }),
+    }),
 };

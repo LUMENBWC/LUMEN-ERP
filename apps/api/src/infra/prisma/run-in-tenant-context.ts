@@ -46,8 +46,17 @@ export async function runInTenantContext<T>(
   warmup.release();
 
   const scoped = scopeClient(prisma, empresaId);
-  return scoped.$transaction(async (tx) => {
-    await tx.$executeRaw`SELECT set_config('app.empresa_id', ${empresaId}, true)`;
-    return fn(tx);
-  });
+  return scoped.$transaction(
+    async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.empresa_id', ${empresaId}, true)`;
+      return fn(tx);
+    },
+    // Default do Prisma é timeout: 5000ms - baixo demais pros fluxos que
+    // fazem várias queries sequenciais na mesma transação sob latência de
+    // rede real (ex.: finalizar venda convertendo um orçamento: busca o
+    // orçamento, trava produtos, cria a venda, N deltas de estoque,
+    // movimento de caixa, atualiza status do orçamento, audit log - visto
+    // estourar 5s contra o pooler do Supabase nos testes e2e).
+    { timeout: 15000, maxWait: 5000 },
+  );
 }
