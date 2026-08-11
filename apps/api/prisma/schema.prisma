@@ -397,29 +397,30 @@ model MovimentacaoEstoque {
 // ---------------------------------------------------------------------------
 
 model Cliente {
-  id            String     @id @default(uuid(7)) @db.Uuid
-  empresaId     String     @db.Uuid
-  tipoPessoa    TipoPessoa @default(FISICA)
-  nome          String
-  documento     String
-  telefone      String?
-  whatsapp      String?
-  email         String?
-  logradouro    String?
-  numero        String?
-  complemento   String?
-  bairro        String?
-  cidade        String?
-  uf            String?    @db.VarChar(2)
-  cep           String?
-  limiteCredito Decimal    @default(0) @db.Decimal(14, 2)
-  observacoes   String?
-  ativo         Boolean    @default(true)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  deletedAt     DateTime?
-  createdById   String?    @db.Uuid
-  updatedById   String?    @db.Uuid
+  id                String     @id @default(uuid(7)) @db.Uuid
+  empresaId         String     @db.Uuid
+  tipoPessoa        TipoPessoa @default(FISICA)
+  nome              String
+  documento         String
+  telefone          String?
+  whatsapp          String?
+  email             String?
+  logradouro        String?
+  numero            String?
+  complemento       String?
+  bairro            String?
+  cidade            String?
+  uf                String?    @db.VarChar(2)
+  cep               String?
+  inscricaoEstadual String?
+  limiteCredito     Decimal    @default(0) @db.Decimal(14, 2)
+  observacoes       String?
+  ativo             Boolean    @default(true)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  deletedAt         DateTime?
+  createdById       String?    @db.Uuid
+  updatedById       String?    @db.Uuid
 
   empresa       Empresa        @relation(fields: [empresaId], references: [id], onDelete: Cascade)
   orcamentos    Orcamento[]

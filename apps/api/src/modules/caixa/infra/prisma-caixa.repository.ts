@@ -168,7 +168,7 @@ export class PrismaCaixaRepository implements CaixaRepositoryPort {
       this.tx.caixaSessao.findMany({
         where,
         include: INCLUDE_RESUMO,
-        orderBy: { abertoEm: 'desc' },
+        orderBy: { [filtro.sortBy]: filtro.sortDir },
         skip: (filtro.page - 1) * filtro.perPage,
         take: filtro.perPage,
       }),

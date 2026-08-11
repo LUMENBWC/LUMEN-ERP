@@ -15,6 +15,7 @@ export const atualizarClienteSchema = z
     cidade: z.string().trim().max(255).nullable().optional(),
     uf: z.string().trim().length(2).nullable().optional(),
     cep: z.string().trim().max(9).nullable().optional(),
+    inscricaoEstadual: z.string().trim().max(20).nullable().optional(),
     limiteCredito: z.number().nonnegative('Limite de crédito não pode ser negativo.').optional(),
     observacoes: z.string().trim().max(2000).nullable().optional(),
   })

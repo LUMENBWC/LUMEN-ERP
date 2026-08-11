@@ -231,7 +231,7 @@ export class PrismaVendasRepository implements VendasRepositoryPort {
       this.tx.venda.findMany({
         where,
         include: INCLUDE_RESUMO,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { [filtro.sortBy]: filtro.sortDir },
         skip: (filtro.page - 1) * filtro.perPage,
         take: filtro.perPage,
       }),

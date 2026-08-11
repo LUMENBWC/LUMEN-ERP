@@ -1,4 +1,5 @@
 import type { Prisma } from '../../../../../generated/prisma/client';
+import type { ClienteInadimplenteResumo } from '../../domain/agrupar-clientes-inadimplentes';
 import type { StatusContaBase } from '../../domain/calcular-status-conta';
 
 export type StatusContaValue = 'ABERTO' | 'PARCIAL' | 'PAGO' | 'CANCELADO';
@@ -48,10 +49,22 @@ export interface ListarContasReceberFiltro {
   vencido?: boolean;
   page: number;
   perPage: number;
+  sortBy: 'vencimento' | 'valorTotal' | 'createdAt';
+  sortDir: 'asc' | 'desc';
 }
 
 export interface ListarContasReceberResultado {
   items: ContaReceberResumo[];
+  total: number;
+}
+
+export interface ListarClientesInadimplentesFiltro {
+  page: number;
+  perPage: number;
+}
+
+export interface ListarClientesInadimplentesResultado {
+  items: ClienteInadimplenteResumo[];
   total: number;
 }
 
@@ -105,6 +118,8 @@ export interface ListarContasPagarFiltro {
   vencido?: boolean;
   page: number;
   perPage: number;
+  sortBy: 'vencimento' | 'valorTotal' | 'createdAt';
+  sortDir: 'asc' | 'desc';
 }
 
 export interface ListarContasPagarResultado {
@@ -132,6 +147,9 @@ export interface FinanceiroRepositoryPort {
   registrarRecebimento(input: RegistrarRecebimentoInput, usuarioId: string): Promise<void>;
   listarContasReceber(filtro: ListarContasReceberFiltro): Promise<ListarContasReceberResultado>;
   obterContaReceberPorId(id: string): Promise<ContaReceberDetalhada | null>;
+  listarClientesInadimplentes(
+    filtro: ListarClientesInadimplentesFiltro,
+  ): Promise<ListarClientesInadimplentesResultado>;
 
   // Categorias de despesa
   criarCategoriaDespesa(nome: string): Promise<CategoriaDespesaResumo>;

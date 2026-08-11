@@ -12,6 +12,8 @@ export const listarContasPagarQuerySchema = z.object({
   vencido: booleanQueryParam,
   page: z.coerce.number().int().min(1).default(1),
   perPage: z.coerce.number().int().min(1).max(100).default(20),
+  sortBy: z.enum(['vencimento', 'valorTotal', 'createdAt']).default('vencimento'),
+  sortDir: z.enum(['asc', 'desc']).default('asc'),
 });
 
 export type ListarContasPagarQueryDto = z.infer<typeof listarContasPagarQuerySchema>;

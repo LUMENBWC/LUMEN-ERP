@@ -4,6 +4,7 @@ import type { FormaPagamento } from '@/features/vendas/api/vendas.types';
 import { financeiroApi } from './financeiro.api';
 import type {
   CriarContaPagarInput,
+  ListarClientesInadimplentesParams,
   ListarContasPagarParams,
   ListarContasReceberParams,
 } from './financeiro.types';
@@ -18,6 +19,8 @@ const financeiroKeys = {
   contasPagarList: (params: ListarContasPagarParams) =>
     [...financeiroKeys.contasPagar, 'list', params] as const,
   contaPagarDetail: (id: string) => [...financeiroKeys.contasPagar, 'detail', id] as const,
+  clientesInadimplentes: (params: ListarClientesInadimplentesParams) =>
+    ['financeiro', 'clientes-inadimplentes', params] as const,
 };
 
 export function useContasReceber(params: ListarContasReceberParams) {
@@ -101,6 +104,14 @@ export function useRegistrarPagamento(id: string) {
       queryClient.invalidateQueries({ queryKey: financeiroKeys.contasPagar });
       toast.success('Pagamento registrado.');
     },
+  });
+}
+
+export function useClientesInadimplentes(params: ListarClientesInadimplentesParams) {
+  return useQuery({
+    queryKey: financeiroKeys.clientesInadimplentes(params),
+    queryFn: () => financeiroApi.listarClientesInadimplentes(params),
+    placeholderData: (previous) => previous,
   });
 }
 

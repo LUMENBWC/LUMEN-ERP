@@ -49,6 +49,8 @@ export interface ListarVendasParams {
   status?: StatusVenda;
   page: number;
   perPage: number;
+  sortBy?: 'total' | 'createdAt';
+  sortDir?: 'asc' | 'desc';
 }
 
 export interface ItemVendaInput {

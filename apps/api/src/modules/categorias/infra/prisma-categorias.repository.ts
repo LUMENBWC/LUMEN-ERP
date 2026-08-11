@@ -60,7 +60,7 @@ export class PrismaCategoriasRepository implements CategoriasRepositoryPort {
       this.tx.categoria.findMany({
         where,
         include: { categoriaPai: { select: { nome: true } } },
-        orderBy: { nome: 'asc' },
+        orderBy: { [filtro.sortBy]: filtro.sortDir },
         skip: (filtro.page - 1) * filtro.perPage,
         take: filtro.perPage,
       }),

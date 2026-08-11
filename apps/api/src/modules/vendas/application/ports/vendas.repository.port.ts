@@ -97,6 +97,8 @@ export interface ListarVendasFiltro {
   dataFim?: Date;
   page: number;
   perPage: number;
+  sortBy: 'total' | 'createdAt';
+  sortDir: 'asc' | 'desc';
 }
 
 export interface ListarVendasResultado {

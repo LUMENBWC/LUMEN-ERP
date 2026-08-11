@@ -19,6 +19,8 @@ function buildQuery(params: ListarMovimentacoesParams): string {
   if (params.tipo) search.set('tipo', params.tipo);
   if (params.dataInicio) search.set('dataInicio', params.dataInicio);
   if (params.dataFim) search.set('dataFim', params.dataFim);
+  if (params.sortBy) search.set('sortBy', params.sortBy);
+  if (params.sortDir) search.set('sortDir', params.sortDir);
   return search.toString();
 }
 

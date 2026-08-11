@@ -23,6 +23,7 @@ export interface ClienteDetalhado extends ClienteResumo {
   complemento: string | null;
   bairro: string | null;
   cep: string | null;
+  inscricaoEstadual: string | null;
   observacoes: string | null;
   updatedAt: Date;
   criadoPorNome: string | null;
@@ -43,6 +44,7 @@ export interface CriarClienteInput {
   cidade: string | null;
   uf: string | null;
   cep: string | null;
+  inscricaoEstadual: string | null;
   limiteCredito: Prisma.Decimal;
   observacoes: string | null;
 }

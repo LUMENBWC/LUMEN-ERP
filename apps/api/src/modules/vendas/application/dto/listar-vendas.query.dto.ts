@@ -7,6 +7,8 @@ export const listarVendasQuerySchema = z.object({
   dataFim: z.coerce.date().optional(),
   page: z.coerce.number().int().min(1).default(1),
   perPage: z.coerce.number().int().min(1).max(100).default(20),
+  sortBy: z.enum(['total', 'createdAt']).default('createdAt'),
+  sortDir: z.enum(['asc', 'desc']).default('desc'),
 });
 
 export type ListarVendasQueryDto = z.infer<typeof listarVendasQuerySchema>;

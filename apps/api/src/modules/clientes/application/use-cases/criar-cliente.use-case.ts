@@ -50,6 +50,7 @@ export class CriarClienteUseCase {
           cidade: dto.cidade,
           uf: dto.uf,
           cep: dto.cep,
+          inscricaoEstadual: dto.inscricaoEstadual,
           limiteCredito: new Prisma.Decimal(dto.limiteCredito),
           observacoes: dto.observacoes,
         },

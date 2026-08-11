@@ -26,6 +26,7 @@ export const criarClienteSchema = z
       .default(null)
       .transform((v) => (v ? v : null)),
     cep: z.string().trim().max(9).nullable().optional().default(null),
+    inscricaoEstadual: z.string().trim().max(20).nullable().optional().default(null),
     limiteCredito: z.coerce
       .number()
       .nonnegative('Limite de crédito não pode ser negativo.')

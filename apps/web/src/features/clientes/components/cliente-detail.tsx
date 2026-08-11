@@ -4,6 +4,7 @@ import { Switch } from '@/components/ui/switch';
 import { useAtualizarCliente, useCliente, useDefinirAtivoCliente } from '../api/clientes.queries';
 import type { CriarClienteInput } from '../schemas/cliente.schema';
 import { ClienteForm } from './cliente-form';
+import { HistoricoComprasCliente } from './historico-compras';
 
 export function ClienteDetail({ clienteId }: { clienteId: string }) {
   const { data: cliente, isLoading, isError } = useCliente(clienteId);
@@ -47,6 +48,7 @@ export function ClienteDetail({ clienteId }: { clienteId: string }) {
           cidade: cliente.cidade,
           uf: cliente.uf,
           cep: cliente.cep,
+          inscricaoEstadual: cliente.inscricaoEstadual,
           limiteCredito: Number(cliente.limiteCredito),
           observacoes: cliente.observacoes,
         }}
@@ -57,9 +59,7 @@ export function ClienteDetail({ clienteId }: { clienteId: string }) {
         isPending={atualizarCliente.isPending}
       />
 
-      <p className="text-muted-foreground text-xs">
-        Histórico de compras aparece aqui quando os módulos de Orçamentos e Vendas existirem.
-      </p>
+      <HistoricoComprasCliente clienteId={clienteId} />
     </div>
   );
 }

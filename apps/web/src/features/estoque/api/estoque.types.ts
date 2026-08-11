@@ -31,4 +31,6 @@ export interface ListarMovimentacoesParams {
   dataFim?: string;
   page: number;
   perPage: number;
+  sortBy?: 'data' | 'quantidade';
+  sortDir?: 'asc' | 'desc';
 }

@@ -53,6 +53,7 @@ export function clienteFixture(overrides: Partial<ClienteDetalhado> = {}): Clien
     complemento: null,
     bairro: null,
     cep: null,
+    inscricaoEstadual: null,
     observacoes: null,
     updatedAt: new Date('2026-01-01T00:00:00.000Z'),
     criadoPorNome: 'Quem Está Logado',

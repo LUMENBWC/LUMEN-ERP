@@ -21,6 +21,7 @@ export interface ClienteDetalhado extends ClienteResumo {
   complemento: string | null;
   bairro: string | null;
   cep: string | null;
+  inscricaoEstadual: string | null;
   observacoes: string | null;
   updatedAt: string;
   criadoPorNome: string | null;

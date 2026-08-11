@@ -166,7 +166,7 @@ export class PrismaEstoqueRepository implements EstoqueRepositoryPort {
       this.tx.movimentacaoEstoque.findMany({
         where,
         include: INCLUDE_RESUMO,
-        orderBy: { data: 'desc' },
+        orderBy: { [filtro.sortBy]: filtro.sortDir },
         skip: (filtro.page - 1) * filtro.perPage,
         take: filtro.perPage,
       }),

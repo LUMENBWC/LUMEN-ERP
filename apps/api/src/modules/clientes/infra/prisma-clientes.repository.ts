@@ -32,6 +32,7 @@ interface ClienteRowDetalhado extends ClienteRow {
   complemento: string | null;
   bairro: string | null;
   cep: string | null;
+  inscricaoEstadual: string | null;
   observacoes: string | null;
   updatedAt: Date;
   criadoPor: { nome: string } | null;
@@ -63,6 +64,7 @@ function paraDetalhado(cliente: ClienteRowDetalhado): ClienteDetalhado {
     complemento: cliente.complemento,
     bairro: cliente.bairro,
     cep: cliente.cep,
+    inscricaoEstadual: cliente.inscricaoEstadual,
     observacoes: cliente.observacoes,
     updatedAt: cliente.updatedAt,
     criadoPorNome: cliente.criadoPor?.nome ?? null,
@@ -98,6 +100,7 @@ export class PrismaClientesRepository implements ClientesRepositoryPort {
         cidade: input.cidade,
         uf: input.uf,
         cep: input.cep,
+        inscricaoEstadual: input.inscricaoEstadual,
         limiteCredito: input.limiteCredito,
         observacoes: input.observacoes,
         createdById: criadoPorId,

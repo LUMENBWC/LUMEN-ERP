@@ -23,6 +23,7 @@ const dto: CriarClienteDto = {
   cidade: null,
   uf: null,
   cep: null,
+  inscricaoEstadual: null,
   limiteCredito: 0,
   observacoes: null,
 };

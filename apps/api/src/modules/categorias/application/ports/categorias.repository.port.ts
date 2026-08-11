@@ -23,6 +23,8 @@ export interface ListarCategoriasFiltro {
   apenasRaiz?: boolean;
   page: number;
   perPage: number;
+  sortBy: 'nome' | 'createdAt';
+  sortDir: 'asc' | 'desc';
 }
 
 export interface ListarCategoriasResultado {

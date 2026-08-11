@@ -31,6 +31,8 @@ export class ListarVendasUseCase {
         dataFim: query.dataFim,
         page: query.page,
         perPage: query.perPage,
+        sortBy: query.sortBy,
+        sortDir: query.sortDir,
       });
     });
   }

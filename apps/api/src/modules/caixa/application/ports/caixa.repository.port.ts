@@ -63,6 +63,8 @@ export interface ListarSessoesFiltro {
   status?: StatusCaixaSessaoValue;
   page: number;
   perPage: number;
+  sortBy: 'abertoEm' | 'valorAbertura';
+  sortDir: 'asc' | 'desc';
 }
 
 export interface ListarSessoesResultado {

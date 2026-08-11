@@ -75,6 +75,9 @@ export function ClienteForm({
               setValue('documento', formatarDocumento(novoTipo, documento), {
                 shouldValidate: true,
               });
+              if (novoTipo === 'FISICA') {
+                setValue('inscricaoEstadual', null);
+              }
             }}
           >
             <SelectTrigger id="tipoPessoa" className="w-full">
@@ -167,6 +170,13 @@ export function ClienteForm({
           <Input id="cep" {...register('cep')} />
         </div>
       </div>
+
+      {tipoPessoa === 'JURIDICA' && (
+        <div className="space-y-1">
+          <Label htmlFor="inscricaoEstadual">Inscrição estadual</Label>
+          <Input id="inscricaoEstadual" {...register('inscricaoEstadual')} />
+        </div>
+      )}
 
       <div className="space-y-1">
         <Label htmlFor="limiteCredito">Limite de crédito</Label>

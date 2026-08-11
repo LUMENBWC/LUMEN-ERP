@@ -1,5 +1,6 @@
 import { Prisma } from '../../../../generated/prisma/client';
 import type { TenantScopedPrismaClient } from '../../../infra/prisma/run-in-tenant-context';
+import { agruparClientesInadimplentes } from '../domain/agrupar-clientes-inadimplentes';
 import { estaVencida } from '../domain/esta-vencida';
 import type {
   CategoriaDespesaResumo,
@@ -11,6 +12,8 @@ import type {
   CriarContaPagarInput,
   FinanceiroRepositoryPort,
   FormaPagamentoValue,
+  ListarClientesInadimplentesFiltro,
+  ListarClientesInadimplentesResultado,
   ListarContasPagarFiltro,
   ListarContasPagarResultado,
   ListarContasReceberFiltro,
@@ -212,7 +215,7 @@ export class PrismaFinanceiroRepository implements FinanceiroRepositoryPort {
       this.tx.contaReceber.findMany({
         where,
         include: INCLUDE_CONTA_RECEBER_RESUMO,
-        orderBy: { vencimento: 'asc' },
+        orderBy: { [filtro.sortBy]: filtro.sortDir },
         skip: (filtro.page - 1) * filtro.perPage,
         take: filtro.perPage,
       }),
@@ -232,6 +235,44 @@ export class PrismaFinanceiroRepository implements FinanceiroRepositoryPort {
       ...paraContaReceberResumo(conta),
       recebimentos: conta.recebimentos.map(paraRecebimentoResumo),
     };
+  }
+
+  async listarClientesInadimplentes(
+    filtro: ListarClientesInadimplentesFiltro,
+  ): Promise<ListarClientesInadimplentesResultado> {
+    const contasVencidas = await this.tx.contaReceber.findMany({
+      where: {
+        deletedAt: null,
+        clienteId: { not: null },
+        status: { in: ['ABERTO', 'PARCIAL'] },
+        vencimento: { lt: HOJE() },
+      },
+      select: {
+        clienteId: true,
+        valorTotal: true,
+        valorRecebido: true,
+        vencimento: true,
+        cliente: { select: { nome: true } },
+      },
+    });
+
+    const agrupados = agruparClientesInadimplentes(
+      contasVencidas
+        .filter(
+          (conta): conta is typeof conta & { clienteId: string; cliente: { nome: string } } =>
+            conta.clienteId !== null && conta.cliente !== null,
+        )
+        .map((conta) => ({
+          clienteId: conta.clienteId,
+          clienteNome: conta.cliente.nome,
+          valorTotal: conta.valorTotal,
+          valorRecebido: conta.valorRecebido,
+          vencimento: conta.vencimento,
+        })),
+    );
+
+    const inicio = (filtro.page - 1) * filtro.perPage;
+    return { items: agrupados.slice(inicio, inicio + filtro.perPage), total: agrupados.length };
   }
 
   // --- Categorias de despesa --------------------------------------------
@@ -340,7 +381,7 @@ export class PrismaFinanceiroRepository implements FinanceiroRepositoryPort {
       this.tx.contaPagar.findMany({
         where,
         include: INCLUDE_CONTA_PAGAR_RESUMO,
-        orderBy: { vencimento: 'asc' },
+        orderBy: { [filtro.sortBy]: filtro.sortDir },
         skip: (filtro.page - 1) * filtro.perPage,
         take: filtro.perPage,
       }),

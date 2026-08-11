@@ -14,6 +14,7 @@ export const criarClienteSchema = z.object({
   cidade: z.string().trim().max(255).nullable().optional().default(null),
   uf: z.string().trim().length(2).nullable().optional().default(null),
   cep: z.string().trim().max(9).nullable().optional().default(null),
+  inscricaoEstadual: z.string().trim().max(20).nullable().optional().default(null),
   limiteCredito: z.number().nonnegative('Limite de crédito não pode ser negativo.').default(0),
   observacoes: z.string().trim().max(2000).nullable().optional().default(null),
 });

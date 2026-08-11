@@ -5,6 +5,8 @@ import type {
   ContaPagarDetalhada,
   ContaReceberDetalhada,
   CriarContaPagarInput,
+  ListarClientesInadimplentesParams,
+  ListarClientesInadimplentesResultado,
   ListarContasPagarParams,
   ListarContasPagarResultado,
   ListarContasReceberParams,
@@ -18,6 +20,8 @@ function buildQueryContasReceber(params: ListarContasReceberParams): string {
   if (params.status) search.set('status', params.status);
   if (params.clienteId) search.set('clienteId', params.clienteId);
   if (params.vencido !== undefined) search.set('vencido', String(params.vencido));
+  if (params.sortBy) search.set('sortBy', params.sortBy);
+  if (params.sortDir) search.set('sortDir', params.sortDir);
   return search.toString();
 }
 
@@ -29,6 +33,8 @@ function buildQueryContasPagar(params: ListarContasPagarParams): string {
   if (params.fornecedorId) search.set('fornecedorId', params.fornecedorId);
   if (params.categoriaDespesaId) search.set('categoriaDespesaId', params.categoriaDespesaId);
   if (params.vencido !== undefined) search.set('vencido', String(params.vencido));
+  if (params.sortBy) search.set('sortBy', params.sortBy);
+  if (params.sortDir) search.set('sortDir', params.sortDir);
   return search.toString();
 }
 
@@ -70,4 +76,9 @@ export const financeiroApi = {
     }),
   cancelarContaPagar: (id: string) =>
     apiJson<void>(`/financeiro/contas-pagar/${id}/cancelar`, { method: 'POST' }),
+
+  listarClientesInadimplentes: (params: ListarClientesInadimplentesParams) =>
+    apiJson<ListarClientesInadimplentesResultado>(
+      `/financeiro/clientes-inadimplentes?page=${params.page}&perPage=${params.perPage}`,
+    ),
 };

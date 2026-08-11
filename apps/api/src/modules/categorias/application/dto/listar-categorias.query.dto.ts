@@ -11,6 +11,8 @@ export const listarCategoriasQuerySchema = z.object({
   apenasRaiz: booleanQueryParam,
   page: z.coerce.number().int().min(1).default(1),
   perPage: z.coerce.number().int().min(1).max(100).default(50),
+  sortBy: z.enum(['nome', 'createdAt']).default('nome'),
+  sortDir: z.enum(['asc', 'desc']).default('asc'),
 });
 
 export type ListarCategoriasQueryDto = z.infer<typeof listarCategoriasQuerySchema>;

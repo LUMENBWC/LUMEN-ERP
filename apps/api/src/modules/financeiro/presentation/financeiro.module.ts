@@ -4,6 +4,7 @@ import { CancelarContaPagarUseCase } from '../application/use-cases/cancelar-con
 import { CriarCategoriaDespesaUseCase } from '../application/use-cases/criar-categoria-despesa.use-case';
 import { CriarContaPagarUseCase } from '../application/use-cases/criar-conta-pagar.use-case';
 import { ListarCategoriasDespesaUseCase } from '../application/use-cases/listar-categorias-despesa.use-case';
+import { ListarClientesInadimplentesUseCase } from '../application/use-cases/listar-clientes-inadimplentes.use-case';
 import { ListarContasPagarUseCase } from '../application/use-cases/listar-contas-pagar.use-case';
 import { ListarContasReceberUseCase } from '../application/use-cases/listar-contas-receber.use-case';
 import { ObterContaPagarUseCase } from '../application/use-cases/obter-conta-pagar.use-case';
@@ -26,6 +27,7 @@ import { FinanceiroController } from './financeiro.controller';
     ObterContaPagarUseCase,
     RegistrarPagamentoUseCase,
     CancelarContaPagarUseCase,
+    ListarClientesInadimplentesUseCase,
     {
       provide: FINANCEIRO_REPOSITORY_FACTORY,
       useValue: (

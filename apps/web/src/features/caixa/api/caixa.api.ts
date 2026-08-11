@@ -11,6 +11,8 @@ function buildQuery(params: ListarSessoesParams): string {
   search.set('page', String(params.page));
   search.set('perPage', String(params.perPage));
   if (params.status) search.set('status', params.status);
+  if (params.sortBy) search.set('sortBy', params.sortBy);
+  if (params.sortDir) search.set('sortDir', params.sortDir);
   return search.toString();
 }
 

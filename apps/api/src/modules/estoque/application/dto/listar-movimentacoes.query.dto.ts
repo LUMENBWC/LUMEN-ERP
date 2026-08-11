@@ -8,6 +8,8 @@ export const listarMovimentacoesQuerySchema = z.object({
   dataFim: z.coerce.date().optional(),
   page: z.coerce.number().int().min(1).default(1),
   perPage: z.coerce.number().int().min(1).max(100).default(20),
+  sortBy: z.enum(['data', 'quantidade']).default('data'),
+  sortDir: z.enum(['asc', 'desc']).default('desc'),
 });
 
 export type ListarMovimentacoesQueryDto = z.infer<typeof listarMovimentacoesQuerySchema>;

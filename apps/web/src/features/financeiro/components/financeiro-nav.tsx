@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 const LINKS = [
   { href: '/financeiro/contas-receber', label: 'Contas a Receber' },
   { href: '/financeiro/contas-pagar', label: 'Contas a Pagar' },
+  { href: '/financeiro/clientes-inadimplentes', label: 'Clientes Inadimplentes' },
   { href: '/financeiro/categorias-despesa', label: 'Categorias de Despesa' },
 ];
 

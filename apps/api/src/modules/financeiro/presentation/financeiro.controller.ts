@@ -25,6 +25,10 @@ import {
   type CriarContaPagarDto,
 } from '../application/dto/criar-conta-pagar.dto';
 import {
+  listarClientesInadimplentesQuerySchema,
+  type ListarClientesInadimplentesQueryDto,
+} from '../application/dto/listar-clientes-inadimplentes.query.dto';
+import {
   listarContasPagarQuerySchema,
   type ListarContasPagarQueryDto,
 } from '../application/dto/listar-contas-pagar.query.dto';
@@ -45,6 +49,7 @@ import { CriarCategoriaDespesaUseCase } from '../application/use-cases/criar-cat
 import { CriarContaPagarUseCase } from '../application/use-cases/criar-conta-pagar.use-case';
 import { ListarCategoriasDespesaUseCase } from '../application/use-cases/listar-categorias-despesa.use-case';
 import { ListarContasPagarUseCase } from '../application/use-cases/listar-contas-pagar.use-case';
+import { ListarClientesInadimplentesUseCase } from '../application/use-cases/listar-clientes-inadimplentes.use-case';
 import { ListarContasReceberUseCase } from '../application/use-cases/listar-contas-receber.use-case';
 import { ObterContaPagarUseCase } from '../application/use-cases/obter-conta-pagar.use-case';
 import { ObterContaReceberUseCase } from '../application/use-cases/obter-conta-receber.use-case';
@@ -67,6 +72,7 @@ export class FinanceiroController {
     private readonly obterContaPagar: ObterContaPagarUseCase,
     private readonly registrarPagamento: RegistrarPagamentoUseCase,
     private readonly cancelarContaPagar: CancelarContaPagarUseCase,
+    private readonly listarClientesInadimplentes: ListarClientesInadimplentesUseCase,
   ) {}
 
   // --- Contas a receber -----------------------------------------------
@@ -79,6 +85,16 @@ export class FinanceiroController {
     @Query() query: ListarContasReceberQueryDto,
   ) {
     return this.listarContasReceber.execute(tenant, query);
+  }
+
+  @Get('clientes-inadimplentes')
+  @RequirePermissions('financeiro.ler')
+  @UsePipes(new ZodValidationPipe(listarClientesInadimplentesQuerySchema))
+  listarInadimplentes(
+    @CurrentTenant() tenant: TenantContext,
+    @Query() query: ListarClientesInadimplentesQueryDto,
+  ) {
+    return this.listarClientesInadimplentes.execute(tenant, query);
   }
 
   @Get('contas-receber/:id')

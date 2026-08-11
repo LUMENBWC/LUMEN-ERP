@@ -13,6 +13,8 @@ function buildQuery(params: ListarCategoriasParams): string {
   if (params.busca) search.set('busca', params.busca);
   if (params.ativo !== undefined) search.set('ativo', String(params.ativo));
   if (params.apenasRaiz !== undefined) search.set('apenasRaiz', String(params.apenasRaiz));
+  if (params.sortBy) search.set('sortBy', params.sortBy);
+  if (params.sortDir) search.set('sortDir', params.sortDir);
   return search.toString();
 }
 

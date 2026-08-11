@@ -40,4 +40,6 @@ export interface ListarSessoesParams {
   status?: StatusCaixaSessao;
   page: number;
   perPage: number;
+  sortBy?: 'abertoEm' | 'valorAbertura';
+  sortDir?: 'asc' | 'desc';
 }

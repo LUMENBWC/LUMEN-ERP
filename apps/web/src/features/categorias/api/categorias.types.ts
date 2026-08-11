@@ -18,4 +18,6 @@ export interface ListarCategoriasParams {
   apenasRaiz?: boolean;
   page: number;
   perPage: number;
+  sortBy?: 'nome' | 'createdAt';
+  sortDir?: 'asc' | 'desc';
 }

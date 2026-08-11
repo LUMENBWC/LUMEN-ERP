@@ -20,6 +20,7 @@ export function createMockRepo(): jest.Mocked<FinanceiroRepositoryPort> {
     registrarRecebimento: jest.fn(),
     listarContasReceber: jest.fn(),
     obterContaReceberPorId: jest.fn(),
+    listarClientesInadimplentes: jest.fn(),
     criarCategoriaDespesa: jest.fn(),
     categoriaDespesaExistePorNome: jest.fn(),
     categoriaDespesaExiste: jest.fn(),

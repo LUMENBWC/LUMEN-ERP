@@ -60,6 +60,8 @@ export interface ListarMovimentacoesFiltro {
   dataFim?: Date;
   page: number;
   perPage: number;
+  sortBy: 'data' | 'quantidade';
+  sortDir: 'asc' | 'desc';
 }
 
 export interface ListarMovimentacoesResultado {

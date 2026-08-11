@@ -42,6 +42,8 @@ export interface ListarContasReceberParams {
   vencido?: boolean;
   page: number;
   perPage: number;
+  sortBy?: 'vencimento' | 'valorTotal' | 'createdAt';
+  sortDir?: 'asc' | 'desc';
 }
 
 export interface PagamentoResumo {
@@ -83,6 +85,8 @@ export interface ListarContasPagarParams {
   vencido?: boolean;
   page: number;
   perPage: number;
+  sortBy?: 'vencimento' | 'valorTotal' | 'createdAt';
+  sortDir?: 'asc' | 'desc';
 }
 
 export interface CriarContaPagarInput {
@@ -97,4 +101,22 @@ export interface CategoriaDespesaResumo {
   id: string;
   nome: string;
   createdAt: string;
+}
+
+export interface ClienteInadimplenteResumo {
+  clienteId: string;
+  clienteNome: string;
+  totalVencido: string;
+  quantidadeTitulos: number;
+  vencimentoMaisAntigo: string;
+}
+
+export interface ListarClientesInadimplentesResultado {
+  items: ClienteInadimplenteResumo[];
+  total: number;
+}
+
+export interface ListarClientesInadimplentesParams {
+  page: number;
+  perPage: number;
 }
