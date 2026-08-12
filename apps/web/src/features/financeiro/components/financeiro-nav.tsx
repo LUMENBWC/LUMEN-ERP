@@ -15,7 +15,7 @@ export function FinanceiroNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex gap-4 border-b pb-2">
+    <nav className="border-border flex flex-wrap gap-5 border-b">
       {LINKS.map((link) => {
         const ativo = pathname.startsWith(link.href);
         return (
@@ -23,8 +23,10 @@ export function FinanceiroNav() {
             key={link.href}
             href={link.href}
             className={cn(
-              'text-sm',
-              ativo ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground',
+              '-mb-px border-b-2 pb-2 text-sm transition-colors',
+              ativo
+                ? 'border-primary text-foreground font-medium'
+                : 'text-muted-foreground hover:text-foreground border-transparent',
             )}
           >
             {link.label}

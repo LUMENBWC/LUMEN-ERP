@@ -6,6 +6,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
 
 const loginSchema = z.object({
@@ -39,49 +41,54 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-8">
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-sm space-y-4" noValidate>
-        <div className="space-y-1 text-center">
-          <h1 className="text-2xl font-semibold">Entrar</h1>
-          <p className="text-muted-foreground text-sm">Acesse o ERP com seu e-mail e senha.</p>
-        </div>
+    <main className="flex min-h-screen items-center justify-center p-6">
+      <Card elevation="md" className="w-full max-w-[380px] gap-0 p-8">
+        <div className="font-heading mb-0.5 text-[22px] font-semibold">LUMEN ERP</div>
+        <h1 className="font-heading mt-4 mb-0.5 text-xl font-semibold">Entrar</h1>
+        <p className="text-muted-foreground mb-5 text-[13px]">
+          Acesse o ERP com seu e-mail e senha
+        </p>
 
-        <div className="space-y-1">
-          <label htmlFor="email" className="text-sm font-medium">
-            E-mail
-          </label>
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            aria-invalid={!!errors.email}
-            className="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
-            {...register('email')}
-          />
-          {errors.email && <p className="text-destructive text-sm">{errors.email.message}</p>}
-        </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5" noValidate>
+          <div className="space-y-1.5">
+            <label htmlFor="email" className="text-muted-foreground block text-xs">
+              E-mail
+            </label>
+            <Input
+              id="email"
+              type="email"
+              autoComplete="email"
+              aria-invalid={!!errors.email}
+              {...register('email')}
+            />
+            {errors.email && (
+              <p className="text-destructive-foreground text-xs">{errors.email.message}</p>
+            )}
+          </div>
 
-        <div className="space-y-1">
-          <label htmlFor="password" className="text-sm font-medium">
-            Senha
-          </label>
-          <input
-            id="password"
-            type="password"
-            autoComplete="current-password"
-            aria-invalid={!!errors.password}
-            className="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
-            {...register('password')}
-          />
-          {errors.password && <p className="text-destructive text-sm">{errors.password.message}</p>}
-        </div>
+          <div className="space-y-1.5">
+            <label htmlFor="password" className="text-muted-foreground block text-xs">
+              Senha
+            </label>
+            <Input
+              id="password"
+              type="password"
+              autoComplete="current-password"
+              aria-invalid={!!errors.password}
+              {...register('password')}
+            />
+            {errors.password && (
+              <p className="text-destructive-foreground text-xs">{errors.password.message}</p>
+            )}
+          </div>
 
-        {serverError && <p className="text-destructive text-sm">{serverError}</p>}
+          {serverError && <p className="text-destructive-foreground text-sm">{serverError}</p>}
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? 'Entrando...' : 'Entrar'}
-        </Button>
-      </form>
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? 'Entrando…' : 'Entrar'}
+          </Button>
+        </form>
+      </Card>
     </main>
   );
 }

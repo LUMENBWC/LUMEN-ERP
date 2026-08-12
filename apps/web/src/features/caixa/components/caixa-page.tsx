@@ -1,14 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
+import { PageHeader } from '@/components/page-header';
 import { buttonVariants } from '@/components/ui/button';
+import { Card, CardKicker, CardValue } from '@/components/ui/card';
+import { LoadingState } from '@/components/states';
+import { Tag } from '@/components/ui/tag';
 import { useCaixaAtual, useSessaoCaixa } from '../api/caixa.queries';
 import { AbrirCaixaDialog } from './abrir-caixa-dialog';
 import { FecharCaixaDialog } from './fechar-caixa-dialog';
 import { MovimentosTabela } from './movimentos-tabela';
 import { SangriaDialog } from './sangria-dialog';
 import { SuprimentoDialog } from './suprimento-dialog';
+
+const moeda = (v: string | number) =>
+  Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
 export function CaixaPage() {
   const { data: sessaoAtual, isLoading: carregandoAtual } = useCaixaAtual();
@@ -17,34 +23,36 @@ export function CaixaPage() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Caixa</h1>
-        <Link href="/caixa/sessoes" className={buttonVariants({ variant: 'outline' })}>
-          Histórico de sessões
-        </Link>
-      </div>
+    <div className="space-y-5">
+      <PageHeader
+        title="Caixa"
+        action={
+          <Link href="/caixa/sessoes" className={buttonVariants({ variant: 'ghost' })}>
+            Histórico de sessões
+          </Link>
+        }
+      >
+        {!carregandoAtual &&
+          (sessaoAtual ? <Tag variant="success">Aberto</Tag> : <Tag variant="error">Fechado</Tag>)}
+      </PageHeader>
 
-      {carregandoAtual && <p className="text-muted-foreground text-sm">Carregando...</p>}
+      {carregandoAtual && <LoadingState />}
 
       {!carregandoAtual && !sessaoAtual && (
-        <div className="flex items-center gap-3 rounded-lg border p-4">
-          <Badge variant="destructive">Caixa fechado</Badge>
+        <Card className="items-center gap-3 px-8 py-12 text-center">
+          <p className="text-muted-foreground">Nenhuma sessão de caixa aberta.</p>
           <AbrirCaixaDialog />
-        </div>
+        </Card>
       )}
 
       {!carregandoAtual && sessaoAtual && (
-        <div className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
-            <div className="flex items-center gap-3">
-              <Badge variant="default">Caixa aberto</Badge>
-              <span className="text-muted-foreground text-sm">
-                Aberto por {sessaoAtual.usuarioAberturaNome} em{' '}
-                {new Date(sessaoAtual.abertoEm).toLocaleString('pt-BR')}
-              </span>
-            </div>
-            <div className="flex gap-2">
+        <div className="space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span className="text-muted-foreground text-sm">
+              Aberto por {sessaoAtual.usuarioAberturaNome} em{' '}
+              {new Date(sessaoAtual.abertoEm).toLocaleString('pt-BR')}
+            </span>
+            <div className="flex flex-wrap gap-2">
               <SangriaDialog />
               <SuprimentoDialog />
               {sessaoDetalhada && (
@@ -56,21 +64,21 @@ export function CaixaPage() {
           </div>
 
           {sessaoDetalhada && (
-            <div className="bg-muted flex gap-6 rounded-lg border p-4 text-sm">
-              <div>
-                <div className="text-muted-foreground">Valor de abertura</div>
-                <div className="text-lg font-semibold">R$ {sessaoAtual.valorAbertura}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground">Valor esperado agora</div>
-                <div className="text-lg font-semibold">R$ {sessaoDetalhada.valorEsperadoAtual}</div>
-              </div>
+            <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+              <Card>
+                <CardKicker>Valor de abertura</CardKicker>
+                <CardValue>{moeda(sessaoAtual.valorAbertura)}</CardValue>
+              </Card>
+              <Card>
+                <CardKicker>Valor esperado agora</CardKicker>
+                <CardValue>{moeda(sessaoDetalhada.valorEsperadoAtual)}</CardValue>
+              </Card>
             </div>
           )}
 
           <div className="space-y-2">
-            <h2 className="text-sm font-medium">Movimentos desta sessão</h2>
-            {carregandoDetalhe && <p className="text-muted-foreground text-sm">Carregando...</p>}
+            <h5 className="font-heading text-base font-semibold">Movimentos desta sessão</h5>
+            {carregandoDetalhe && <LoadingState />}
             {sessaoDetalhada && <MovimentosTabela movimentos={sessaoDetalhada.movimentos} />}
           </div>
         </div>

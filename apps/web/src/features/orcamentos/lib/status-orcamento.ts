@@ -9,11 +9,14 @@ export const STATUS_LABEL: Record<StatusOrcamento, string> = {
   CONVERTIDO: 'Convertido',
 };
 
-export const STATUS_VARIANT: Record<StatusOrcamento, 'default' | 'secondary' | 'destructive'> = {
+export const STATUS_VARIANT: Record<
+  StatusOrcamento,
+  'secondary' | 'info' | 'success' | 'warning' | 'destructive'
+> = {
   RASCUNHO: 'secondary',
-  ENVIADO: 'default',
-  APROVADO: 'default',
+  ENVIADO: 'info',
+  APROVADO: 'success',
   RECUSADO: 'destructive',
-  EXPIRADO: 'destructive',
-  CONVERTIDO: 'default',
+  EXPIRADO: 'warning',
+  CONVERTIDO: 'success',
 };

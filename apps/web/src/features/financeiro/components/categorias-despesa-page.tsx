@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/page-header';
+import { ErrorState, LoadingState } from '@/components/states';
 import {
   Dialog,
   DialogContent,
@@ -91,18 +93,13 @@ export function CategoriasDespesaPage() {
   return (
     <div className="space-y-4">
       <FinanceiroNav />
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Categorias de Despesa</h1>
-        <NovaCategoriaDialog />
-      </div>
+      <PageHeader title="Categorias de Despesa" action={<NovaCategoriaDialog />} />
 
-      {isError && (
-        <p className="text-destructive text-sm">Não foi possível carregar as categorias.</p>
-      )}
-      {isLoading && <p className="text-muted-foreground text-sm">Carregando...</p>}
+      {isError && <ErrorState message="Não foi possível carregar as categorias." />}
+      {isLoading && <LoadingState />}
 
       {categorias && (
-        <div className="max-w-xl rounded-lg border">
+        <div className="max-w-xl overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

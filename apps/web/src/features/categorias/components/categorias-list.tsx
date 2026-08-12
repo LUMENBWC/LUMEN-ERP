@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/page-header';
+import { ErrorState, LoadingState } from '@/components/states';
 import { Switch } from '@/components/ui/switch';
 import {
   Table,
@@ -22,19 +24,17 @@ export function CategoriasList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Categorias</h1>
-        <CategoriaFormDialog trigger={<Button>Nova categoria</Button>} />
-      </div>
+      <PageHeader
+        title="Categorias"
+        action={<CategoriaFormDialog trigger={<Button>Nova categoria</Button>} />}
+      />
 
-      {isError && (
-        <p className="text-destructive text-sm">Não foi possível carregar as categorias.</p>
-      )}
-      {isLoading && <p className="text-muted-foreground text-sm">Carregando...</p>}
+      {isError && <ErrorState message="Não foi possível carregar as categorias." />}
+      {isLoading && <LoadingState />}
 
       {data && (
         <>
-          <div className="rounded-lg border">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>

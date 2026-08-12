@@ -4,6 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
+import { PageHeader } from '@/components/page-header';
+import { ErrorState, LoadingState } from '@/components/states';
 import {
   Table,
   TableBody,
@@ -25,25 +27,27 @@ export function SessoesList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Histórico de sessões de caixa</h1>
-        <Link href="/caixa" className={buttonVariants({ variant: 'outline' })}>
-          Voltar
-        </Link>
-      </div>
+      <PageHeader
+        title="Histórico de sessões de caixa"
+        action={
+          <Link href="/caixa" className={buttonVariants({ variant: 'outline' })}>
+            Voltar
+          </Link>
+        }
+      />
 
-      {isError && <p className="text-destructive text-sm">Não foi possível carregar as sessões.</p>}
-      {isLoading && <p className="text-muted-foreground text-sm">Carregando...</p>}
+      {isError && <ErrorState message="Não foi possível carregar as sessões." />}
+      {isLoading && <LoadingState />}
 
       {data && (
         <>
-          <div className="rounded-lg border">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Aberto por</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Valor de abertura</TableHead>
+                  <TableHead className="text-right">Valor de abertura</TableHead>
                   <TableHead>Aberto em</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
@@ -64,7 +68,12 @@ export function SessoesList() {
                         {STATUS_LABEL[sessao.status]}
                       </Badge>
                     </TableCell>
-                    <TableCell>R$ {sessao.valorAbertura}</TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {Number(sessao.valorAbertura).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })}
+                    </TableCell>
                     <TableCell>{new Date(sessao.abertoEm).toLocaleString('pt-BR')}</TableCell>
                     <TableCell className="text-right">
                       <Link

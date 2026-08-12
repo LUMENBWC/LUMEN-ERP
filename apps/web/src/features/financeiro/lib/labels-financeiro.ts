@@ -7,9 +7,12 @@ export const STATUS_LABEL: Record<StatusConta, string> = {
   CANCELADO: 'Cancelado',
 };
 
-export const STATUS_VARIANT: Record<StatusConta, 'default' | 'secondary' | 'destructive'> = {
+export const STATUS_VARIANT: Record<
+  StatusConta,
+  'secondary' | 'warning' | 'success' | 'destructive'
+> = {
   ABERTO: 'secondary',
-  PARCIAL: 'default',
-  PAGO: 'default',
+  PARCIAL: 'warning',
+  PAGO: 'success',
   CANCELADO: 'destructive',
 };

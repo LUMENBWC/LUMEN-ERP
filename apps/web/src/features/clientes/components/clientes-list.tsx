@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { buttonVariants, Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/page-header';
+import { ErrorState, LoadingState } from '@/components/states';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -39,12 +41,14 @@ export function ClientesList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Clientes</h1>
-        <Link href="/clientes/novo" className={buttonVariants()}>
-          Novo cliente
-        </Link>
-      </div>
+      <PageHeader
+        title="Clientes"
+        action={
+          <Link href="/clientes/novo" className={buttonVariants()}>
+            Novo cliente
+          </Link>
+        }
+      />
 
       <div className="flex flex-wrap items-center gap-3">
         <Input
@@ -93,14 +97,12 @@ export function ClientesList() {
         </Select>
       </div>
 
-      {isError && (
-        <p className="text-destructive text-sm">Não foi possível carregar os clientes.</p>
-      )}
-      {isLoading && <p className="text-muted-foreground text-sm">Carregando...</p>}
+      {isError && <ErrorState message="Não foi possível carregar os clientes." />}
+      {isLoading && <LoadingState />}
 
       {data && (
         <>
-          <div className="rounded-lg border">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>

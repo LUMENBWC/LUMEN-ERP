@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
+import { ErrorState, LoadingState } from '@/components/states';
 import {
   Select,
   SelectContent,
@@ -81,14 +82,12 @@ export function ContasPagarList() {
         </Button>
       </div>
 
-      {isError && (
-        <p className="text-destructive text-sm">Não foi possível carregar as contas a pagar.</p>
-      )}
-      {isLoading && <p className="text-muted-foreground text-sm">Carregando...</p>}
+      {isError && <ErrorState message="Não foi possível carregar as contas a pagar." />}
+      {isLoading && <LoadingState />}
 
       {data && (
         <>
-          <div className="rounded-lg border">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -96,8 +95,8 @@ export function ContasPagarList() {
                   <TableHead>Fornecedor</TableHead>
                   <TableHead>Categoria</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Pago</TableHead>
+                  <TableHead className="text-right">Valor</TableHead>
+                  <TableHead className="text-right">Pago</TableHead>
                   <TableHead>Vencimento</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
@@ -121,8 +120,18 @@ export function ContasPagarList() {
                       </Badge>
                       {conta.vencida && <Badge variant="destructive">Vencida</Badge>}
                     </TableCell>
-                    <TableCell>R$ {conta.valorTotal}</TableCell>
-                    <TableCell>R$ {conta.valorPago}</TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {Number(conta.valorTotal).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {Number(conta.valorPago).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })}
+                    </TableCell>
                     <TableCell>{new Date(conta.vencimento).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell className="text-right">
                       <Link

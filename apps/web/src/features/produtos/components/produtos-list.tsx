@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants, Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/page-header';
+import { ErrorState, LoadingState } from '@/components/states';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -54,12 +56,14 @@ export function ProdutosList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Produtos</h1>
-        <Link href="/produtos/novo" className={buttonVariants()}>
-          Novo produto
-        </Link>
-      </div>
+      <PageHeader
+        title="Produtos"
+        action={
+          <Link href="/produtos/novo" className={buttonVariants()}>
+            Novo produto
+          </Link>
+        }
+      />
 
       <div className="flex flex-wrap items-center gap-3">
         <Input
@@ -112,23 +116,21 @@ export function ProdutosList() {
         </label>
       </div>
 
-      {isError && (
-        <p className="text-destructive text-sm">Não foi possível carregar os produtos.</p>
-      )}
-      {isLoading && <p className="text-muted-foreground text-sm">Carregando...</p>}
+      {isError && <ErrorState message="Não foi possível carregar os produtos." />}
+      {isLoading && <LoadingState />}
 
       {data && (
         <>
-          <div className="rounded-lg border">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Nome</TableHead>
                   <TableHead>SKU</TableHead>
                   <TableHead>Categoria</TableHead>
-                  <TableHead>Preço de venda</TableHead>
-                  <TableHead>Margem</TableHead>
-                  <TableHead>Estoque</TableHead>
+                  <TableHead className="text-right">Preço de venda</TableHead>
+                  <TableHead className="text-right">Margem</TableHead>
+                  <TableHead className="text-right">Estoque</TableHead>
                   <TableHead>Ativo</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
@@ -148,14 +150,20 @@ export function ProdutosList() {
                   return (
                     <TableRow key={produto.id}>
                       <TableCell className="font-medium">{produto.nome}</TableCell>
-                      <TableCell>{produto.sku}</TableCell>
+                      <TableCell className="text-muted-foreground font-mono text-xs">
+                        {produto.sku}
+                      </TableCell>
                       <TableCell>{produto.categoriaNome ?? '—'}</TableCell>
-                      <TableCell>{formatarMoeda(produto.precoVenda)}</TableCell>
-                      <TableCell>{(Number(produto.margemLucro) * 100).toFixed(1)}%</TableCell>
-                      <TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {formatarMoeda(produto.precoVenda)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {(Number(produto.margemLucro) * 100).toFixed(1)}%
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
                         {produto.estoqueAtual} {produto.unidadeMedida}
                         {abaixo && (
-                          <Badge variant="destructive" className="ml-2">
+                          <Badge variant="warning" className="ml-2">
                             baixo
                           </Badge>
                         )}

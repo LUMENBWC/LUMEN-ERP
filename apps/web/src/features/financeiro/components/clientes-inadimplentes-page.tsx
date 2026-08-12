@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/page-header';
+import { ErrorState, LoadingState } from '@/components/states';
 import {
   Table,
   TableBody,
@@ -34,27 +36,23 @@ export function ClientesInadimplentesPage() {
   return (
     <div className="space-y-4">
       <FinanceiroNav />
-      <div>
-        <h1 className="text-xl font-semibold">Clientes inadimplentes</h1>
-        <p className="text-muted-foreground text-sm">
-          Clientes com contas a receber vencidas, ordenados pelo maior valor em aberto.
-        </p>
-      </div>
+      <PageHeader
+        title="Clientes inadimplentes"
+        description="Clientes com contas a receber vencidas, ordenados pelo maior valor em aberto."
+      />
 
-      {isError && (
-        <p className="text-destructive text-sm">Não foi possível carregar os inadimplentes.</p>
-      )}
-      {isLoading && <p className="text-muted-foreground text-sm">Carregando...</p>}
+      {isError && <ErrorState message="Não foi possível carregar os inadimplentes." />}
+      {isLoading && <LoadingState />}
 
       {data && (
         <>
-          <div className="rounded-lg border">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Cliente</TableHead>
-                  <TableHead>Total vencido</TableHead>
-                  <TableHead>Títulos</TableHead>
+                  <TableHead className="text-right">Total vencido</TableHead>
+                  <TableHead className="text-right">Títulos</TableHead>
                   <TableHead>Vencido há</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
@@ -70,8 +68,15 @@ export function ClientesInadimplentesPage() {
                 {data.items.map((cliente) => (
                   <TableRow key={cliente.clienteId}>
                     <TableCell className="font-medium">{cliente.clienteNome}</TableCell>
-                    <TableCell className="text-destructive">R$ {cliente.totalVencido}</TableCell>
-                    <TableCell>{cliente.quantidadeTitulos}</TableCell>
+                    <TableCell className="text-destructive-foreground text-right font-medium tabular-nums">
+                      {Number(cliente.totalVencido).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {cliente.quantidadeTitulos}
+                    </TableCell>
                     <TableCell>{diasEmAtraso(cliente.vencimentoMaisAntigo)} dias</TableCell>
                     <TableCell className="text-right">
                       <Link href={`/clientes/${cliente.clienteId}`} className="text-sm underline">

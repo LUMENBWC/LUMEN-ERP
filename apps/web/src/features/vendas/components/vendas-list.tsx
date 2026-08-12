@@ -4,6 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { buttonVariants, Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { PageHeader } from '@/components/page-header';
+import { ErrorState, LoadingState } from '@/components/states';
 import {
   Table,
   TableBody,
@@ -25,25 +27,27 @@ export function VendasList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Vendas</h1>
-        <Link href="/pdv" className={buttonVariants()}>
-          Nova venda
-        </Link>
-      </div>
+      <PageHeader
+        title="Vendas"
+        action={
+          <Link href="/pdv" className={buttonVariants()}>
+            Nova venda
+          </Link>
+        }
+      />
 
-      {isError && <p className="text-destructive text-sm">Não foi possível carregar as vendas.</p>}
-      {isLoading && <p className="text-muted-foreground text-sm">Carregando...</p>}
+      {isError && <ErrorState message="Não foi possível carregar as vendas." />}
+      {isLoading && <LoadingState />}
 
       {data && (
         <>
-          <div className="rounded-lg border">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Cliente</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Total</TableHead>
+                  <TableHead className="text-right">Total</TableHead>
                   <TableHead>Vendedor</TableHead>
                   <TableHead>Data</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
@@ -67,7 +71,12 @@ export function VendasList() {
                         {STATUS_LABEL[venda.status]}
                       </Badge>
                     </TableCell>
-                    <TableCell>{venda.total}</TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {Number(venda.total).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })}
+                    </TableCell>
                     <TableCell>{venda.usuarioNome}</TableCell>
                     <TableCell>{new Date(venda.createdAt).toLocaleString('pt-BR')}</TableCell>
                     <TableCell className="text-right">

@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/page-header';
+import { ErrorState, LoadingState } from '@/components/states';
 import {
   Select,
   SelectContent,
@@ -58,14 +60,16 @@ export function MovimentacoesList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Estoque</h1>
-        <div className="flex gap-2">
-          <EntradaDialog trigger={<Button>Nova entrada</Button>} />
-          <AjusteDialog trigger={<Button variant="outline">Ajuste</Button>} />
-          <PerdaDialog trigger={<Button variant="outline">Perda</Button>} />
-        </div>
-      </div>
+      <PageHeader
+        title="Estoque"
+        action={
+          <>
+            <EntradaDialog trigger={<Button>Nova entrada</Button>} />
+            <AjusteDialog trigger={<Button variant="outline">Ajuste</Button>} />
+            <PerdaDialog trigger={<Button variant="outline">Perda</Button>} />
+          </>
+        }
+      />
 
       <div className="flex flex-wrap items-center gap-3">
         <Select
@@ -116,14 +120,12 @@ export function MovimentacoesList() {
         </Select>
       </div>
 
-      {isError && (
-        <p className="text-destructive text-sm">Não foi possível carregar as movimentações.</p>
-      )}
-      {isLoading && <p className="text-muted-foreground text-sm">Carregando...</p>}
+      {isError && <ErrorState message="Não foi possível carregar as movimentações." />}
+      {isLoading && <LoadingState />}
 
       {data && (
         <>
-          <div className="rounded-lg border">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>

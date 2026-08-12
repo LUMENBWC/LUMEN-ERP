@@ -5,8 +5,8 @@ export const STATUS_LABEL: Record<StatusVenda, string> = {
   CANCELADA: 'Cancelada',
 };
 
-export const STATUS_VARIANT: Record<StatusVenda, 'default' | 'secondary' | 'destructive'> = {
-  CONCLUIDA: 'default',
+export const STATUS_VARIANT: Record<StatusVenda, 'success' | 'destructive'> = {
+  CONCLUIDA: 'success',
   CANCELADA: 'destructive',
 };
 

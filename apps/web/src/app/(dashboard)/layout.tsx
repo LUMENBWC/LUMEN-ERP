@@ -1,8 +1,15 @@
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { AppShell, type NavGroup } from '@/components/app-shell';
 import { apiFetch } from '@/lib/api/server';
 import { createClient } from '@/lib/supabase/server';
-import { LogoutButton } from './logout-button';
+
+interface Me {
+  nome: string;
+  email: string;
+  empresaId: string;
+  papeis: string[];
+  permissoes: string[];
+}
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -15,98 +22,63 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   const meRes = await apiFetch('/me');
-  const permissoes: string[] = meRes.ok ? ((await meRes.json()).permissoes ?? []) : [];
-  const podeGerenciarUsuarios = permissoes.includes('usuarios.gerenciar');
-  const podeVerProdutos = permissoes.includes('produtos.ler');
-  const podeVerEstoque = permissoes.includes('estoque.ler');
-  const podeVerClientes = permissoes.includes('clientes.ler');
-  const podeVerFornecedores = permissoes.includes('fornecedores.ler');
-  const podeVerOrcamentos = permissoes.includes('orcamentos.ler');
-  const podeVerVendas = permissoes.includes('vendas.criar');
-  const podeVerCaixa = permissoes.includes('caixa.abrir');
-  const podeVerFinanceiro = permissoes.includes('financeiro.ler');
+  const me: Partial<Me> = meRes.ok ? await meRes.json() : {};
+  const permissoes = new Set(me.permissoes ?? []);
+  const has = (p: string) => permissoes.has(p);
+
+  // Grupos de navegação — cada item só aparece com a permissão correspondente.
+  const groups: NavGroup[] = [
+    { items: [{ href: '/dashboard', label: 'Dashboard' }] },
+    {
+      label: 'Operação',
+      items: [
+        has('vendas.criar') && { href: '/pdv', label: 'PDV' },
+        has('caixa.abrir') && { href: '/caixa', label: 'Caixa' },
+        has('vendas.criar') && { href: '/vendas', label: 'Vendas' },
+        has('orcamentos.ler') && { href: '/orcamentos', label: 'Orçamentos' },
+      ].filter(Boolean) as NavGroup['items'],
+    },
+    {
+      label: 'Cadastros',
+      items: [
+        has('produtos.ler') && { href: '/produtos', label: 'Produtos' },
+        has('produtos.ler') && { href: '/categorias', label: 'Categorias' },
+        has('estoque.ler') && { href: '/estoque', label: 'Estoque' },
+        has('clientes.ler') && { href: '/clientes', label: 'Clientes' },
+        has('fornecedores.ler') && { href: '/fornecedores', label: 'Fornecedores' },
+      ].filter(Boolean) as NavGroup['items'],
+    },
+    {
+      label: 'Financeiro',
+      items: [
+        has('financeiro.ler') && {
+          href: '/financeiro/contas-receber',
+          label: 'Contas a receber',
+        },
+        has('financeiro.ler') && { href: '/financeiro/contas-pagar', label: 'Contas a pagar' },
+        has('financeiro.ler') && {
+          href: '/financeiro/clientes-inadimplentes',
+          label: 'Inadimplentes',
+        },
+        has('financeiro.ler') && {
+          href: '/financeiro/categorias-despesa',
+          label: 'Categorias de despesa',
+        },
+      ].filter(Boolean) as NavGroup['items'],
+    },
+    {
+      label: 'Administração',
+      items: [has('usuarios.gerenciar') && { href: '/usuarios', label: 'Usuários' }].filter(
+        Boolean,
+      ) as NavGroup['items'],
+    },
+  ].filter((g) => g.items.length > 0);
+
+  const papel = (me.papeis ?? []).join(', ') || 'Sem papel';
 
   return (
-    <div className="min-h-screen">
-      <header className="flex items-center justify-between border-b px-6 py-4">
-        <nav className="flex items-center gap-4">
-          <Link href="/dashboard" className="font-semibold">
-            ERP SaaS
-          </Link>
-          {podeVerProdutos && (
-            <>
-              <Link
-                href="/produtos"
-                className="text-muted-foreground hover:text-foreground text-sm"
-              >
-                Produtos
-              </Link>
-              <Link
-                href="/categorias"
-                className="text-muted-foreground hover:text-foreground text-sm"
-              >
-                Categorias
-              </Link>
-            </>
-          )}
-          {podeVerEstoque && (
-            <Link href="/estoque" className="text-muted-foreground hover:text-foreground text-sm">
-              Estoque
-            </Link>
-          )}
-          {podeVerClientes && (
-            <Link href="/clientes" className="text-muted-foreground hover:text-foreground text-sm">
-              Clientes
-            </Link>
-          )}
-          {podeVerFornecedores && (
-            <Link
-              href="/fornecedores"
-              className="text-muted-foreground hover:text-foreground text-sm"
-            >
-              Fornecedores
-            </Link>
-          )}
-          {podeVerOrcamentos && (
-            <Link
-              href="/orcamentos"
-              className="text-muted-foreground hover:text-foreground text-sm"
-            >
-              Orçamentos
-            </Link>
-          )}
-          {podeVerVendas && (
-            <>
-              <Link href="/pdv" className="text-muted-foreground hover:text-foreground text-sm">
-                PDV
-              </Link>
-              <Link href="/vendas" className="text-muted-foreground hover:text-foreground text-sm">
-                Vendas
-              </Link>
-            </>
-          )}
-          {podeVerCaixa && (
-            <Link href="/caixa" className="text-muted-foreground hover:text-foreground text-sm">
-              Caixa
-            </Link>
-          )}
-          {podeVerFinanceiro && (
-            <Link
-              href="/financeiro/contas-receber"
-              className="text-muted-foreground hover:text-foreground text-sm"
-            >
-              Financeiro
-            </Link>
-          )}
-          {podeGerenciarUsuarios && (
-            <Link href="/usuarios" className="text-muted-foreground hover:text-foreground text-sm">
-              Usuários
-            </Link>
-          )}
-        </nav>
-        <LogoutButton />
-      </header>
-      <main className="p-6">{children}</main>
-    </div>
+    <AppShell user={{ nome: me.nome ?? 'Usuário', papel }} nav={groups}>
+      {children}
+    </AppShell>
   );
 }

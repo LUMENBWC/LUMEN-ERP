@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { buttonVariants, Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { PageHeader } from '@/components/page-header';
+import { ErrorState, LoadingState } from '@/components/states';
 import {
   Select,
   SelectContent,
@@ -33,12 +35,14 @@ export function OrcamentosList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Orçamentos</h1>
-        <Link href="/orcamentos/novo" className={buttonVariants()}>
-          Novo orçamento
-        </Link>
-      </div>
+      <PageHeader
+        title="Orçamentos"
+        action={
+          <Link href="/orcamentos/novo" className={buttonVariants()}>
+            Novo orçamento
+          </Link>
+        }
+      />
 
       <div className="flex flex-wrap items-center gap-3">
         <Select
@@ -65,20 +69,18 @@ export function OrcamentosList() {
         </Select>
       </div>
 
-      {isError && (
-        <p className="text-destructive text-sm">Não foi possível carregar os orçamentos.</p>
-      )}
-      {isLoading && <p className="text-muted-foreground text-sm">Carregando...</p>}
+      {isError && <ErrorState message="Não foi possível carregar os orçamentos." />}
+      {isLoading && <LoadingState />}
 
       {data && (
         <>
-          <div className="rounded-lg border">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Cliente</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Total</TableHead>
+                  <TableHead className="text-right">Total</TableHead>
                   <TableHead>Válido até</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
@@ -99,7 +101,12 @@ export function OrcamentosList() {
                         {STATUS_LABEL[orcamento.status]}
                       </Badge>
                     </TableCell>
-                    <TableCell>{orcamento.total}</TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {Number(orcamento.total).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })}
+                    </TableCell>
                     <TableCell>
                       {orcamento.validade
                         ? new Date(orcamento.validade).toLocaleDateString('pt-BR')

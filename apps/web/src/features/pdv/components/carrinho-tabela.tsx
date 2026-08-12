@@ -21,15 +21,15 @@ export function CarrinhoTabela() {
   }
 
   return (
-    <div className="rounded-lg border">
+    <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Produto</TableHead>
             <TableHead className="w-24">Qtd.</TableHead>
-            <TableHead className="w-32">Preço unit.</TableHead>
-            <TableHead className="w-32">Desconto</TableHead>
-            <TableHead className="w-28">Total</TableHead>
+            <TableHead className="w-32 text-right">Preço unit.</TableHead>
+            <TableHead className="w-32 text-right">Desconto</TableHead>
+            <TableHead className="w-28 text-right">Total</TableHead>
             <TableHead className="w-10" />
           </TableRow>
         </TableHeader>
@@ -74,7 +74,9 @@ export function CarrinhoTabela() {
                     }
                   />
                 </TableCell>
-                <TableCell className="text-sm">{total.toFixed(2)}</TableCell>
+                <TableCell className="text-right text-sm tabular-nums">
+                  {total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                </TableCell>
                 <TableCell>
                   <button
                     type="button"

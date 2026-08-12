@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
+import { PageHeader } from '@/components/page-header';
+import { ErrorState, LoadingState } from '@/components/states';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -41,12 +43,14 @@ export function UsuariosList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Usuários</h1>
-        <Link href="/usuarios/novo" className={buttonVariants()}>
-          Novo usuário
-        </Link>
-      </div>
+      <PageHeader
+        title="Usuários"
+        action={
+          <Link href="/usuarios/novo" className={buttonVariants()}>
+            Novo usuário
+          </Link>
+        }
+      />
 
       <div className="flex flex-wrap gap-3">
         <Input
@@ -95,14 +99,12 @@ export function UsuariosList() {
         </Select>
       </div>
 
-      {isError && (
-        <p className="text-destructive text-sm">Não foi possível carregar os usuários.</p>
-      )}
-      {isLoading && <p className="text-muted-foreground text-sm">Carregando...</p>}
+      {isError && <ErrorState message="Não foi possível carregar os usuários." />}
+      {isLoading && <LoadingState />}
 
       {data && (
         <>
-          <div className="rounded-lg border">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>

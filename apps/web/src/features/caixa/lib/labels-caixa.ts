@@ -5,8 +5,8 @@ export const STATUS_LABEL: Record<StatusCaixaSessao, string> = {
   FECHADO: 'Fechado',
 };
 
-export const STATUS_VARIANT: Record<StatusCaixaSessao, 'default' | 'secondary'> = {
-  ABERTO: 'default',
+export const STATUS_VARIANT: Record<StatusCaixaSessao, 'success' | 'secondary'> = {
+  ABERTO: 'success',
   FECHADO: 'secondary',
 };
 

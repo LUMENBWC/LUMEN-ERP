@@ -1,6 +1,8 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
+import { PageHeader } from '@/components/page-header';
+import { Card } from '@/components/ui/card';
+import { Tag } from '@/components/ui/tag';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -32,24 +34,21 @@ export function PdvPage() {
     0,
   );
   const total = Math.max(subtotal - descontoGeral, 0);
+  const moeda = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">PDV — Frente de caixa</h1>
-        {!caixaCarregando && (
-          <div className="flex items-center gap-2">
-            {caixa ? (
-              <Badge variant="default">Caixa aberto — R$ {caixa.valorAbertura}</Badge>
-            ) : (
-              <>
-                <Badge variant="destructive">Caixa fechado</Badge>
-                <AbrirCaixaDialog />
-              </>
-            )}
-          </div>
-        )}
-      </div>
+      <PageHeader title="PDV — Frente de caixa">
+        {!caixaCarregando &&
+          (caixa ? (
+            <Tag variant="success">Caixa aberto — {moeda(Number(caixa.valorAbertura))}</Tag>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Tag variant="error">Caixa fechado</Tag>
+              <AbrirCaixaDialog />
+            </div>
+          ))}
+      </PageHeader>
 
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
@@ -101,16 +100,16 @@ export function PdvPage() {
             />
           </div>
 
-          <div className="bg-muted space-y-2 rounded-lg border p-4 text-sm">
+          <Card elevation="sm" className="gap-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Subtotal</span>
-              <span>R$ {subtotal.toFixed(2)}</span>
+              <span className="tabular-nums">{moeda(subtotal)}</span>
             </div>
-            <div className="flex justify-between text-lg font-semibold">
+            <div className="font-heading flex justify-between text-xl font-semibold">
               <span>Total</span>
-              <span>R$ {total.toFixed(2)}</span>
+              <span className="tabular-nums">{moeda(total)}</span>
             </div>
-          </div>
+          </Card>
 
           <FinalizarVendaDialog total={total} />
         </div>

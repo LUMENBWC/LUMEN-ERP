@@ -4,12 +4,21 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+  LUMEN ERP — Design System "Industry" (Claude Design).
+  Tokens portados de theme.json + styles.css (design-system) + lumen-extensions.css.
+  Estética "blueprint": canto vivo (radius ~0), borda hairline, superfícies chapadas,
+  tipografia Barlow / Barlow Condensed, accent azul-industrial.
+  A camada shadcn/ui continua consumindo os mesmos nomes de token — só mudam os valores.
+*/
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-heading);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -27,8 +36,18 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-soft: var(--brand-soft);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -39,82 +58,140 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-lg);
+  --radius-2xl: var(--radius-lg);
+  --radius-3xl: var(--radius-lg);
+  --radius-4xl: var(--radius-lg);
+  --shadow-sm: var(--elev-sm);
+  --shadow-md: var(--elev-md);
+  --shadow-lg: var(--elev-lg);
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Base — Industry (light) */
+  --background: #f2f2f3;
+  --foreground: #1d1f20;
+  --surface: #e9e9ea;
+
+  --card: #e9e9ea;
+  --card-foreground: #1d1f20;
+  --popover: #e9e9ea;
+  --popover-foreground: #1d1f20;
+
+  /* Accent industrial (azul-acinzentado) usado como "primary" */
+  --primary: #5980a6;
+  --primary-foreground: #f2f2f3;
+  --brand: #5980a6;
+  --brand-foreground: #f2f2f3;
+  --brand-soft: #eef6ff; /* accent-100 */
+  --brand-strong: #2c455d; /* accent-800 */
+
+  --secondary: #e0e0e2;
+  --secondary-foreground: #1d1f20;
+  --muted: #e9e9ea;
+  --muted-foreground: color-mix(in srgb, #1d1f20 55%, transparent);
+  /* accent no shadcn = cor de hover/seleção neutra, não a marca */
+  --accent: color-mix(in srgb, #1d1f20 7%, transparent);
+  --accent-foreground: #1d1f20;
+
+  /* Semânticas funcionais (lumen-extensions) */
+  --destructive: #b1524a;
+  --destructive-foreground: #6b2822;
+  --success: #4d8a68;
+  --success-foreground: #24462f;
+  --warning: #a97b3d;
+  --warning-foreground: #5c3f18;
+  --info: #5980a6;
+  --info-foreground: #2c455d;
+
+  --border: color-mix(in srgb, #1d1f20 16%, transparent);
+  --input: color-mix(in srgb, #1d1f20 16%, transparent);
+  --ring: #5980a6;
+
+  --chart-1: #5980a6;
+  --chart-2: #728fab;
+  --chart-3: #4d8a68;
+  --chart-4: #a97b3d;
+  --chart-5: #b1524a;
+
+  /* Blueprint: canto vivo. Mantemos um radius mínimo para foco/anéis. */
+  --radius: 2px;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 3px;
+
+  --elev-sm: 0 1px 2px color-mix(in srgb, #2b2b2d 14%, transparent);
+  --elev-md: 0 3px 10px color-mix(in srgb, #2b2b2d 16%, transparent);
+  --elev-lg: 0 12px 32px color-mix(in srgb, #2b2b2d 22%, transparent);
+
+  --sidebar: #e9e9ea;
+  --sidebar-foreground: #1d1f20;
+  --sidebar-primary: #5980a6;
+  --sidebar-primary-foreground: #f2f2f3;
+  --sidebar-accent: color-mix(in srgb, #1d1f20 6%, transparent);
+  --sidebar-accent-foreground: #1d1f20;
+  --sidebar-border: color-mix(in srgb, #1d1f20 16%, transparent);
+  --sidebar-ring: #5980a6;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #1b1c1e;
+  --foreground: #f1f1f2;
+  --surface: #232426;
+
+  --card: #232426;
+  --card-foreground: #f1f1f2;
+  --popover: #232426;
+  --popover-foreground: #f1f1f2;
+
+  --primary: #5980a6;
+  --primary-foreground: #10171e;
+  --brand: #5980a6;
+  --brand-foreground: #10171e;
+  --brand-soft: color-mix(in srgb, #5980a6 24%, transparent);
+  --brand-strong: #cfe3f5;
+
+  --secondary: #2b2c2f;
+  --secondary-foreground: #f1f1f2;
+  --muted: #2b2c2f;
+  --muted-foreground: color-mix(in srgb, #f1f1f2 55%, transparent);
+  --accent: color-mix(in srgb, #ffffff 8%, transparent);
+  --accent-foreground: #f1f1f2;
+
+  --destructive: #b1524a;
+  --destructive-foreground: #e5978d;
+  --success: #4d8a68;
+  --success-foreground: #8fd1a8;
+  --warning: #a97b3d;
+  --warning-foreground: #e0b56e;
+  --info: #5980a6;
+  --info-foreground: #cfe3f5;
+
+  --border: color-mix(in srgb, #ffffff 16%, transparent);
+  --input: color-mix(in srgb, #ffffff 16%, transparent);
+  --ring: #5980a6;
+
+  --chart-1: #5980a6;
+  --chart-2: #728fab;
+  --chart-3: #8fd1a8;
+  --chart-4: #e0b56e;
+  --chart-5: #e5978d;
+
+  --elev-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --elev-md: 0 3px 12px rgba(0, 0, 0, 0.55);
+  --elev-lg: 0 12px 34px rgba(0, 0, 0, 0.6);
+
+  --sidebar: #232426;
+  --sidebar-foreground: #f1f1f2;
+  --sidebar-primary: #5980a6;
+  --sidebar-primary-foreground: #10171e;
+  --sidebar-accent: color-mix(in srgb, #ffffff 8%, transparent);
+  --sidebar-accent-foreground: #f1f1f2;
+  --sidebar-border: color-mix(in srgb, #ffffff 16%, transparent);
+  --sidebar-ring: #5980a6;
 }
 
 @layer base {
@@ -123,8 +200,81 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "cv11";
   }
   html {
     @apply font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.015em;
+    line-height: 1.12;
+  }
+}
+
+/*
+  Frame "blueprint" — marcas de registro nos 4 cantos, portadas do design-system.
+  Uso: um contêiner `position:relative` com a classe `.blueprint` e quatro
+  `<i class="corner tl|tr|bl|br" />` (ver componente <Corners/>).
+*/
+@layer components {
+  .blueprint {
+    position: relative;
+  }
+  .blueprint > .corner {
+    position: absolute;
+    width: 11px;
+    height: 11px;
+    color: color-mix(in srgb, var(--foreground) 55%, transparent);
+    pointer-events: none;
+  }
+  .blueprint > .corner::before,
+  .blueprint > .corner::after {
+    content: "";
+    position: absolute;
+    background: currentColor;
+  }
+  .blueprint > .corner::before {
+    left: 5px;
+    top: 0;
+    width: 1px;
+    height: 100%;
+  }
+  .blueprint > .corner::after {
+    top: 5px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+  }
+  .blueprint > .corner.tl {
+    top: -6px;
+    left: -6px;
+  }
+  .blueprint > .corner.tr {
+    top: -6px;
+    right: -6px;
+  }
+  .blueprint > .corner.bl {
+    bottom: -6px;
+    left: -6px;
+  }
+  .blueprint > .corner.br {
+    bottom: -6px;
+    right: -6px;
+  }
+}
+
+@media print {
+  .lumen-noprint {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
   }
 }
