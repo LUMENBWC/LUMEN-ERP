@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { PageHeader } from '@/components/page-header';
 import { useCriarCliente } from '../api/clientes.queries';
 import type { CriarClienteInput } from '../schemas/cliente.schema';
 import { ClienteForm } from './cliente-form';
@@ -16,7 +17,7 @@ export function CriarClientePage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold">Novo cliente</h1>
+      <PageHeader title="Novo cliente" />
       <ClienteForm
         onSubmit={handleSubmit}
         submitLabel="Criar cliente"

@@ -84,7 +84,7 @@ export function FecharCaixaDialog({
               <p className="text-destructive text-xs">{errors.valorFechamentoInformado.message}</p>
             )}
           </div>
-          <div className="bg-muted flex items-center justify-between rounded-lg border p-3 text-sm">
+          <div className="border-border flex items-center justify-between border p-3 text-sm">
             <span>Diferença</span>
             <span
               className={

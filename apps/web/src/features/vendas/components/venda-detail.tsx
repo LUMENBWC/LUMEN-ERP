@@ -1,8 +1,10 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { PageHeader } from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ErrorState, LoadingState } from '@/components/states';
 import {
   Table,
   TableBody,
@@ -19,37 +21,33 @@ export function VendaDetail({ vendaId }: { vendaId: string }) {
   const { data: venda, isLoading, isError } = useVenda(vendaId);
   const cancelarVenda = useCancelarVenda(vendaId);
 
-  if (isLoading) return <p className="text-muted-foreground text-sm">Carregando...</p>;
-  if (isError || !venda) return <p className="text-destructive text-sm">Venda não encontrada.</p>;
+  if (isLoading) return <LoadingState />;
+  if (isError || !venda) return <ErrorState message="Venda não encontrada." />;
 
   const cancelavel = venda.status === 'CONCLUIDA';
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold">
-            Venda — {venda.clienteNome ?? 'Consumidor final'}
-          </h1>
-          <Badge variant={STATUS_VARIANT[venda.status]} className="mt-1">
-            {STATUS_LABEL[venda.status]}
-          </Badge>
-        </div>
-        {cancelavel && (
-          <Button
-            type="button"
-            variant="outline"
-            className="text-destructive"
-            disabled={cancelarVenda.isPending}
-            onClick={() => cancelarVenda.mutate(undefined, { onSuccess: () => router.refresh() })}
-          >
-            {cancelarVenda.isPending ? 'Cancelando...' : 'Cancelar venda'}
-          </Button>
-        )}
-      </div>
+      <PageHeader
+        title={`Venda — ${venda.clienteNome ?? 'Consumidor final'}`}
+        action={
+          cancelavel && (
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={cancelarVenda.isPending}
+              onClick={() => cancelarVenda.mutate(undefined, { onSuccess: () => router.refresh() })}
+            >
+              {cancelarVenda.isPending ? 'Cancelando...' : 'Cancelar venda'}
+            </Button>
+          )
+        }
+      >
+        <Badge variant={STATUS_VARIANT[venda.status]}>{STATUS_LABEL[venda.status]}</Badge>
+      </PageHeader>
 
       <div className="max-w-3xl space-y-4">
-        <div className="rounded-lg border">
+        <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -74,24 +72,36 @@ export function VendaDetail({ vendaId }: { vendaId: string }) {
           </Table>
         </div>
 
-        <div className="bg-muted flex gap-6 rounded-lg border p-4 text-sm">
+        <div className="border-border flex flex-wrap gap-x-8 gap-y-4 border p-4 text-sm">
           <div>
             <div className="text-muted-foreground">Subtotal</div>
-            <div className="text-lg font-semibold">{venda.subtotal}</div>
+            <div className="text-lg font-semibold tabular-nums">
+              {Number(venda.subtotal).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}
+            </div>
           </div>
           <div>
             <div className="text-muted-foreground">Desconto geral</div>
-            <div className="text-lg font-semibold">{venda.descontoGeral}</div>
+            <div className="text-lg font-semibold tabular-nums">
+              {Number(venda.descontoGeral).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}
+            </div>
           </div>
           <div>
             <div className="text-muted-foreground">Total</div>
-            <div className="text-lg font-semibold">{venda.total}</div>
+            <div className="text-lg font-semibold tabular-nums">
+              {Number(venda.total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            </div>
           </div>
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-sm font-medium">Pagamentos</h2>
-          <div className="rounded-lg border">
+          <h5 className="font-heading text-base font-semibold">Pagamentos</h5>
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>

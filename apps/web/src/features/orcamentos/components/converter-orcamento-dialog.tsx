@@ -179,7 +179,7 @@ export function ConverterOrcamentoDialog({
             )}
           </div>
 
-          <div className="bg-muted flex items-center justify-between rounded-lg border p-3 text-sm">
+          <div className="border-border flex items-center justify-between border p-3 text-sm">
             <span>Soma dos pagamentos</span>
             <span className={divergente ? 'text-destructive font-semibold' : 'font-semibold'}>
               R$ {somaPagamentos.toFixed(2)} / R$ {total.toFixed(2)}

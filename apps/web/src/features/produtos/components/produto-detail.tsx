@@ -1,5 +1,8 @@
 'use client';
 
+import { PageHeader } from '@/components/page-header';
+import { Card, CardKicker, CardValue } from '@/components/ui/card';
+import { ErrorState, LoadingState } from '@/components/states';
 import { Switch } from '@/components/ui/switch';
 import { ProdutoHistoricoEstoque } from '@/features/estoque/components/produto-historico-estoque';
 import { useAtualizarProduto, useDefinirAtivoProduto, useProduto } from '../api/produtos.queries';
@@ -12,9 +15,8 @@ export function ProdutoDetail({ produtoId }: { produtoId: string }) {
   const atualizarProduto = useAtualizarProduto(produtoId);
   const definirAtivo = useDefinirAtivoProduto(produtoId);
 
-  if (isLoading) return <p className="text-muted-foreground text-sm">Carregando...</p>;
-  if (isError || !produto)
-    return <p className="text-destructive text-sm">Produto não encontrado.</p>;
+  if (isLoading) return <LoadingState />;
+  if (isError || !produto) return <ErrorState message="Produto não encontrado." />;
 
   async function handleSubmit(input: CriarProdutoInput) {
     await atualizarProduto.mutateAsync(input);
@@ -22,37 +24,37 @@ export function ProdutoDetail({ produtoId }: { produtoId: string }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{produto.nome}</h1>
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground text-sm">Ativo</span>
-          <Switch
-            checked={produto.ativo}
-            disabled={definirAtivo.isPending}
-            onCheckedChange={(checked) => definirAtivo.mutate(checked)}
-          />
-        </div>
-      </div>
+      <PageHeader
+        title={produto.nome}
+        action={
+          <>
+            <span className="text-muted-foreground text-sm">Ativo</span>
+            <Switch
+              checked={produto.ativo}
+              disabled={definirAtivo.isPending}
+              onCheckedChange={(checked) => definirAtivo.mutate(checked)}
+            />
+          </>
+        }
+      />
 
-      <div className="bg-muted flex gap-6 rounded-lg border p-4 text-sm">
-        <div>
-          <div className="text-muted-foreground">Margem de lucro atual</div>
-          <div className="text-lg font-semibold">
-            {(Number(produto.margemLucro) * 100).toFixed(1)}%
-          </div>
-        </div>
-        <div>
-          <div className="text-muted-foreground">Estoque atual</div>
-          <div className="text-lg font-semibold">
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3">
+        <Card>
+          <CardKicker>Margem de lucro atual</CardKicker>
+          <CardValue>{(Number(produto.margemLucro) * 100).toFixed(1)}%</CardValue>
+        </Card>
+        <Card>
+          <CardKicker>Estoque atual</CardKicker>
+          <CardValue>
             {produto.estoqueAtual} {produto.unidadeMedida}
-          </div>
-        </div>
-        <div>
-          <div className="text-muted-foreground">Lucro por unidade</div>
-          <div className="text-lg font-semibold">
+          </CardValue>
+        </Card>
+        <Card>
+          <CardKicker>Lucro por unidade</CardKicker>
+          <CardValue>
             {formatarMoeda(String(Number(produto.precoVenda) - Number(produto.precoCusto)))}
-          </div>
-        </div>
+          </CardValue>
+        </Card>
       </div>
 
       <ProdutoForm

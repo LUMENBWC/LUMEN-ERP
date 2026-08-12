@@ -18,7 +18,7 @@ export function MovimentosTabela({ movimentos }: { movimentos: MovimentoCaixaRes
   }
 
   return (
-    <div className="rounded-lg border">
+    <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>

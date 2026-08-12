@@ -1,5 +1,6 @@
 'use client';
 
+import { LoadingState } from '@/components/states';
 import {
   Table,
   TableBody,
@@ -20,10 +21,10 @@ export function FornecedorHistoricoCompras({ fornecedorId }: { fornecedorId: str
 
   return (
     <div className="space-y-2">
-      <h2 className="text-sm font-medium">Histórico de compras</h2>
-      {isLoading && <p className="text-muted-foreground text-sm">Carregando...</p>}
+      <h5 className="font-heading text-base font-semibold">Histórico de compras</h5>
+      {isLoading && <LoadingState />}
       {data && (
-        <div className="rounded-lg border">
+        <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

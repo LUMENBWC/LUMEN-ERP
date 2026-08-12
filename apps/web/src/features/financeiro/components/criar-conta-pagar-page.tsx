@@ -4,7 +4,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -55,93 +57,103 @@ export function CriarContaPagarPage() {
   return (
     <div className="space-y-4">
       <FinanceiroNav />
-      <h1 className="text-xl font-semibold">Nova conta a pagar</h1>
+      <PageHeader title="Nova conta a pagar" />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl space-y-4">
-        <div className="space-y-1">
-          <Label htmlFor="descricao">Descrição</Label>
-          <Input id="descricao" {...register('descricao')} />
-          {errors.descricao && (
-            <p className="text-destructive text-xs">{errors.descricao.message}</p>
+      <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl">
+        <Card className="gap-4 p-5">
+          <div className="space-y-1">
+            <Label htmlFor="descricao">Descrição</Label>
+            <Input id="descricao" {...register('descricao')} />
+            {errors.descricao && (
+              <p className="text-destructive text-xs">{errors.descricao.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="fornecedorId">Fornecedor (opcional)</Label>
+            <Select
+              items={[
+                { value: 'nenhum', label: 'Nenhum' },
+                ...(fornecedores?.items ?? []).map((f) => ({ value: f.id, label: f.nome })),
+              ]}
+              value={fornecedorId ?? 'nenhum'}
+              onValueChange={(v) => setValue('fornecedorId', v === 'nenhum' || !v ? null : v)}
+            >
+              <SelectTrigger id="fornecedorId" className="w-full">
+                <SelectValue placeholder="Nenhum" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="nenhum">Nenhum</SelectItem>
+                {fornecedores?.items.map((f) => (
+                  <SelectItem key={f.id} value={f.id}>
+                    {f.nome}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="categoriaDespesaId">Categoria de despesa (opcional)</Label>
+            <Select
+              items={[
+                { value: 'nenhuma', label: 'Nenhuma' },
+                ...(categorias ?? []).map((c) => ({ value: c.id, label: c.nome })),
+              ]}
+              value={categoriaDespesaId ?? 'nenhuma'}
+              onValueChange={(v) =>
+                setValue('categoriaDespesaId', v === 'nenhuma' || !v ? null : v)
+              }
+            >
+              <SelectTrigger id="categoriaDespesaId" className="w-full">
+                <SelectValue placeholder="Nenhuma" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="nenhuma">Nenhuma</SelectItem>
+                {categorias?.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.nome}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="valorTotal">Valor</Label>
+              <Input
+                id="valorTotal"
+                type="number"
+                step="0.01"
+                min="0"
+                {...register('valorTotal')}
+              />
+              {errors.valorTotal && (
+                <p className="text-destructive text-xs">{errors.valorTotal.message}</p>
+              )}
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="vencimento">Vencimento</Label>
+              <Input id="vencimento" type="date" {...register('vencimento')} />
+              {errors.vencimento && (
+                <p className="text-destructive text-xs">{errors.vencimento.message}</p>
+              )}
+            </div>
+          </div>
+
+          {criarContaPagar.error && (
+            <p className="text-destructive text-sm">
+              {criarContaPagar.error instanceof ApiError
+                ? criarContaPagar.error.message
+                : 'Erro ao criar conta a pagar.'}
+            </p>
           )}
-        </div>
 
-        <div className="space-y-1">
-          <Label htmlFor="fornecedorId">Fornecedor (opcional)</Label>
-          <Select
-            items={[
-              { value: 'nenhum', label: 'Nenhum' },
-              ...(fornecedores?.items ?? []).map((f) => ({ value: f.id, label: f.nome })),
-            ]}
-            value={fornecedorId ?? 'nenhum'}
-            onValueChange={(v) => setValue('fornecedorId', v === 'nenhum' || !v ? null : v)}
-          >
-            <SelectTrigger id="fornecedorId" className="w-full">
-              <SelectValue placeholder="Nenhum" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="nenhum">Nenhum</SelectItem>
-              {fornecedores?.items.map((f) => (
-                <SelectItem key={f.id} value={f.id}>
-                  {f.nome}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-1">
-          <Label htmlFor="categoriaDespesaId">Categoria de despesa (opcional)</Label>
-          <Select
-            items={[
-              { value: 'nenhuma', label: 'Nenhuma' },
-              ...(categorias ?? []).map((c) => ({ value: c.id, label: c.nome })),
-            ]}
-            value={categoriaDespesaId ?? 'nenhuma'}
-            onValueChange={(v) => setValue('categoriaDespesaId', v === 'nenhuma' || !v ? null : v)}
-          >
-            <SelectTrigger id="categoriaDespesaId" className="w-full">
-              <SelectValue placeholder="Nenhuma" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="nenhuma">Nenhuma</SelectItem>
-              {categorias?.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.nome}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <Label htmlFor="valorTotal">Valor</Label>
-            <Input id="valorTotal" type="number" step="0.01" min="0" {...register('valorTotal')} />
-            {errors.valorTotal && (
-              <p className="text-destructive text-xs">{errors.valorTotal.message}</p>
-            )}
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="vencimento">Vencimento</Label>
-            <Input id="vencimento" type="date" {...register('vencimento')} />
-            {errors.vencimento && (
-              <p className="text-destructive text-xs">{errors.vencimento.message}</p>
-            )}
-          </div>
-        </div>
-
-        {criarContaPagar.error && (
-          <p className="text-destructive text-sm">
-            {criarContaPagar.error instanceof ApiError
-              ? criarContaPagar.error.message
-              : 'Erro ao criar conta a pagar.'}
-          </p>
-        )}
-
-        <Button type="submit" disabled={criarContaPagar.isPending}>
-          {criarContaPagar.isPending ? 'Criando...' : 'Criar conta a pagar'}
-        </Button>
+          <Button type="submit" disabled={criarContaPagar.isPending}>
+            {criarContaPagar.isPending ? 'Criando...' : 'Criar conta a pagar'}
+          </Button>
+        </Card>
       </form>
     </div>
   );

@@ -40,7 +40,7 @@ export function ProdutoBusca() {
         autoFocus
       />
       {data && data.items.length > 0 && (
-        <div className="max-h-64 overflow-y-auto rounded-lg border">
+        <div className="border-border max-h-64 overflow-y-auto border">
           {data.items.map((produto) => (
             <button
               key={produto.id}

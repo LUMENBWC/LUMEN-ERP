@@ -15,6 +15,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { PageHeader } from '@/components/page-header';
+import { ErrorState, LoadingState } from '@/components/states';
 import { ApiError } from '@/lib/api/client';
 import {
   useAtribuirPapel,
@@ -29,19 +31,20 @@ import { atualizarUsuarioSchema, type AtualizarUsuarioInput } from '../schemas/u
 export function UsuarioDetail({ usuarioId }: { usuarioId: string }) {
   const { data: usuario, isLoading, isError } = useUsuario(usuarioId);
 
-  if (isLoading) return <p className="text-muted-foreground text-sm">Carregando...</p>;
-  if (isError || !usuario)
-    return <p className="text-destructive text-sm">Usuário não encontrado.</p>;
+  if (isLoading) return <LoadingState />;
+  if (isError || !usuario) return <ErrorState message="Usuário não encontrado." />;
 
   return (
     <div className="max-w-lg space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{usuario.nome}</h1>
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground text-sm">Ativo</span>
-          <AtivoSwitch usuarioId={usuarioId} ativo={usuario.ativo} />
-        </div>
-      </div>
+      <PageHeader
+        title={usuario.nome}
+        action={
+          <>
+            <span className="text-muted-foreground text-sm">Ativo</span>
+            <AtivoSwitch usuarioId={usuarioId} ativo={usuario.ativo} />
+          </>
+        }
+      />
 
       <DadosForm usuarioId={usuarioId} nome={usuario.nome} email={usuario.email} />
 

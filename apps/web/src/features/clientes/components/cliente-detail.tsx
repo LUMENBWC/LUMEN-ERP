@@ -1,5 +1,7 @@
 'use client';
 
+import { PageHeader } from '@/components/page-header';
+import { ErrorState, LoadingState } from '@/components/states';
 import { Switch } from '@/components/ui/switch';
 import { useAtualizarCliente, useCliente, useDefinirAtivoCliente } from '../api/clientes.queries';
 import type { CriarClienteInput } from '../schemas/cliente.schema';
@@ -11,9 +13,8 @@ export function ClienteDetail({ clienteId }: { clienteId: string }) {
   const atualizarCliente = useAtualizarCliente(clienteId);
   const definirAtivo = useDefinirAtivoCliente(clienteId);
 
-  if (isLoading) return <p className="text-muted-foreground text-sm">Carregando...</p>;
-  if (isError || !cliente)
-    return <p className="text-destructive text-sm">Cliente não encontrado.</p>;
+  if (isLoading) return <LoadingState />;
+  if (isError || !cliente) return <ErrorState message="Cliente não encontrado." />;
 
   async function handleSubmit(input: CriarClienteInput) {
     await atualizarCliente.mutateAsync(input);
@@ -21,17 +22,19 @@ export function ClienteDetail({ clienteId }: { clienteId: string }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{cliente.nome}</h1>
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground text-sm">Ativo</span>
-          <Switch
-            checked={cliente.ativo}
-            disabled={definirAtivo.isPending}
-            onCheckedChange={(checked) => definirAtivo.mutate(checked)}
-          />
-        </div>
-      </div>
+      <PageHeader
+        title={cliente.nome}
+        action={
+          <>
+            <span className="text-muted-foreground text-sm">Ativo</span>
+            <Switch
+              checked={cliente.ativo}
+              disabled={definirAtivo.isPending}
+              onCheckedChange={(checked) => definirAtivo.mutate(checked)}
+            />
+          </>
+        }
+      />
 
       <ClienteForm
         defaultValues={{

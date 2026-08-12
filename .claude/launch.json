@@ -1,11 +1,7 @@
 {
   "version": "0.0.1",
   "configurations": [
-    {
-      "name": "web",
-      "runtimeExecutable": "corepack",
-      "runtimeArgs": ["pnpm", "--filter", "@erp/web", "exec", "next", "dev", "--turbopack", "-p", "3100"],
-      "port": 3100
-    }
+    { "name": "web", "runtimeExecutable": "corepack", "runtimeArgs": ["pnpm", "--filter", "@erp/web", "exec", "next", "dev", "--turbopack", "-p", "3100"], "port": 3100 },
+    { "name": "preview", "runtimeExecutable": "corepack", "runtimeArgs": ["pnpm", "dlx", "serve", "-l", "4180", "/private/tmp/claude-501/-Users-erick-Documents-LUMEN-LUMEN-ERP/953618a9-d474-45d6-a93b-6f427d50d1e5/scratchpad"], "port": 4180 }
   ]
 }

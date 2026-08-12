@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { PageHeader } from '@/components/page-header';
 import { useCriarProduto } from '../api/produtos.queries';
 import type { CriarProdutoInput } from '../schemas/produto.schema';
 import { ProdutoForm } from './produto-form';
@@ -16,7 +17,7 @@ export function CriarProdutoPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold">Novo produto</h1>
+      <PageHeader title="Novo produto" />
       <ProdutoForm
         onSubmit={handleSubmit}
         submitLabel="Criar produto"

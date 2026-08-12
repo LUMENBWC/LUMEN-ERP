@@ -1,5 +1,7 @@
 'use client';
 
+import { PageHeader } from '@/components/page-header';
+import { ErrorState, LoadingState } from '@/components/states';
 import { Switch } from '@/components/ui/switch';
 import {
   useAtualizarFornecedor,
@@ -16,9 +18,8 @@ export function FornecedorDetail({ fornecedorId }: { fornecedorId: string }) {
   const atualizarFornecedor = useAtualizarFornecedor(fornecedorId);
   const definirAtivo = useDefinirAtivoFornecedor(fornecedorId);
 
-  if (isLoading) return <p className="text-muted-foreground text-sm">Carregando...</p>;
-  if (isError || !fornecedor)
-    return <p className="text-destructive text-sm">Fornecedor não encontrado.</p>;
+  if (isLoading) return <LoadingState />;
+  if (isError || !fornecedor) return <ErrorState message="Fornecedor não encontrado." />;
 
   async function handleSubmit(input: CriarFornecedorInput) {
     await atualizarFornecedor.mutateAsync(input);
@@ -26,17 +27,19 @@ export function FornecedorDetail({ fornecedorId }: { fornecedorId: string }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{fornecedor.nome}</h1>
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground text-sm">Ativo</span>
-          <Switch
-            checked={fornecedor.ativo}
-            disabled={definirAtivo.isPending}
-            onCheckedChange={(checked) => definirAtivo.mutate(checked)}
-          />
-        </div>
-      </div>
+      <PageHeader
+        title={fornecedor.nome}
+        action={
+          <>
+            <span className="text-muted-foreground text-sm">Ativo</span>
+            <Switch
+              checked={fornecedor.ativo}
+              disabled={definirAtivo.isPending}
+              onCheckedChange={(checked) => definirAtivo.mutate(checked)}
+            />
+          </>
+        }
+      />
 
       <FornecedorForm
         defaultValues={{

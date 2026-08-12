@@ -37,11 +37,11 @@ export function HistoricoComprasCliente({ clienteId }: { clienteId: string }) {
     <div className="space-y-6">
       {!vendas.isError && vendas.data && (
         <div className="space-y-2">
-          <h2 className="text-sm font-medium">Últimas vendas</h2>
+          <h5 className="font-heading text-base font-semibold">Últimas vendas</h5>
           {vendas.data.items.length === 0 ? (
             <p className="text-muted-foreground text-sm">Nenhuma venda deste cliente ainda.</p>
           ) : (
-            <div className="rounded-lg border">
+            <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -82,11 +82,11 @@ export function HistoricoComprasCliente({ clienteId }: { clienteId: string }) {
 
       {!orcamentos.isError && orcamentos.data && (
         <div className="space-y-2">
-          <h2 className="text-sm font-medium">Últimos orçamentos</h2>
+          <h5 className="font-heading text-base font-semibold">Últimos orçamentos</h5>
           {orcamentos.data.items.length === 0 ? (
             <p className="text-muted-foreground text-sm">Nenhum orçamento deste cliente ainda.</p>
           ) : (
-            <div className="rounded-lg border">
+            <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>

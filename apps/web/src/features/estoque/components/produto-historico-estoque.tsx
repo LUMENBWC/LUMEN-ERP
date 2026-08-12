@@ -1,6 +1,7 @@
 'use client';
 
 import { Badge } from '@/components/ui/badge';
+import { LoadingState } from '@/components/states';
 import {
   Table,
   TableBody,
@@ -31,10 +32,10 @@ export function ProdutoHistoricoEstoque({ produtoId }: { produtoId: string }) {
 
   return (
     <div className="space-y-2">
-      <h2 className="text-sm font-semibold">Histórico de movimentações</h2>
-      {isLoading && <p className="text-muted-foreground text-sm">Carregando...</p>}
+      <h5 className="font-heading text-base font-semibold">Histórico de movimentações</h5>
+      {isLoading && <LoadingState />}
       {data && (
-        <div className="rounded-lg border">
+        <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

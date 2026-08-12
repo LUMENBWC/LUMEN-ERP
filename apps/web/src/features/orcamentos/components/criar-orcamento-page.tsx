@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { PageHeader } from '@/components/page-header';
 import { useCriarOrcamento } from '../api/orcamentos.queries';
 import type { CriarOrcamentoInput } from '../schemas/orcamento.schema';
 import { OrcamentoForm } from './orcamento-form';
@@ -16,7 +17,7 @@ export function CriarOrcamentoPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold">Novo orçamento</h1>
+      <PageHeader title="Novo orçamento" />
       <OrcamentoForm
         onSubmit={handleSubmit}
         submitLabel="Criar orçamento"

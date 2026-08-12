@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { PageHeader } from '@/components/page-header';
 import { useCriarFornecedor } from '../api/fornecedores.queries';
 import type { CriarFornecedorInput } from '../schemas/fornecedor.schema';
 import { FornecedorForm } from './fornecedor-form';
@@ -16,7 +17,7 @@ export function CriarFornecedorPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold">Novo fornecedor</h1>
+      <PageHeader title="Novo fornecedor" />
       <FornecedorForm
         onSubmit={handleSubmit}
         submitLabel="Criar fornecedor"

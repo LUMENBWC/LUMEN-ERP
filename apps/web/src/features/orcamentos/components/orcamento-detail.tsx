@@ -1,8 +1,10 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { PageHeader } from '@/components/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ErrorState, LoadingState } from '@/components/states';
 import {
   Table,
   TableBody,
@@ -28,9 +30,8 @@ export function OrcamentoDetail({ orcamentoId }: { orcamentoId: string }) {
   const atualizarOrcamento = useAtualizarOrcamento(orcamentoId);
   const gerarPdf = useGerarPdfOrcamento(orcamentoId);
 
-  if (isLoading) return <p className="text-muted-foreground text-sm">Carregando...</p>;
-  if (isError || !orcamento)
-    return <p className="text-destructive text-sm">Orçamento não encontrado.</p>;
+  if (isLoading) return <LoadingState />;
+  if (isError || !orcamento) return <ErrorState message="Orçamento não encontrado." />;
 
   async function handleSubmit(input: CriarOrcamentoInput) {
     await atualizarOrcamento.mutateAsync(input);
@@ -54,32 +55,34 @@ export function OrcamentoDetail({ orcamentoId }: { orcamentoId: string }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold">Orçamento - {orcamento.clienteNome}</h1>
-          <Badge variant={STATUS_VARIANT[orcamento.status]} className="mt-1">
-            {STATUS_LABEL[orcamento.status]}
-          </Badge>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={gerarPdf.isPending}
-            onClick={handleBaixarPdf}
-          >
-            {gerarPdf.isPending ? 'Gerando PDF...' : 'Baixar PDF'}
-          </Button>
-          {orcamento.status === 'APROVADO' && (
-            <ConverterOrcamentoDialog orcamentoId={orcamento.id} total={Number(orcamento.total)} />
-          )}
-          <OrcamentoStatusActions
-            orcamento={orcamento}
-            onCancelled={() => router.push('/orcamentos')}
-          />
-        </div>
-      </div>
+      <PageHeader
+        title={`Orçamento — ${orcamento.clienteNome}`}
+        action={
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={gerarPdf.isPending}
+              onClick={handleBaixarPdf}
+            >
+              {gerarPdf.isPending ? 'Gerando PDF...' : 'Baixar PDF'}
+            </Button>
+            {orcamento.status === 'APROVADO' && (
+              <ConverterOrcamentoDialog
+                orcamentoId={orcamento.id}
+                total={Number(orcamento.total)}
+              />
+            )}
+            <OrcamentoStatusActions
+              orcamento={orcamento}
+              onCancelled={() => router.push('/orcamentos')}
+            />
+          </>
+        }
+      >
+        <Badge variant={STATUS_VARIANT[orcamento.status]}>{STATUS_LABEL[orcamento.status]}</Badge>
+      </PageHeader>
 
       {editavel ? (
         <OrcamentoForm
@@ -104,7 +107,7 @@ export function OrcamentoDetail({ orcamentoId }: { orcamentoId: string }) {
         />
       ) : (
         <div className="max-w-3xl space-y-4">
-          <div className="rounded-lg border">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -128,18 +131,33 @@ export function OrcamentoDetail({ orcamentoId }: { orcamentoId: string }) {
               </TableBody>
             </Table>
           </div>
-          <div className="bg-muted flex gap-6 rounded-lg border p-4 text-sm">
+          <div className="border-border flex flex-wrap gap-x-8 gap-y-4 border p-4 text-sm">
             <div>
               <div className="text-muted-foreground">Subtotal</div>
-              <div className="text-lg font-semibold">{orcamento.subtotal}</div>
+              <div className="text-lg font-semibold tabular-nums">
+                {Number(orcamento.subtotal).toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                })}
+              </div>
             </div>
             <div>
               <div className="text-muted-foreground">Desconto geral</div>
-              <div className="text-lg font-semibold">{orcamento.descontoGeral}</div>
+              <div className="text-lg font-semibold tabular-nums">
+                {Number(orcamento.descontoGeral).toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                })}
+              </div>
             </div>
             <div>
               <div className="text-muted-foreground">Total</div>
-              <div className="text-lg font-semibold">{orcamento.total}</div>
+              <div className="text-lg font-semibold tabular-nums">
+                {Number(orcamento.total).toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                })}
+              </div>
             </div>
           </div>
           {orcamento.observacoes && (
