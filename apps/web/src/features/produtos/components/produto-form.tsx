@@ -159,6 +159,29 @@ export function ProdutoForm({
           campo editável.
         </p>
 
+        <div className="border-border space-y-3 border-t pt-4">
+          <div>
+            <h6 className="text-sm font-medium">Dados fiscais</h6>
+            <p className="text-muted-foreground text-xs">
+              Opcionais. Usados na emissão de documento fiscal quando essa integração for ativada.
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-1">
+              <Label htmlFor="ncm">NCM</Label>
+              <Input id="ncm" placeholder="00000000" {...register('ncm')} />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="cfop">CFOP</Label>
+              <Input id="cfop" placeholder="5102" {...register('cfop')} />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="cst">CST</Label>
+              <Input id="cst" placeholder="00" {...register('cst')} />
+            </div>
+          </div>
+        </div>
+
         {!!error && (
           <p className="text-destructive text-sm">
             {error instanceof ApiError ? error.message : 'Erro ao salvar produto.'}

@@ -19,6 +19,7 @@ import { CarrinhoTabela } from './carrinho-tabela';
 import { FinalizarVendaDialog } from './finalizar-venda-dialog';
 import { ProdutoBusca } from './produto-busca';
 import { useCarrinho } from '../store/carrinho.store';
+import { formatarMoeda as moeda } from '@/lib/format';
 
 export function PdvPage() {
   const { data: caixa, isLoading: caixaCarregando } = useCaixaAtual();
@@ -34,7 +35,6 @@ export function PdvPage() {
     0,
   );
   const total = Math.max(subtotal - descontoGeral, 0);
-  const moeda = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
   return (
     <div className="space-y-4">

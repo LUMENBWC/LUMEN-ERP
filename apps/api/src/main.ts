@@ -7,6 +7,35 @@ import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 const API_PREFIX = 'api/v1';
 
+/**
+ * Origens permitidas para CORS, de `CORS_ORIGINS` (lista separada por vírgula).
+ *
+ * Em produção a variável é obrigatória: sem ela o boot falha, em vez de subir
+ * com `origin: *` silenciosamente. A autenticação é por `Authorization: Bearer`
+ * (não por cookie), então uma origem curinga não permite sequestro de sessão
+ * por si só - mas expõe a API a qualquer site e não há motivo para isso quando
+ * o front tem domínio conhecido.
+ */
+function resolveCorsOrigin(): string[] | boolean {
+  const origens = (process.env.CORS_ORIGINS ?? '')
+    .split(',')
+    .map((origem) => origem.trim())
+    .filter(Boolean);
+
+  if (origens.length > 0) {
+    return origens;
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(
+      'CORS_ORIGINS é obrigatória em produção - defina a(s) origem(ns) do front (ex.: https://app.lumen.com.br).',
+    );
+  }
+
+  // Dev: reflete a origem da requisição (equivale ao comportamento anterior).
+  return true;
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -17,7 +46,12 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   app.use(helmet());
-  app.enableCors();
+  app.enableCors({
+    origin: resolveCorsOrigin(),
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Authorization', 'Content-Type'],
+    maxAge: 86400,
+  });
   app.setGlobalPrefix(API_PREFIX);
   app.useGlobalPipes(
     new ValidationPipe({
@@ -28,14 +62,22 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('ERP SaaS API')
-    .setDescription('API do ERP SaaS multiempresa')
-    .setVersion('0.1.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup(`${API_PREFIX}/docs`, app, document);
+  // O Swagger publica o mapa completo de rotas, DTOs e permissões exigidas.
+  // Fica fora de produção por padrão; `ENABLE_SWAGGER=true` reabilita quando
+  // for realmente necessário depurar um ambiente publicado.
+  const swaggerHabilitado =
+    process.env.NODE_ENV !== 'production' || process.env.ENABLE_SWAGGER === 'true';
+
+  if (swaggerHabilitado) {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('LUMEN ERP API')
+      .setDescription('API do LUMEN ERP - ERP SaaS multiempresa')
+      .setVersion('0.1.0')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup(`${API_PREFIX}/docs`, app, document);
+  }
 
   const port = process.env.PORT ?? 3001;
   await app.listen(port);

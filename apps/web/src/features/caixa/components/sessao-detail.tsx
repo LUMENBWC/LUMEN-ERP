@@ -7,11 +7,7 @@ import { ErrorState, LoadingState } from '@/components/states';
 import { useSessaoCaixa } from '../api/caixa.queries';
 import { STATUS_LABEL, STATUS_VARIANT } from '../lib/labels-caixa';
 import { MovimentosTabela } from './movimentos-tabela';
-
-const moeda = (v: string | number | null | undefined) =>
-  v === null || v === undefined
-    ? '—'
-    : Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+import { formatarMoeda as moeda } from '@/lib/format';
 
 export function SessaoDetail({ sessaoId }: { sessaoId: string }) {
   const { data: sessao, isLoading, isError } = useSessaoCaixa(sessaoId);

@@ -13,6 +13,8 @@ function buildQuery(params: ListarVendasParams): string {
   search.set('perPage', String(params.perPage));
   if (params.clienteId) search.set('clienteId', params.clienteId);
   if (params.status) search.set('status', params.status);
+  if (params.dataInicio) search.set('dataInicio', params.dataInicio);
+  if (params.dataFim) search.set('dataFim', params.dataFim);
   if (params.sortBy) search.set('sortBy', params.sortBy);
   if (params.sortDir) search.set('sortDir', params.sortDir);
   return search.toString();

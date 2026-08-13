@@ -25,4 +25,10 @@ COPY --from=build /app/apps/api/package.json /app/apps/api/package.json
 
 WORKDIR /app/apps/api
 EXPOSE 3001
+
+# `/api/v1/health` é @Public() (não exige JWT), então serve como probe.
+# Usado pelo Coolify/compose para saber se o container está realmente servindo,
+# e não apenas "de pé".
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \n  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3001)+'/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+
 CMD ["node", "dist/src/main.js"]

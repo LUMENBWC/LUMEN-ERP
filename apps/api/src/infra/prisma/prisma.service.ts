@@ -34,8 +34,24 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
   constructor(configService: ConfigService) {
     const connectionString = configService.getOrThrow<string>('DATABASE_URL');
-    const pool = new Pool({ connectionString });
-    const authBootstrapPool = new Pool({ connectionString, max: 3 });
+
+    // Dimensionamento explícito, e não o default do `pg` (max: 10).
+    //
+    // O Supavisor em modo SESSION impõe um teto de clientes por projeto
+    // (`pool_size`, tipicamente 15 no plano free). Esse teto é do PROJETO
+    // inteiro, não por processo: some todas as réplicas da API, mais Prisma
+    // Studio, migrations e testes e2e. Com o default de 10 + 3 do bootstrap,
+    // uma única instância já consumia 13 dos 15 - e duas réplicas estouravam
+    // o limite de imediato, com
+    // `(EMAXCONNSESSION) max clients reached in session mode`.
+    //
+    // Regra ao dimensionar: (DB_POOL_MAX + DB_AUTH_POOL_MAX) × réplicas
+    // precisa ficar FOLGADAMENTE abaixo do `pool_size` do projeto.
+    const poolMax = Number(configService.get<string>('DB_POOL_MAX') ?? 8);
+    const authPoolMax = Number(configService.get<string>('DB_AUTH_POOL_MAX') ?? 2);
+
+    const pool = new Pool({ connectionString, max: poolMax });
+    const authBootstrapPool = new Pool({ connectionString, max: authPoolMax });
     // node-postgres requires a listener on the pool - otherwise an idle
     // pooled connection dropped server-side (e.g. Supavisor's idle timeout)
     // emits an unhandled 'error' that can crash the process instead of just

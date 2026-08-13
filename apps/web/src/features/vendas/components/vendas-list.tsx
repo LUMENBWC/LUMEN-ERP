@@ -14,16 +14,44 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useVendas } from '../api/vendas.queries';
+import type { StatusVenda } from '../api/vendas.types';
 import { STATUS_LABEL, STATUS_VARIANT } from '../lib/labels-venda';
 
 const PER_PAGE = 20;
 
 export function VendasList() {
   const [page, setPage] = useState(1);
-  const { data, isLoading, isError } = useVendas({ page, perPage: PER_PAGE });
+  const [status, setStatus] = useState<StatusVenda | undefined>(undefined);
+  const [dataInicio, setDataInicio] = useState('');
+  const [dataFim, setDataFim] = useState('');
+
+  const { data, isLoading, isError } = useVendas({
+    page,
+    perPage: PER_PAGE,
+    status,
+    dataInicio: dataInicio || undefined,
+    dataFim: dataFim || undefined,
+  });
 
   const totalPaginas = data ? Math.max(1, Math.ceil(data.total / PER_PAGE)) : 1;
+  const temFiltro = status !== undefined || dataInicio !== '' || dataFim !== '';
+
+  function limparFiltros() {
+    setStatus(undefined);
+    setDataInicio('');
+    setDataFim('');
+    setPage(1);
+  }
 
   return (
     <div className="space-y-4">
@@ -35,6 +63,72 @@ export function VendasList() {
           </Link>
         }
       />
+
+      {/* Filtros que o backend já suportava desde a criação do módulo
+          (listar-vendas.query.dto.ts) e que nunca tinham sido expostos. */}
+      <div className="flex flex-wrap items-end gap-3">
+        <div className="space-y-1">
+          <Label className="text-xs">Status</Label>
+          <Select
+            items={[
+              { value: 'todos', label: 'Todos os status' },
+              ...Object.entries(STATUS_LABEL).map(([valor, label]) => ({ value: valor, label })),
+            ]}
+            value={status ?? 'todos'}
+            onValueChange={(v) => {
+              setStatus(v === 'todos' || v === null ? undefined : (v as StatusVenda));
+              setPage(1);
+            }}
+          >
+            <SelectTrigger className="w-44">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os status</SelectItem>
+              {Object.entries(STATUS_LABEL).map(([valor, label]) => (
+                <SelectItem key={valor} value={valor}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="dataInicio" className="text-xs">
+            De
+          </Label>
+          <Input
+            id="dataInicio"
+            type="date"
+            className="w-40"
+            value={dataInicio}
+            onChange={(e) => {
+              setDataInicio(e.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="dataFim" className="text-xs">
+            Até
+          </Label>
+          <Input
+            id="dataFim"
+            type="date"
+            className="w-40"
+            value={dataFim}
+            onChange={(e) => {
+              setDataFim(e.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
+        {temFiltro && (
+          <Button type="button" variant="ghost" size="sm" onClick={limparFiltros}>
+            Limpar filtros
+          </Button>
+        )}
+      </div>
 
       {isError && <ErrorState message="Não foi possível carregar as vendas." />}
       {isLoading && <LoadingState />}
@@ -57,7 +151,9 @@ export function VendasList() {
                 {data.items.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={6} className="text-muted-foreground text-center">
-                      Nenhuma venda encontrada.
+                      {temFiltro
+                        ? 'Nenhuma venda para estes filtros.'
+                        : 'Nenhuma venda registrada ainda.'}
                     </TableCell>
                   </TableRow>
                 )}

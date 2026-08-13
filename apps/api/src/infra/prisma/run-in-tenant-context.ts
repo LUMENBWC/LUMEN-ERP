@@ -1,5 +1,6 @@
 import { PrismaService } from './prisma.service';
 import { withTenantScope } from './tenant.extension';
+import { withPooledClient } from './with-pooled-client';
 
 /**
  * Runs `fn` inside a single Postgres transaction scoped to `empresaId`:
@@ -41,9 +42,10 @@ export async function runInTenantContext<T>(
   // (low-concurrency) common case; unlike the 'acquire' event this at
   // least has correct ordering guarantees for its own connection when it
   // does line up.
-  const warmup = await prisma.pgPool.connect();
-  await warmup.query('DISCARD ALL');
-  warmup.release();
+  // `withPooledClient` garante o release mesmo se o DISCARD falhar (antes,
+  // um throw aqui vazava a conexão) e anexa o listener de 'error' que evita
+  // que uma conexão derrubada pelo pooler mate o processo.
+  await withPooledClient(prisma.pgPool, (warmup) => warmup.query('DISCARD ALL'));
 
   const scoped = scopeClient(prisma, empresaId);
   return scoped.$transaction(

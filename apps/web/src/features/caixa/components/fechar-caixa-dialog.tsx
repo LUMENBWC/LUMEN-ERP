@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ApiError } from '@/lib/api/client';
 import { useFecharCaixa } from '../api/caixa.queries';
+import { formatarMoeda as moeda } from '@/lib/format';
 
 const fecharCaixaSchema = z.object({
   valorFechamentoInformado: z.coerce.number().nonnegative('Valor não pode ser negativo.'),
@@ -69,7 +70,7 @@ export function FecharCaixaDialog({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <p className="text-muted-foreground text-sm">
             Valor esperado em caixa:{' '}
-            <span className="font-medium">R$ {valorEsperadoAtual.toFixed(2)}</span>
+            <span className="font-medium tabular-nums">{moeda(valorEsperadoAtual)}</span>
           </p>
           <div className="space-y-1">
             <Label htmlFor="valorFechamentoInformado">Valor contado</Label>
@@ -95,7 +96,7 @@ export function FecharCaixaDialog({
                     : 'text-destructive font-semibold'
               }
             >
-              R$ {diferenca.toFixed(2)}
+              {moeda(diferenca)}
             </span>
           </div>
           <div className="space-y-1">

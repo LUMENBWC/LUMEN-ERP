@@ -68,6 +68,9 @@ export function ProdutoDetail({ produtoId }: { produtoId: string }) {
           precoCusto: Number(produto.precoCusto),
           precoVenda: Number(produto.precoVenda),
           estoqueMinimo: Number(produto.estoqueMinimo),
+          ncm: produto.ncm,
+          cfop: produto.cfop,
+          cst: produto.cst,
         }}
         onSubmit={handleSubmit}
         submitLabel="Salvar alterações"

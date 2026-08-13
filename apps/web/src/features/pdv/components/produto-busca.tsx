@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { useProdutos } from '@/features/produtos/api/produtos.queries';
 import type { ProdutoResumo } from '@/features/produtos/api/produtos.types';
 import { useCarrinho } from '../store/carrinho.store';
+import { formatarMoeda as moeda } from '@/lib/format';
 
 export function ProdutoBusca() {
   const [busca, setBusca] = useState('');
@@ -51,7 +52,9 @@ export function ProdutoBusca() {
               <span>
                 {produto.nome} <span className="text-muted-foreground">({produto.sku})</span>
               </span>
-              <span className="text-muted-foreground">R$ {produto.precoVenda}</span>
+              <span className="text-muted-foreground tabular-nums">
+                {moeda(produto.precoVenda)}
+              </span>
             </button>
           ))}
         </div>

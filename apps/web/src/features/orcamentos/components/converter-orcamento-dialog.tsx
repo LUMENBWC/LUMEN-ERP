@@ -27,6 +27,7 @@ import { useConverterOrcamento } from '@/features/vendas/api/vendas.queries';
 import type { FormaPagamento } from '@/features/vendas/api/vendas.types';
 import { FORMA_PAGAMENTO_LABEL } from '@/features/vendas/lib/labels-venda';
 import { ApiError } from '@/lib/api/client';
+import { formatarMoeda as moeda } from '@/lib/format';
 
 const FORMAS: FormaPagamento[] = [
   'DINHEIRO',
@@ -103,7 +104,7 @@ export function ConverterOrcamentoDialog({
       <DialogTrigger render={<Button type="button">Converter em venda</Button>} />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Converter em venda — Total R$ {total.toFixed(2)}</DialogTitle>
+          <DialogTitle>Converter em venda — Total {moeda(total)}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-3">
@@ -182,7 +183,7 @@ export function ConverterOrcamentoDialog({
           <div className="border-border flex items-center justify-between border p-3 text-sm">
             <span>Soma dos pagamentos</span>
             <span className={divergente ? 'text-destructive font-semibold' : 'font-semibold'}>
-              R$ {somaPagamentos.toFixed(2)} / R$ {total.toFixed(2)}
+              {moeda(somaPagamentos)} / {moeda(total)}
             </span>
           </div>
 

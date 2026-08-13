@@ -1,4 +1,5 @@
 import { PrismaService } from '../../infra/prisma/prisma.service';
+import { withPooledClient } from '../../infra/prisma/with-pooled-client';
 
 export interface TenantContext {
   authUserId: string;
@@ -66,41 +67,40 @@ export async function resolveTenantContext(
 }
 
 async function lookupUsuarioByAuthUserId(prisma: PrismaService, authUserId: string) {
-  const client = await prisma.authBootstrapPool.connect();
-  try {
-    // Connection hygiene, not the fix for `invalid input syntax for type
-    // uuid: ""` (see ADR-0005 - that's a NULLIF guard in the RLS policies
-    // themselves, since DISCARD ALL/RESET ALL can't clean a custom GUC
-    // already stuck at ''). Must be awaited here, before BEGIN, not left to
-    // the pool's 'acquire' event - that fires-and-forgets, with no
-    // ordering guarantee against this function's own next query on the
-    // same client. DISCARD ALL can't run inside a transaction block.
-    await client.query('DISCARD ALL');
-    await client.query('BEGIN');
-    await client.query("SELECT set_config('app.auth_user_id', $1, true)", [authUserId]);
+  return withPooledClient(prisma.authBootstrapPool, async (client) => {
+    try {
+      // Connection hygiene, not the fix for `invalid input syntax for type
+      // uuid: ""` (see ADR-0005 - that's a NULLIF guard in the RLS policies
+      // themselves, since DISCARD ALL/RESET ALL can't clean a custom GUC
+      // already stuck at ''). Must be awaited here, before BEGIN, not left to
+      // the pool's 'acquire' event - that fires-and-forgets, with no
+      // ordering guarantee against this function's own next query on the
+      // same client. DISCARD ALL can't run inside a transaction block.
+      await client.query('DISCARD ALL');
+      await client.query('BEGIN');
+      await client.query("SELECT set_config('app.auth_user_id', $1, true)", [authUserId]);
 
-    const result = await client.query<{
-      id: string;
-      empresaId: string;
-      filialId: string | null;
-      nome: string;
-      email: string;
-    }>(
-      `SELECT id, "empresaId", "filialId", nome, email
-       FROM usuarios
-       WHERE "authUserId" = $1::uuid AND ativo = true
-       LIMIT 1`,
-      [authUserId],
-    );
+      const result = await client.query<{
+        id: string;
+        empresaId: string;
+        filialId: string | null;
+        nome: string;
+        email: string;
+      }>(
+        `SELECT id, "empresaId", "filialId", nome, email
+         FROM usuarios
+         WHERE "authUserId" = $1::uuid AND ativo = true
+         LIMIT 1`,
+        [authUserId],
+      );
 
-    await client.query('COMMIT');
-    return result.rows[0] ?? null;
-  } catch (error) {
-    await client.query('ROLLBACK').catch(() => undefined);
-    throw error;
-  } finally {
-    client.release();
-  }
+      await client.query('COMMIT');
+      return result.rows[0] ?? null;
+    } catch (error) {
+      await client.query('ROLLBACK').catch(() => undefined);
+      throw error;
+    }
+  });
 }
 
 async function lookupPapeisEPermissoes(
@@ -108,35 +108,34 @@ async function lookupPapeisEPermissoes(
   usuarioId: string,
   empresaId: string,
 ) {
-  const client = await prisma.pgPool.connect();
-  try {
-    await client.query('DISCARD ALL');
-    await client.query('BEGIN');
-    await client.query("SELECT set_config('app.empresa_id', $1, true)", [empresaId]);
+  return withPooledClient(prisma.pgPool, async (client) => {
+    try {
+      await client.query('DISCARD ALL');
+      await client.query('BEGIN');
+      await client.query("SELECT set_config('app.empresa_id', $1, true)", [empresaId]);
 
-    const result = await client.query<{ papelNome: string; chave: string }>(
-      `SELECT p.nome AS "papelNome", perm.chave
-       FROM usuario_papeis up
-       JOIN papeis p ON p.id = up."papelId"
-       JOIN papel_permissoes pp ON pp."papelId" = p.id
-       JOIN permissoes perm ON perm.id = pp."permissaoId"
-       WHERE up."usuarioId" = $1::uuid`,
-      [usuarioId],
-    );
+      const result = await client.query<{ papelNome: string; chave: string }>(
+        `SELECT p.nome AS "papelNome", perm.chave
+         FROM usuario_papeis up
+         JOIN papeis p ON p.id = up."papelId"
+         JOIN papel_permissoes pp ON pp."papelId" = p.id
+         JOIN permissoes perm ON perm.id = pp."permissaoId"
+         WHERE up."usuarioId" = $1::uuid`,
+        [usuarioId],
+      );
 
-    await client.query('COMMIT');
+      await client.query('COMMIT');
 
-    const permissoes = new Set<string>();
-    const papeis = new Set<string>();
-    for (const row of result.rows) {
-      papeis.add(row.papelNome);
-      permissoes.add(row.chave);
+      const permissoes = new Set<string>();
+      const papeis = new Set<string>();
+      for (const row of result.rows) {
+        papeis.add(row.papelNome);
+        permissoes.add(row.chave);
+      }
+      return { papeis: Array.from(papeis), permissoes };
+    } catch (error) {
+      await client.query('ROLLBACK').catch(() => undefined);
+      throw error;
     }
-    return { papeis: Array.from(papeis), permissoes };
-  } catch (error) {
-    await client.query('ROLLBACK').catch(() => undefined);
-    throw error;
-  } finally {
-    client.release();
-  }
+  });
 }

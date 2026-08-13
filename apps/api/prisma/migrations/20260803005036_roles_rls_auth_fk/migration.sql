@@ -7,9 +7,22 @@
 -- as defense-in-depth against tenant-scoping bugs in the application layer.
 -- Migrations continue to run as `postgres` (DIRECT_URL), which needs DDL
 -- rights that `app_api` intentionally does not have.
+--
+-- NOTA DE SEGURANCA: este arquivo ja conteve as senhas dos dois papeis em
+-- texto puro, e o repositorio e publico - as senhas de entao devem ser
+-- consideradas comprometidas e rotacionadas. Migration nao e lugar para
+-- segredo: os papeis agora sao criados SEM senha e de forma idempotente, e a
+-- senha e definida fora da migration por `scripts/01-bootstrap-roles.sql`.
+-- Ver docs/deploy.md.
 -- ---------------------------------------------------------------------------
 
-CREATE ROLE app_api LOGIN PASSWORD '3TCe8aucaqqPZxLo09tVHGhTwquIHF0Y' NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'app_api') THEN
+    CREATE ROLE app_api LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS;
+  END IF;
+END
+$$;
 
 GRANT USAGE ON SCHEMA public TO app_api;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO app_api;
@@ -27,7 +40,14 @@ ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT USAGE, SELECT 
 -- shadow-database creation.
 -- ---------------------------------------------------------------------------
 
-CREATE USER prisma_migrator WITH PASSWORD 'S8vGqzYVQqE1o1Iz2GG97sVeamOZeBBP' BYPASSRLS CREATEDB;
+-- Sem senha e idempotente, pelo mesmo motivo do `app_api` acima.
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'prisma_migrator') THEN
+    CREATE USER prisma_migrator WITH BYPASSRLS CREATEDB;
+  END IF;
+END
+$$;
 
 GRANT prisma_migrator TO postgres;
 

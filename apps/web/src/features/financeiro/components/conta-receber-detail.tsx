@@ -16,9 +16,7 @@ import { FORMA_PAGAMENTO_LABEL } from '@/features/vendas/lib/labels-venda';
 import { useContaReceber } from '../api/financeiro.queries';
 import { STATUS_LABEL, STATUS_VARIANT } from '../lib/labels-financeiro';
 import { RegistrarRecebimentoDialog } from './registrar-recebimento-dialog';
-
-const moeda = (v: string | number) =>
-  Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+import { formatarMoeda as moeda } from '@/lib/format';
 
 export function ContaReceberDetail({ contaReceberId }: { contaReceberId: string }) {
   const { data: conta, isLoading, isError } = useContaReceber(contaReceberId);

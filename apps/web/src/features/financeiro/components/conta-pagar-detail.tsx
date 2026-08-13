@@ -17,9 +17,7 @@ import {
 import { useCancelarContaPagar, useContaPagar } from '../api/financeiro.queries';
 import { STATUS_LABEL, STATUS_VARIANT } from '../lib/labels-financeiro';
 import { RegistrarPagamentoDialog } from './registrar-pagamento-dialog';
-
-const moeda = (v: string | number) =>
-  Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+import { formatarMoeda as moeda } from '@/lib/format';
 
 export function ContaPagarDetail({ contaPagarId }: { contaPagarId: string }) {
   const router = useRouter();

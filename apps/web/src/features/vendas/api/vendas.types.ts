@@ -47,6 +47,9 @@ export interface ListarVendasResultado {
 export interface ListarVendasParams {
   clienteId?: string;
   status?: StatusVenda;
+  /** ISO (yyyy-mm-dd). O backend aceita desde a criação do módulo. */
+  dataInicio?: string;
+  dataFim?: string;
   page: number;
   perPage: number;
   sortBy?: 'total' | 'createdAt';

@@ -12,9 +12,7 @@ import { FecharCaixaDialog } from './fechar-caixa-dialog';
 import { MovimentosTabela } from './movimentos-tabela';
 import { SangriaDialog } from './sangria-dialog';
 import { SuprimentoDialog } from './suprimento-dialog';
-
-const moeda = (v: string | number) =>
-  Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+import { formatarMoeda as moeda } from '@/lib/format';
 
 export function CaixaPage() {
   const { data: sessaoAtual, isLoading: carregandoAtual } = useCaixaAtual();
