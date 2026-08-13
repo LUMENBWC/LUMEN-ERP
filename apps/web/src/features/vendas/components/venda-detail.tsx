@@ -29,6 +29,7 @@ export function VendaDetail({ vendaId }: { vendaId: string }) {
   return (
     <div className="space-y-6">
       <PageHeader
+        backHref="/vendas"
         title={`Venda — ${venda.clienteNome ?? 'Consumidor final'}`}
         action={
           cancelavel && (

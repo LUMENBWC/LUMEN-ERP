@@ -17,7 +17,10 @@ export function SessaoDetail({ sessaoId }: { sessaoId: string }) {
 
   return (
     <div className="space-y-6">
-      <PageHeader title={`Sessão de caixa — ${sessao.usuarioAberturaNome}`}>
+      <PageHeader
+        backHref="/caixa/sessoes"
+        title={`Sessão de caixa — ${sessao.usuarioAberturaNome}`}
+      >
         <Badge variant={STATUS_VARIANT[sessao.status]}>{STATUS_LABEL[sessao.status]}</Badge>
       </PageHeader>
 

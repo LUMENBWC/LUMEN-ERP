@@ -34,6 +34,7 @@ export function ContaPagarDetail({ contaPagarId }: { contaPagarId: string }) {
   return (
     <div className="space-y-6">
       <PageHeader
+        backHref="/financeiro/contas-pagar"
         title={conta.descricao}
         action={
           <>

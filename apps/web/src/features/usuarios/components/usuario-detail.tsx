@@ -37,6 +37,7 @@ export function UsuarioDetail({ usuarioId }: { usuarioId: string }) {
   return (
     <div className="max-w-lg space-y-8">
       <PageHeader
+        backHref="/usuarios"
         title={usuario.nome}
         action={
           <>

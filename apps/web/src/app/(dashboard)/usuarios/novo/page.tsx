@@ -10,7 +10,7 @@ export default async function NovoUsuarioPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Novo usuário" />
+      <PageHeader title="Novo usuário" backHref="/usuarios" />
       <CriarUsuarioForm />
     </div>
   );

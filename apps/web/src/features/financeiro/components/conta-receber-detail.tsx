@@ -30,6 +30,7 @@ export function ContaReceberDetail({ contaReceberId }: { contaReceberId: string 
   return (
     <div className="space-y-6">
       <PageHeader
+        backHref="/financeiro/contas-receber"
         title={conta.descricao}
         action={
           podeReceber && (

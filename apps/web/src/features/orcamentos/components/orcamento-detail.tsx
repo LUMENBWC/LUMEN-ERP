@@ -56,6 +56,7 @@ export function OrcamentoDetail({ orcamentoId }: { orcamentoId: string }) {
   return (
     <div className="space-y-6">
       <PageHeader
+        backHref="/orcamentos"
         title={`Orçamento — ${orcamento.clienteNome}`}
         action={
           <>

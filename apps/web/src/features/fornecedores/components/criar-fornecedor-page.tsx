@@ -17,7 +17,7 @@ export function CriarFornecedorPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Novo fornecedor" />
+      <PageHeader backHref="/fornecedores" title="Novo fornecedor" />
       <FornecedorForm
         onSubmit={handleSubmit}
         submitLabel="Criar fornecedor"

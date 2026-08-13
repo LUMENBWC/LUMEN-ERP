@@ -25,6 +25,7 @@ export function ProdutoDetail({ produtoId }: { produtoId: string }) {
   return (
     <div className="space-y-6">
       <PageHeader
+        backHref="/produtos"
         title={produto.nome}
         action={
           <>

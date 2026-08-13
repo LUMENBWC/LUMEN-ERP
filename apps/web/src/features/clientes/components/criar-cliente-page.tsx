@@ -17,7 +17,7 @@ export function CriarClientePage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Novo cliente" />
+      <PageHeader backHref="/clientes" title="Novo cliente" />
       <ClienteForm
         onSubmit={handleSubmit}
         submitLabel="Criar cliente"

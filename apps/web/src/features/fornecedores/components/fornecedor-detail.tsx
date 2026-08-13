@@ -28,6 +28,7 @@ export function FornecedorDetail({ fornecedorId }: { fornecedorId: string }) {
   return (
     <div className="space-y-6">
       <PageHeader
+        backHref="/fornecedores"
         title={fornecedor.nome}
         action={
           <>

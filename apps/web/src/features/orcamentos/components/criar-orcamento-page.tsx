@@ -17,7 +17,7 @@ export function CriarOrcamentoPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Novo orçamento" />
+      <PageHeader backHref="/orcamentos" title="Novo orçamento" />
       <OrcamentoForm
         onSubmit={handleSubmit}
         submitLabel="Criar orçamento"

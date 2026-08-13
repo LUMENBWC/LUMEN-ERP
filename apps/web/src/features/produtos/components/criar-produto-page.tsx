@@ -17,7 +17,7 @@ export function CriarProdutoPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Novo produto" />
+      <PageHeader backHref="/produtos" title="Novo produto" />
       <ProdutoForm
         onSubmit={handleSubmit}
         submitLabel="Criar produto"

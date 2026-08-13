@@ -57,7 +57,7 @@ export function CriarContaPagarPage() {
   return (
     <div className="space-y-4">
       <FinanceiroNav />
-      <PageHeader title="Nova conta a pagar" />
+      <PageHeader backHref="/financeiro/contas-pagar" title="Nova conta a pagar" />
 
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl">
         <Card className="gap-4 p-5">

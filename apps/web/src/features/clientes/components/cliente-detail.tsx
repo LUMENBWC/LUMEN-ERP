@@ -23,6 +23,7 @@ export function ClienteDetail({ clienteId }: { clienteId: string }) {
   return (
     <div className="space-y-6">
       <PageHeader
+        backHref="/clientes"
         title={cliente.nome}
         action={
           <>

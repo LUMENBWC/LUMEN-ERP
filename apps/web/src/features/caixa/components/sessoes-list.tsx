@@ -27,14 +27,7 @@ export function SessoesList() {
 
   return (
     <div className="space-y-4">
-      <PageHeader
-        title="Histórico de sessões de caixa"
-        action={
-          <Link href="/caixa" className={buttonVariants({ variant: 'outline' })}>
-            Voltar
-          </Link>
-        }
-      />
+      <PageHeader backHref="/caixa" title="Histórico de sessões de caixa" />
 
       {isError && <ErrorState message="Não foi possível carregar as sessões." />}
       {isLoading && <LoadingState />}

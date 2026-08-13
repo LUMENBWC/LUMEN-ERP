@@ -137,8 +137,13 @@ export function AppShell({
           >
             <MenuIcon className="size-4" />
           </button>
-          <div className="text-muted-foreground text-sm">
-            LUMEN ERP / <span className="text-foreground">{title}</span>
+          {/* Breadcrumb: a raiz leva ao dashboard. Antes era texto puro, então
+              o usuário não tinha nenhum caminho de volta pelo cabeçalho. */}
+          <div className="text-muted-foreground min-w-0 truncate text-sm">
+            <Link href="/dashboard" className="hover:text-foreground transition-colors">
+              LUMEN ERP
+            </Link>{' '}
+            / <span className="text-foreground">{title}</span>
           </div>
           <div className="flex-1" />
           <ThemeToggle />
