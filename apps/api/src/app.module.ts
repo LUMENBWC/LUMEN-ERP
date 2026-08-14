@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuditModule } from './common/audit/audit.module';
 import { AuthModule } from './common/auth/auth.module';
+import { RateLimitModule } from './common/rate-limit/rate-limit.module';
 import { PrismaModule } from './infra/prisma/prisma.module';
 import { FiscalProviderModule } from './infra/providers/fiscal/fiscal-provider.module';
 import { ShippingProviderModule } from './infra/providers/logistica/shipping-provider.module';
@@ -29,6 +30,7 @@ import { VendasModule } from './modules/vendas/presentation/vendas.module';
       isGlobal: true,
       envFilePath: path.resolve(process.cwd(), '../../.env'),
     }),
+    RateLimitModule,
     PrismaModule,
     AuditModule,
     AuthModule,

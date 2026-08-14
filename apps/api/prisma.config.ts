@@ -1,8 +1,8 @@
-import path from "node:path";
-import { config } from "dotenv";
-import { defineConfig } from "prisma/config";
+import path from 'node:path';
+import { config } from 'dotenv';
+import { defineConfig } from 'prisma/config';
 
-config({ path: path.resolve(__dirname, "../../.env") });
+config({ path: path.resolve(__dirname, '../../.env') });
 
 // The Prisma CLI (migrate/generate/studio) always uses the direct
 // connection (`prisma_migrator`, BYPASSRLS+CREATEDB - see ADR-0002), never
@@ -15,12 +15,13 @@ config({ path: path.resolve(__dirname, "../../.env") });
 // placeholder fallback instead of the `env()` helper, which throws when the
 // variable is missing even for commands that never use it.
 export default defineConfig({
-  schema: "prisma/schema.prisma",
+  schema: 'prisma/schema.prisma',
   migrations: {
-    path: "prisma/migrations",
-    seed: "ts-node prisma/seed.ts",
+    path: 'prisma/migrations',
+    seed: 'ts-node prisma/seed.ts',
   },
   datasource: {
-    url: process.env.DIRECT_URL ?? "postgresql://placeholder:placeholder@localhost:5432/placeholder",
+    url:
+      process.env.DIRECT_URL ?? 'postgresql://placeholder:placeholder@localhost:5432/placeholder',
   },
 });

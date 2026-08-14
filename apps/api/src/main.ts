@@ -1,9 +1,11 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import helmet from 'helmet';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+import type { NextFunction, Request, Response } from 'express';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
+import { getHelmetConfig } from './common/security/helmet.config';
 
 const API_PREFIX = 'api/v1';
 
@@ -37,7 +39,7 @@ function resolveCorsOrigin(): string[] | boolean {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Sem isso, onModuleDestroy() (que fecha pgPool/authBootstrapPool - ver
   // ADR-0003) nunca roda em SIGTERM/SIGINT, incluindo todo restart do
@@ -45,12 +47,31 @@ async function bootstrap() {
   // ficam penduradas no Supavisor em vez de fechadas de forma limpa.
   app.enableShutdownHooks();
 
-  app.use(helmet());
+  // Desabilita o header X-Powered-By de forma redundante (helmet já faz)
+  app.disable('x-powered-by');
+
+  // Security: headers HTTP de segurança (CSP, HSTS, X-Frame-Options, etc)
+  app.use(getHelmetConfig());
+
+  // Security: limita tamanho da requisição
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.method === 'POST' || req.method === 'PATCH') {
+      const contentLength = parseInt(req.headers['content-length'] ?? '0', 10);
+      if (contentLength > 10 * 1024 * 1024) {
+        // 10MB limite
+        res.status(413).json({ message: 'Payload muito grande' });
+        return;
+      }
+    }
+    next();
+  });
+
   app.enableCors({
     origin: resolveCorsOrigin(),
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Authorization', 'Content-Type'],
     maxAge: 86400,
+    credentials: false, // Bearer token, não cookie
   });
   app.setGlobalPrefix(API_PREFIX);
   app.useGlobalPipes(
