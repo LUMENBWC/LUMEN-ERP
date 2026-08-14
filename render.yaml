@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: lumen-erp-api
+    runtime: docker
+    dockerfilePath: docker/Dockerfile.api
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_JWKS_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: '3001'
+      - key: DB_POOL_MAX
+        value: '8'
+      - key: DB_AUTH_POOL_MAX
+        value: '2'
