@@ -41,15 +41,20 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
-      <Card elevation="md" className="w-full max-w-[380px] gap-0 p-8">
-        <div className="font-heading mb-0.5 text-[22px] font-semibold">LUMEN ERP</div>
-        <h1 className="font-heading mt-4 mb-0.5 text-xl font-semibold">Entrar</h1>
-        <p className="text-muted-foreground mb-5 text-[13px]">
+    <main className="bg-navy flex min-h-screen items-center justify-center p-6">
+      <Card elevation="lg" className="w-full max-w-[380px] gap-0 p-8 text-center">
+        <div className="bg-primary text-primary-foreground font-heading mx-auto mb-3.5 flex size-11 items-center justify-center rounded-[var(--radius-sm)] text-lg font-extrabold">
+          L
+        </div>
+        <div className="font-heading mb-0.5 text-[22px] font-extrabold tracking-tight">
+          LUMEN ERP
+        </div>
+        <h1 className="font-heading mt-4 mb-0.5 text-left text-xl font-semibold">Entrar</h1>
+        <p className="text-muted-foreground mb-5 text-left text-[13px]">
           Acesse o ERP com seu e-mail e senha
         </p>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5" noValidate>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5 text-left" noValidate>
           <div className="space-y-1.5">
             <label htmlFor="email" className="text-muted-foreground block text-xs">
               E-mail

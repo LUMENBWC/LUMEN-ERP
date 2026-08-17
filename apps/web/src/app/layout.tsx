@@ -1,20 +1,20 @@
 import type { Metadata } from 'next';
-import { Barlow, Barlow_Condensed, Geist_Mono } from 'next/font/google';
+import { Manrope, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 
-// Corpo — Barlow (design-system Industry)
-const barlow = Barlow({
+// Corpo — Manrope (design-system LUMEN, marca ouro/navy)
+const manrope = Manrope({
   variable: '--font-sans',
   subsets: ['latin'],
-  weight: ['400', '500', '700'],
+  weight: ['400', '500', '600', '700', '800'],
 });
 
-// Títulos / ações — Barlow Condensed
-const barlowCondensed = Barlow_Condensed({
+// Títulos / ações — Manrope (pesos altos)
+const manropeHeading = Manrope({
   variable: '--font-heading',
   subsets: ['latin'],
-  weight: ['400', '600'],
+  weight: ['600', '700', '800'],
 });
 
 const geistMono = Geist_Mono({
@@ -43,7 +43,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${barlow.variable} ${barlowCondensed.variable} ${geistMono.variable} antialiased`}
+        className={`${manrope.variable} ${manropeHeading.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>{children}</Providers>
       </body>

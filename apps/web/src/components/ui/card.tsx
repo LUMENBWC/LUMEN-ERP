@@ -4,14 +4,15 @@ import { cn } from '@/lib/utils';
 import { Corners } from '@/components/ui/corners';
 
 /*
- * Card — superfície "blueprint": fundo transparente, borda hairline, canto vivo.
- * Com `blueprint` (padrão) ganha as marcas de registro nos quatro cantos.
- * `elevation` mapeia as sombras sm/md/lg do design.
+ * Card — superfície da marca LUMEN: fundo sólido, borda hairline, cantos
+ * arredondados e sombra suave. `elevation` mapeia as sombras sm/md/lg.
+ * `blueprint` (legado, opt-in) ainda renderiza as marcas de canto do tema
+ * anterior, mantido para não quebrar telas que o solicitem explicitamente.
  */
 function Card({
   className,
-  blueprint = true,
-  elevation,
+  blueprint = false,
+  elevation = 'sm',
   children,
   ...props
 }: React.ComponentProps<'div'> & {
@@ -22,7 +23,7 @@ function Card({
     <div
       data-slot="card"
       className={cn(
-        'flex flex-col gap-2 border border-border bg-transparent p-3 text-card-foreground',
+        'flex flex-col gap-2 rounded-[var(--radius-md)] border border-border bg-card p-4 text-card-foreground',
         blueprint && 'blueprint',
         elevation === 'sm' && 'shadow-sm',
         elevation === 'md' && 'shadow-md',

@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
  * Substitui/estende o Badge para os estados do ERP (sucesso, alerta, erro, info).
  */
 const tagVariants = cva(
-  'inline-flex items-center gap-1 whitespace-nowrap px-2.5 py-[3px] text-[11px] leading-none tracking-[0.02em] [&>svg]:size-3',
+  'inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-[3px] text-[11px] leading-none tracking-[0.02em] [&>svg]:size-3',
   {
     variants: {
       variant: {

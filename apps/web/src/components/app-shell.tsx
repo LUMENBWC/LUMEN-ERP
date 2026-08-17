@@ -99,10 +99,10 @@ export function AppShell({
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'px-2.5 py-1.5 text-sm transition-colors',
+                      'rounded-[var(--radius-sm)] border-l-[3px] px-2.5 py-1.5 text-sm transition-colors',
                       active
-                        ? 'bg-[color-mix(in_srgb,var(--primary)_14%,transparent)] text-foreground font-medium'
-                        : 'text-muted-foreground hover:bg-[color-mix(in_srgb,var(--foreground)_6%,transparent)] hover:text-foreground',
+                        ? 'border-primary bg-brand-soft text-foreground font-medium'
+                        : 'text-muted-foreground hover:bg-[color-mix(in_srgb,var(--foreground)_6%,transparent)] hover:text-foreground border-transparent',
                     )}
                   >
                     {item.label}
@@ -114,7 +114,7 @@ export function AppShell({
         </nav>
         <div className="border-sidebar-border flex flex-col gap-2 border-t px-4 py-3.5">
           <div className="flex items-center gap-2">
-            <div className="bg-brand-soft text-info-foreground flex size-7 flex-none items-center justify-center text-xs font-semibold">
+            <div className="bg-brand-soft text-brand-strong flex size-7 flex-none items-center justify-center rounded-full text-xs font-semibold">
               {initials(user.nome)}
             </div>
             <div className="min-w-0">

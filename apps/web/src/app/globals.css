@@ -5,10 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
-  LUMEN ERP — Design System "Industry" (Claude Design).
-  Tokens portados de theme.json + styles.css (design-system) + lumen-extensions.css.
-  Estética "blueprint": canto vivo (radius ~0), borda hairline, superfícies chapadas,
-  tipografia Barlow / Barlow Condensed, accent azul-industrial.
+  LUMEN ERP — Design System (Claude Design, marca ouro/navy).
+  Tokens portados de lumen-extensions.css: accent ouro (#C68A2E) + navy profundo,
+  superfícies claras arredondadas, sombra suave, tipografia Manrope.
   A camada shadcn/ui continua consumindo os mesmos nomes de token — só mudam os valores.
 */
 
@@ -45,6 +44,8 @@
   --color-info-foreground: var(--info-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
+  --color-navy: var(--navy);
+  --color-navy-800: var(--navy-800);
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-soft: var(--brand-soft);
@@ -71,127 +72,135 @@
 }
 
 :root {
-  /* Base — Industry (light) */
-  --background: #f2f2f3;
-  --foreground: #1d1f20;
-  --surface: #e9e9ea;
+  /* Base — LUMEN (light) */
+  --background: #fafaf8;
+  --foreground: #1c1c1c;
+  --surface: #ffffff;
 
-  --card: #e9e9ea;
-  --card-foreground: #1d1f20;
-  --popover: #e9e9ea;
-  --popover-foreground: #1d1f20;
+  --card: #ffffff;
+  --card-foreground: #1c1c1c;
+  --popover: #ffffff;
+  --popover-foreground: #1c1c1c;
 
-  /* Accent industrial (azul-acinzentado) usado como "primary" */
-  --primary: #5980a6;
-  --primary-foreground: #f2f2f3;
-  --brand: #5980a6;
-  --brand-foreground: #f2f2f3;
-  --brand-soft: #eef6ff; /* accent-100 */
-  --brand-strong: #2c455d; /* accent-800 */
+  /* Accent ouro (marca) usado como "primary" */
+  --primary: #c68a2e;
+  --primary-foreground: #ffffff;
+  --brand: #c68a2e;
+  --brand-foreground: #ffffff;
+  --brand-soft: #fbf0dc; /* accent-100 */
+  --brand-strong: #855a19; /* accent-700 */
 
-  --secondary: #e0e0e2;
-  --secondary-foreground: #1d1f20;
-  --muted: #e9e9ea;
-  --muted-foreground: color-mix(in srgb, #1d1f20 55%, transparent);
+  --secondary: #f3f2ee;
+  --secondary-foreground: #1c1c1c;
+  --muted: #f3f2ee;
+  --muted-foreground: color-mix(in srgb, #1c1c1c 55%, transparent);
   /* accent no shadcn = cor de hover/seleção neutra, não a marca */
-  --accent: color-mix(in srgb, #1d1f20 7%, transparent);
-  --accent-foreground: #1d1f20;
+  --accent: color-mix(in srgb, #1c1c1c 6%, transparent);
+  --accent-foreground: #1c1c1c;
 
   /* Semânticas funcionais (lumen-extensions) */
-  --destructive: #b1524a;
-  --destructive-foreground: #6b2822;
-  --success: #4d8a68;
-  --success-foreground: #24462f;
-  --warning: #a97b3d;
-  --warning-foreground: #5c3f18;
-  --info: #5980a6;
-  --info-foreground: #2c455d;
+  --destructive: #dc2626;
+  --destructive-foreground: #941c1c;
+  --success: #16a34a;
+  --success-foreground: #14622f;
+  --warning: #ea580c;
+  --warning-foreground: #9a3c08;
+  --info: #2563eb;
+  --info-foreground: #1d4bb8;
 
-  --border: color-mix(in srgb, #1d1f20 16%, transparent);
-  --input: color-mix(in srgb, #1d1f20 16%, transparent);
-  --ring: #5980a6;
+  --border: #e5e2dc;
+  --input: #e5e2dc;
+  --ring: #c68a2e;
 
-  --chart-1: #5980a6;
-  --chart-2: #728fab;
-  --chart-3: #4d8a68;
-  --chart-4: #a97b3d;
-  --chart-5: #b1524a;
+  --chart-1: #c68a2e;
+  --chart-2: #ddaa55;
+  --chart-3: #16a34a;
+  --chart-4: #2563eb;
+  --chart-5: #dc2626;
 
-  /* Blueprint: canto vivo. Mantemos um radius mínimo para foco/anéis. */
-  --radius: 2px;
-  --radius-sm: 2px;
-  --radius-md: 2px;
-  --radius-lg: 3px;
+  /* Cantos arredondados da marca LUMEN. */
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
 
-  --elev-sm: 0 1px 2px color-mix(in srgb, #2b2b2d 14%, transparent);
-  --elev-md: 0 3px 10px color-mix(in srgb, #2b2b2d 16%, transparent);
-  --elev-lg: 0 12px 32px color-mix(in srgb, #2b2b2d 22%, transparent);
+  --elev-sm: 0 1px 2px color-mix(in srgb, #1c1c1c 6%, transparent),
+    0 1px 3px color-mix(in srgb, #1c1c1c 5%, transparent);
+  --elev-md: 0 4px 12px color-mix(in srgb, #1c1c1c 8%, transparent);
+  --elev-lg: 0 12px 32px color-mix(in srgb, #1c1c1c 14%, transparent);
 
-  --sidebar: #e9e9ea;
-  --sidebar-foreground: #1d1f20;
-  --sidebar-primary: #5980a6;
-  --sidebar-primary-foreground: #f2f2f3;
-  --sidebar-accent: color-mix(in srgb, #1d1f20 6%, transparent);
-  --sidebar-accent-foreground: #1d1f20;
-  --sidebar-border: color-mix(in srgb, #1d1f20 16%, transparent);
-  --sidebar-ring: #5980a6;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1c1c1c;
+  --sidebar-primary: #c68a2e;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: color-mix(in srgb, #1c1c1c 5%, transparent);
+  --sidebar-accent-foreground: #1c1c1c;
+  --sidebar-border: #e5e2dc;
+  --sidebar-ring: #c68a2e;
+
+  /* Navy da marca — usado em telas de destaque (ex.: login). */
+  --navy: #1b2340;
+  --navy-800: #232c52;
 }
 
 .dark {
-  --background: #1b1c1e;
-  --foreground: #f1f1f2;
-  --surface: #232426;
+  --background: #10142a;
+  --foreground: #f4f1ea;
+  --surface: #1b2340;
 
-  --card: #232426;
-  --card-foreground: #f1f1f2;
-  --popover: #232426;
-  --popover-foreground: #f1f1f2;
+  --card: #1b2340;
+  --card-foreground: #f4f1ea;
+  --popover: #1b2340;
+  --popover-foreground: #f4f1ea;
 
-  --primary: #5980a6;
-  --primary-foreground: #10171e;
-  --brand: #5980a6;
-  --brand-foreground: #10171e;
-  --brand-soft: color-mix(in srgb, #5980a6 24%, transparent);
-  --brand-strong: #cfe3f5;
+  --primary: #e3aa4c;
+  --primary-foreground: #10142a;
+  --brand: #e3aa4c;
+  --brand-foreground: #10142a;
+  --brand-soft: color-mix(in srgb, #e3aa4c 20%, transparent);
+  --brand-strong: #fbe3b4;
 
-  --secondary: #2b2c2f;
-  --secondary-foreground: #f1f1f2;
-  --muted: #2b2c2f;
-  --muted-foreground: color-mix(in srgb, #f1f1f2 55%, transparent);
+  --secondary: color-mix(in srgb, #ffffff 7%, transparent);
+  --secondary-foreground: #f4f1ea;
+  --muted: color-mix(in srgb, #ffffff 7%, transparent);
+  --muted-foreground: color-mix(in srgb, #f4f1ea 55%, transparent);
   --accent: color-mix(in srgb, #ffffff 8%, transparent);
-  --accent-foreground: #f1f1f2;
+  --accent-foreground: #f4f1ea;
 
-  --destructive: #b1524a;
-  --destructive-foreground: #e5978d;
-  --success: #4d8a68;
-  --success-foreground: #8fd1a8;
-  --warning: #a97b3d;
-  --warning-foreground: #e0b56e;
-  --info: #5980a6;
-  --info-foreground: #cfe3f5;
+  --destructive: #dc2626;
+  --destructive-foreground: #f19a9a;
+  --success: #16a34a;
+  --success-foreground: #7fd99e;
+  --warning: #ea580c;
+  --warning-foreground: #f5a76a;
+  --info: #2563eb;
+  --info-foreground: #9db9f5;
 
-  --border: color-mix(in srgb, #ffffff 16%, transparent);
-  --input: color-mix(in srgb, #ffffff 16%, transparent);
-  --ring: #5980a6;
+  --border: color-mix(in srgb, #ffffff 14%, transparent);
+  --input: color-mix(in srgb, #ffffff 14%, transparent);
+  --ring: #e3aa4c;
 
-  --chart-1: #5980a6;
-  --chart-2: #728fab;
-  --chart-3: #8fd1a8;
-  --chart-4: #e0b56e;
-  --chart-5: #e5978d;
+  --chart-1: #e3aa4c;
+  --chart-2: #ebc57d;
+  --chart-3: #7fd99e;
+  --chart-4: #9db9f5;
+  --chart-5: #f19a9a;
 
   --elev-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
   --elev-md: 0 3px 12px rgba(0, 0, 0, 0.55);
   --elev-lg: 0 12px 34px rgba(0, 0, 0, 0.6);
 
-  --sidebar: #232426;
-  --sidebar-foreground: #f1f1f2;
-  --sidebar-primary: #5980a6;
-  --sidebar-primary-foreground: #10171e;
+  --sidebar: #1b2340;
+  --sidebar-foreground: #f4f1ea;
+  --sidebar-primary: #e3aa4c;
+  --sidebar-primary-foreground: #10142a;
   --sidebar-accent: color-mix(in srgb, #ffffff 8%, transparent);
-  --sidebar-accent-foreground: #f1f1f2;
-  --sidebar-border: color-mix(in srgb, #ffffff 16%, transparent);
-  --sidebar-ring: #5980a6;
+  --sidebar-accent-foreground: #f4f1ea;
+  --sidebar-border: color-mix(in srgb, #ffffff 14%, transparent);
+  --sidebar-ring: #e3aa4c;
+
+  --navy: #1b2340;
+  --navy-800: #232c52;
 }
 
 @layer base {
