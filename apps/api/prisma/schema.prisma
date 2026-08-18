@@ -577,7 +577,10 @@ model Venda {
   contasReceber ContaReceber[]
 
   @@index([empresaId])
-  @@index([empresaId, status])
+  // Cobre o filtro do dashboard (faturamento/custo por status + faixa de
+  // createdAt) e a listagem de vendas ordenada por data. Substitui o índice
+  // [empresaId, status] (agora prefixo deste).
+  @@index([empresaId, status, createdAt])
   @@map("vendas")
 }
 
@@ -599,6 +602,8 @@ model VendaItem {
 
   @@index([empresaId])
   @@index([vendaId])
+  // groupBy(produtoId) do "produtos mais vendidos" no dashboard.
+  @@index([empresaId, produtoId])
   @@map("venda_itens")
 }
 
@@ -732,6 +737,8 @@ model PagamentoPagavel {
 
   @@index([empresaId])
   @@index([contaPagarId])
+  // Soma de "despesas pagas" no dashboard filtra por faixa de data.
+  @@index([empresaId, data])
   @@map("pagamentos_pagavel")
 }
 
@@ -781,5 +788,7 @@ model MovimentoCaixa {
 
   @@index([empresaId])
   @@index([caixaSessaoId])
+  // Entradas/saídas do fluxo de caixa filtram por tipo + faixa de data.
+  @@index([empresaId, data])
   @@map("movimentos_caixa")
 }
