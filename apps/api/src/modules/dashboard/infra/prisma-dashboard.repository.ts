@@ -1,7 +1,6 @@
 import { Prisma } from '../../../../generated/prisma/client';
 import type { TenantScopedPrismaClient } from '../../../infra/prisma/run-in-tenant-context';
 import type {
-  AgingResumo,
   DashboardRepositoryPort,
   FaturamentoECusto,
   ProdutoMaisVendidoResumo,
@@ -40,42 +39,43 @@ export class PrismaDashboardRepository implements DashboardRepositoryPort {
   }
 
   async obterTotalEAgingReceber(hoje: Date): Promise<TotalEAging> {
-    const contas = await this.tx.contaReceber.findMany({
-      where: { status: { in: ['ABERTO', 'PARCIAL'] }, deletedAt: null },
-      select: { valorTotal: true, valorRecebido: true, vencimento: true },
-    });
-    return this.somarAging(
-      contas.map((c) => ({ saldo: c.valorTotal.minus(c.valorRecebido), vencimento: c.vencimento })),
-      hoje,
-    );
+    // Soma e split (a vencer / vencido) feitos no banco, em vez de carregar
+    // todas as contas abertas na memória e somar em JS. `vencimento < hoje`
+    // conta como vencido; o restante, a vencer — mesma regra do código antigo.
+    const rows = await this.tx.$queryRaw<{ aVencer: Prisma.Decimal; vencido: Prisma.Decimal }[]>`
+      SELECT
+        COALESCE(SUM(CASE WHEN "vencimento" >= ${hoje} THEN "valorTotal" - "valorRecebido" ELSE 0 END), 0)::numeric AS "aVencer",
+        COALESCE(SUM(CASE WHEN "vencimento" <  ${hoje} THEN "valorTotal" - "valorRecebido" ELSE 0 END), 0)::numeric AS "vencido"
+      FROM contas_receber
+      WHERE "empresaId" = ${this.empresaId}
+        AND status IN ('ABERTO', 'PARCIAL')
+        AND "deletedAt" IS NULL
+    `;
+    return this.montarTotalEAging(rows[0]);
   }
 
   async obterTotalEAgingPagar(hoje: Date): Promise<TotalEAging> {
-    const contas = await this.tx.contaPagar.findMany({
-      where: { status: { in: ['ABERTO', 'PARCIAL'] }, deletedAt: null },
-      select: { valorTotal: true, valorPago: true, vencimento: true },
-    });
-    return this.somarAging(
-      contas.map((c) => ({ saldo: c.valorTotal.minus(c.valorPago), vencimento: c.vencimento })),
-      hoje,
-    );
+    const rows = await this.tx.$queryRaw<{ aVencer: Prisma.Decimal; vencido: Prisma.Decimal }[]>`
+      SELECT
+        COALESCE(SUM(CASE WHEN "vencimento" >= ${hoje} THEN "valorTotal" - "valorPago" ELSE 0 END), 0)::numeric AS "aVencer",
+        COALESCE(SUM(CASE WHEN "vencimento" <  ${hoje} THEN "valorTotal" - "valorPago" ELSE 0 END), 0)::numeric AS "vencido"
+      FROM contas_pagar
+      WHERE "empresaId" = ${this.empresaId}
+        AND status IN ('ABERTO', 'PARCIAL')
+        AND "deletedAt" IS NULL
+    `;
+    return this.montarTotalEAging(rows[0]);
   }
 
-  private somarAging(
-    itens: { saldo: Prisma.Decimal; vencimento: Date }[],
-    hoje: Date,
-  ): TotalEAging {
-    const aging: AgingResumo = { aVencer: ZERO, vencido: ZERO };
-    let total = ZERO;
-    for (const item of itens) {
-      total = total.plus(item.saldo);
-      if (item.vencimento < hoje) {
-        aging.vencido = aging.vencido.plus(item.saldo);
-      } else {
-        aging.aVencer = aging.aVencer.plus(item.saldo);
-      }
-    }
-    return { total, aging };
+  private montarTotalEAging(row?: {
+    aVencer: Prisma.Decimal;
+    vencido: Prisma.Decimal;
+  }): TotalEAging {
+    // `new Prisma.Decimal(...)` aceita Decimal | string | number, blindando
+    // contra variações de como o driver devolve numeric no $queryRaw.
+    const aVencer = row ? new Prisma.Decimal(row.aVencer) : ZERO;
+    const vencido = row ? new Prisma.Decimal(row.vencido) : ZERO;
+    return { total: aVencer.plus(vencido), aging: { aVencer, vencido } };
   }
 
   async obterProdutosMaisVendidos(
