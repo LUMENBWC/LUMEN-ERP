@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { MenuIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { LumenMark } from '@/components/lumen-mark';
 import { LogoutButton } from '@/app/(dashboard)/logout-button';
 
 export interface NavItem {
@@ -81,8 +82,11 @@ export function AppShell({
           open ? 'translate-x-0 shadow-lg' : '-translate-x-full',
         )}
       >
-        <div className="border-sidebar-border font-heading border-b px-5 py-[18px] text-lg font-semibold">
-          LUMEN ERP
+        <div className="border-sidebar-border flex items-center gap-2.5 border-b px-5 py-[18px]">
+          <div className="bg-primary text-primary-foreground flex size-7 flex-none items-center justify-center rounded-[var(--radius-sm)]">
+            <LumenMark className="size-4" />
+          </div>
+          <span className="font-heading text-lg font-semibold">LUMEN ERP</span>
         </div>
         <nav className="flex flex-1 flex-col gap-0.5 overflow-auto px-2.5 py-3">
           {nav.map((group, gi) => (

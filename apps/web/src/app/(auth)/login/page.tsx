@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { LumenMark } from '@/components/lumen-mark';
 import { createClient } from '@/lib/supabase/client';
 
 const loginSchema = z.object({
@@ -43,8 +44,8 @@ export default function LoginPage() {
   return (
     <main className="bg-navy flex min-h-screen items-center justify-center p-6">
       <Card elevation="lg" className="w-full max-w-[380px] gap-0 p-8 text-center">
-        <div className="bg-primary text-primary-foreground font-heading mx-auto mb-3.5 flex size-11 items-center justify-center rounded-[var(--radius-sm)] text-lg font-extrabold">
-          L
+        <div className="bg-primary text-primary-foreground mx-auto mb-3.5 flex size-11 items-center justify-center rounded-[var(--radius-sm)]">
+          <LumenMark className="size-6" />
         </div>
         <div className="font-heading mb-0.5 text-[22px] font-extrabold tracking-tight">
           LUMEN ERP
