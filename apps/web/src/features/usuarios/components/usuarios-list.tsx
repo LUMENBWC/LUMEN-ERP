@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { PageHeader } from '@/components/page-header';
-import { ErrorState, LoadingState } from '@/components/states';
+import { ErrorState, TableSkeleton } from '@/components/states';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -102,7 +102,7 @@ export function UsuariosList() {
       </div>
 
       {isError && <ErrorState message="Não foi possível carregar os usuários." />}
-      {isLoading && <LoadingState />}
+      {isLoading && <TableSkeleton columns={6} />}
 
       {data && (
         <>

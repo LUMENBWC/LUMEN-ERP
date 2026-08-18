@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants, Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/page-header';
-import { ErrorState, LoadingState } from '@/components/states';
+import { ErrorState, TableSkeleton } from '@/components/states';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -119,7 +119,7 @@ export function ProdutosList() {
       </div>
 
       {isError && <ErrorState message="Não foi possível carregar os produtos." />}
-      {isLoading && <LoadingState />}
+      {isLoading && <TableSkeleton columns={9} />}
 
       {data && (
         <>

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { buttonVariants, Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/page-header';
-import { ErrorState, LoadingState } from '@/components/states';
+import { ErrorState, TableSkeleton } from '@/components/states';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -100,7 +100,7 @@ export function ClientesList() {
       </div>
 
       {isError && <ErrorState message="Não foi possível carregar os clientes." />}
-      {isLoading && <LoadingState />}
+      {isLoading && <TableSkeleton columns={7} />}
 
       {data && (
         <>

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { buttonVariants, Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/page-header';
-import { ErrorState, LoadingState } from '@/components/states';
+import { ErrorState, TableSkeleton } from '@/components/states';
 import {
   Table,
   TableBody,
@@ -131,7 +131,7 @@ export function VendasList() {
       </div>
 
       {isError && <ErrorState message="Não foi possível carregar as vendas." />}
-      {isLoading && <LoadingState />}
+      {isLoading && <TableSkeleton columns={7} />}
 
       {data && (
         <>

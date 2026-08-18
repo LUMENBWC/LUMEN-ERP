@@ -71,4 +71,28 @@ function Skeleton({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
-export { EmptyState, ErrorState, LoadingState, Skeleton };
+/* Skeleton de tabela — placeholder animado enquanto a listagem carrega,
+ * evitando a tela em branco. Genérico: só o nº de colunas/linhas muda. */
+function TableSkeleton({ columns = 5, rows = 8 }: { columns?: number; rows?: number }) {
+  return (
+    <div className="border-border overflow-hidden border" aria-hidden>
+      <div className="bg-muted/40 border-border flex gap-4 border-b px-4 py-2.5">
+        {Array.from({ length: columns }).map((_, i) => (
+          <Skeleton key={i} className="h-3 flex-1" />
+        ))}
+      </div>
+      {Array.from({ length: rows }).map((_, r) => (
+        <div
+          key={r}
+          className="border-border flex items-center gap-4 border-b px-4 py-3 last:border-b-0"
+        >
+          {Array.from({ length: columns }).map((_, c) => (
+            <Skeleton key={c} className="h-4 flex-1" />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export { EmptyState, ErrorState, LoadingState, Skeleton, TableSkeleton };
