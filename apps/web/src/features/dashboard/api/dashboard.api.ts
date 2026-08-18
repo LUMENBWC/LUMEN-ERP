@@ -1,5 +1,6 @@
 import { apiJson } from '@/lib/api/client';
 import type {
+  DashboardResultado,
   FluxoCaixaResultado,
   PeriodoParams,
   ProdutosMaisVendidosResultado,
@@ -14,6 +15,7 @@ function buildQuery(params: PeriodoParams): string {
 }
 
 export const dashboardApi = {
+  obter: (params: PeriodoParams) => apiJson<DashboardResultado>(`/dashboard?${buildQuery(params)}`),
   obterResumo: (params: PeriodoParams) =>
     apiJson<ResumoFinanceiro>(`/dashboard/resumo?${buildQuery(params)}`),
   obterProdutosMaisVendidos: (params: PeriodoParams) =>

@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useDebouncedValue } from '@/lib/hooks/use-debounced-value';
 import { useClientes, useDefinirAtivoCliente } from '../api/clientes.queries';
 import { useClientesFiltros } from '../store/clientes-filtros.store';
 
@@ -29,8 +30,9 @@ const PER_PAGE = 20;
 export function ClientesList() {
   const { busca, ativo, tipoPessoa, page, setBusca, setAtivo, setTipoPessoa, setPage } =
     useClientesFiltros();
+  const buscaDebounced = useDebouncedValue(busca, 300);
   const { data, isLoading, isError } = useClientes({
-    busca: busca || undefined,
+    busca: buscaDebounced || undefined,
     ativo,
     tipoPessoa,
     page,

@@ -23,6 +23,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useCategorias } from '@/features/categorias/api/categorias.queries';
+import { useDebouncedValue } from '@/lib/hooks/use-debounced-value';
 import { useDefinirAtivoProduto, useProdutos } from '../api/produtos.queries';
 import { formatarMoeda } from '../lib/formatar-moeda';
 import { useProdutosFiltros } from '../store/produtos-filtros.store';
@@ -43,8 +44,9 @@ export function ProdutosList() {
     setPage,
   } = useProdutosFiltros();
   const { data: categorias } = useCategorias({ ativo: true, page: 1, perPage: 100 });
+  const buscaDebounced = useDebouncedValue(busca, 300);
   const { data, isLoading, isError } = useProdutos({
-    busca: busca || undefined,
+    busca: buscaDebounced || undefined,
     ativo,
     categoriaId,
     abaixoDoMinimo: abaixoDoMinimo || undefined,

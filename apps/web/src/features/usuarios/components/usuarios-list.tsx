@@ -22,6 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useDebouncedValue } from '@/lib/hooks/use-debounced-value';
 import { useDefinirAtivo, usePapeis, useUsuarios } from '../api/usuarios.queries';
 import { useUsuariosFiltros } from '../store/usuarios-filtros.store';
 
@@ -31,8 +32,9 @@ export function UsuariosList() {
   const { busca, ativo, papelId, page, setBusca, setAtivo, setPapelId, setPage } =
     useUsuariosFiltros();
   const { data: papeisData } = usePapeis();
+  const buscaDebounced = useDebouncedValue(busca, 300);
   const { data, isLoading, isError } = useUsuarios({
-    busca: busca || undefined,
+    busca: buscaDebounced || undefined,
     ativo,
     papelId,
     page,

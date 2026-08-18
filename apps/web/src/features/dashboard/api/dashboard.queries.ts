@@ -3,29 +3,18 @@ import { dashboardApi } from './dashboard.api';
 import type { PeriodoParams } from './dashboard.types';
 
 const dashboardKeys = {
-  resumo: (params: PeriodoParams) => ['dashboard', 'resumo', params] as const,
-  produtosMaisVendidos: (params: PeriodoParams) =>
-    ['dashboard', 'produtos-mais-vendidos', params] as const,
-  fluxoCaixa: (params: PeriodoParams) => ['dashboard', 'fluxo-caixa', params] as const,
+  all: (params: PeriodoParams) => ['dashboard', params] as const,
 };
 
-export function useResumoFinanceiro(params: PeriodoParams) {
+/**
+ * Carrega o dashboard financeiro inteiro (resumo, produtos mais vendidos e
+ * fluxo de caixa) numa única requisição ao endpoint agregado `GET /dashboard`,
+ * em vez de três chamadas HTTP separadas.
+ */
+export function useDashboard(params: PeriodoParams) {
   return useQuery({
-    queryKey: dashboardKeys.resumo(params),
-    queryFn: () => dashboardApi.obterResumo(params),
-  });
-}
-
-export function useProdutosMaisVendidos(params: PeriodoParams) {
-  return useQuery({
-    queryKey: dashboardKeys.produtosMaisVendidos(params),
-    queryFn: () => dashboardApi.obterProdutosMaisVendidos(params),
-  });
-}
-
-export function useFluxoCaixa(params: PeriodoParams) {
-  return useQuery({
-    queryKey: dashboardKeys.fluxoCaixa(params),
-    queryFn: () => dashboardApi.obterFluxoCaixa(params),
+    queryKey: dashboardKeys.all(params),
+    queryFn: () => dashboardApi.obter(params),
+    placeholderData: (previous) => previous,
   });
 }

@@ -2,24 +2,15 @@ import { DashboardFinanceiro } from '@/features/dashboard/components/dashboard-f
 import { PageHeader } from '@/components/page-header';
 import { Card, CardKicker } from '@/components/ui/card';
 import { ErrorState } from '@/components/states';
-import { apiFetch } from '@/lib/api/server';
-
-interface Me {
-  nome: string;
-  email: string;
-  empresaId: string;
-  papeis: string[];
-  permissoes: string[];
-}
+import { getMe } from '@/lib/api/me.server';
 
 export default async function DashboardPage() {
-  const res = await apiFetch('/me');
+  const me = await getMe();
 
-  if (!res.ok) {
-    return <ErrorState message={`Não foi possível carregar seus dados (status ${res.status}).`} />;
+  if (!me) {
+    return <ErrorState message="Não foi possível carregar seus dados." />;
   }
 
-  const me: Me = await res.json();
   const podeVerFinanceiro = me.permissoes.includes('financeiro.ler');
 
   if (podeVerFinanceiro) {

@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useDebouncedValue } from '@/lib/hooks/use-debounced-value';
 import { useDefinirAtivoFornecedor, useFornecedores } from '../api/fornecedores.queries';
 import { useFornecedoresFiltros } from '../store/fornecedores-filtros.store';
 
@@ -29,8 +30,9 @@ const PER_PAGE = 20;
 export function FornecedoresList() {
   const { busca, ativo, tipoPessoa, page, setBusca, setAtivo, setTipoPessoa, setPage } =
     useFornecedoresFiltros();
+  const buscaDebounced = useDebouncedValue(busca, 300);
   const { data, isLoading, isError } = useFornecedores({
-    busca: busca || undefined,
+    busca: buscaDebounced || undefined,
     ativo,
     tipoPessoa,
     page,

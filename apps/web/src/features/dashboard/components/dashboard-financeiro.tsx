@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { PageHeader } from '@/components/page-header';
 import { Card, CardKicker, CardTitle, CardValue } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { LoadingState } from '@/components/states';
+import { Skeleton } from '@/components/states';
 import {
   Table,
   TableBody,
@@ -13,11 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  useFluxoCaixa,
-  useProdutosMaisVendidos,
-  useResumoFinanceiro,
-} from '../api/dashboard.queries';
+import { useDashboard } from '../api/dashboard.queries';
 
 function paraDataInput(iso: string): string {
   return iso.slice(0, 10);
@@ -38,9 +34,10 @@ export function DashboardFinanceiro() {
     dataFim: dataFim || undefined,
   };
 
-  const { data: resumo, isLoading: carregandoResumo } = useResumoFinanceiro(params);
-  const { data: produtos, isLoading: carregandoProdutos } = useProdutosMaisVendidos(params);
-  const { data: fluxo, isLoading: carregandoFluxo } = useFluxoCaixa(params);
+  const { data, isLoading: carregando } = useDashboard(params);
+  const resumo = data?.resumo;
+  const produtos = data?.produtosMaisVendidos;
+  const fluxo = data?.fluxoCaixa;
 
   const lucroPositivo = resumo ? Number(resumo.lucro) >= 0 : true;
 
@@ -68,7 +65,16 @@ export function DashboardFinanceiro() {
         }
       />
 
-      {carregandoResumo && <LoadingState />}
+      {carregando && !resumo && (
+        <div className="mb-6 grid grid-cols-2 gap-3.5 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i}>
+              <Skeleton className="mb-2 h-3 w-24" />
+              <Skeleton className="h-7 w-32" />
+            </Card>
+          ))}
+        </div>
+      )}
 
       {resumo && (
         <>
@@ -136,7 +142,16 @@ export function DashboardFinanceiro() {
       {/* Fluxo de caixa */}
       <div className="mb-6">
         <h5 className="font-heading mb-2 text-base font-semibold">Fluxo de caixa</h5>
-        {carregandoFluxo && <LoadingState />}
+        {carregando && !fluxo && (
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Card key={i}>
+                <Skeleton className="mb-2 h-3 w-16" />
+                <Skeleton className="h-5 w-24" />
+              </Card>
+            ))}
+          </div>
+        )}
         {fluxo && (
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3">
             <Card>
@@ -161,7 +176,18 @@ export function DashboardFinanceiro() {
 
       {/* Mais vendidos */}
       <div>
-        {carregandoProdutos && <LoadingState />}
+        {carregando && !produtos && (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {Array.from({ length: 2 }).map((_, col) => (
+              <div key={col} className="space-y-2">
+                <Skeleton className="h-4 w-48" />
+                {Array.from({ length: 5 }).map((_, row) => (
+                  <Skeleton key={row} className="h-8 w-full" />
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
         {produtos && (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>

@@ -9,6 +9,7 @@ import {
   produtosMaisVendidosQuerySchema,
   type ProdutosMaisVendidosQueryDto,
 } from '../application/dto/produtos-mais-vendidos.query.dto';
+import { ObterDashboardUseCase } from '../application/use-cases/obter-dashboard.use-case';
 import { ObterFluxoCaixaUseCase } from '../application/use-cases/obter-fluxo-caixa.use-case';
 import { ObterProdutosMaisVendidosUseCase } from '../application/use-cases/obter-produtos-mais-vendidos.use-case';
 import { ObterResumoFinanceiroUseCase } from '../application/use-cases/obter-resumo-financeiro.use-case';
@@ -17,10 +18,18 @@ import { ObterResumoFinanceiroUseCase } from '../application/use-cases/obter-res
 @Controller('dashboard')
 export class DashboardController {
   constructor(
+    private readonly obterDashboard: ObterDashboardUseCase,
     private readonly obterResumoFinanceiro: ObterResumoFinanceiroUseCase,
     private readonly obterProdutosMaisVendidos: ObterProdutosMaisVendidosUseCase,
     private readonly obterFluxoCaixa: ObterFluxoCaixaUseCase,
   ) {}
+
+  @Get()
+  @RequirePermissions('financeiro.ler')
+  @UsePipes(new ZodValidationPipe(periodoQuerySchema))
+  dashboard(@CurrentTenant() tenant: TenantContext, @Query() query: PeriodoQueryDto) {
+    return this.obterDashboard.execute(tenant, query);
+  }
 
   @Get('resumo')
   @RequirePermissions('financeiro.ler')

@@ -45,3 +45,10 @@ export interface PeriodoParams {
   dataInicio?: string;
   dataFim?: string;
 }
+
+/** Resposta do endpoint agregado `GET /dashboard` (resumo + produtos + fluxo). */
+export interface DashboardResultado {
+  resumo: ResumoFinanceiro;
+  produtosMaisVendidos: ProdutosMaisVendidosResultado;
+  fluxoCaixa: FluxoCaixaResultado;
+}

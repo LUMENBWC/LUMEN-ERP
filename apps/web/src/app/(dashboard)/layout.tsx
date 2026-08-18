@@ -1,15 +1,7 @@
 import { redirect } from 'next/navigation';
 import { AppShell, type NavGroup } from '@/components/app-shell';
-import { apiFetch } from '@/lib/api/server';
+import { getMe } from '@/lib/api/me.server';
 import { createClient } from '@/lib/supabase/server';
-
-interface Me {
-  nome: string;
-  email: string;
-  empresaId: string;
-  papeis: string[];
-  permissoes: string[];
-}
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -21,9 +13,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect('/login');
   }
 
-  const meRes = await apiFetch('/me');
-  const me: Partial<Me> = meRes.ok ? await meRes.json() : {};
-  const permissoes = new Set(me.permissoes ?? []);
+  const me = await getMe();
+  const permissoes = new Set(me?.permissoes ?? []);
   const has = (p: string) => permissoes.has(p);
 
   // Grupos de navegação — cada item só aparece com a permissão correspondente.
@@ -74,10 +65,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
     },
   ].filter((g) => g.items.length > 0);
 
-  const papel = (me.papeis ?? []).join(', ') || 'Sem papel';
+  const papel = (me?.papeis ?? []).join(', ') || 'Sem papel';
 
   return (
-    <AppShell user={{ nome: me.nome ?? 'Usuário', papel }} nav={groups}>
+    <AppShell user={{ nome: me?.nome ?? 'Usuário', papel }} nav={groups}>
       {children}
     </AppShell>
   );
