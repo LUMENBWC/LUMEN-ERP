@@ -362,6 +362,13 @@ model Produto {
   @@index([empresaId, ativo])
   @@index([createdById])
   @@index([updatedById])
+  // Busca "contains" (ILIKE %termo%) por nome/SKU/código de barras. Sem
+  // trigram, o %prefixo impede uso de índice btree e faz seq scan. Os três
+  // índices GIN permitem ao Postgres combinar as condições OR via bitmap.
+  // Requer a extensão pg_trgm (criada na migração).
+  @@index([nome(ops: raw("gin_trgm_ops"))], type: Gin)
+  @@index([sku(ops: raw("gin_trgm_ops"))], type: Gin)
+  @@index([codigoBarras(ops: raw("gin_trgm_ops"))], type: Gin)
   @@map("produtos")
 }
 
