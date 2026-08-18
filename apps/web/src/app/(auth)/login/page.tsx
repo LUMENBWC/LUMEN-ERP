@@ -44,7 +44,7 @@ export default function LoginPage() {
   return (
     <main className="bg-navy flex min-h-screen items-center justify-center p-6">
       <Card elevation="lg" className="w-full max-w-[380px] gap-0 p-8 text-center">
-        <div className="bg-primary text-primary-foreground mx-auto mb-3.5 flex size-11 items-center justify-center rounded-[var(--radius-sm)]">
+        <div className="mx-auto mb-3.5 flex size-11 items-center justify-center rounded-[var(--radius-md)] bg-[#111318] text-white">
           <LumenMark className="size-6" />
         </div>
         <div className="font-heading mb-0.5 text-[22px] font-extrabold tracking-tight">

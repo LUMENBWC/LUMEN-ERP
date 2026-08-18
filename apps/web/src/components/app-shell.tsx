@@ -83,7 +83,7 @@ export function AppShell({
         )}
       >
         <div className="border-sidebar-border flex items-center gap-2.5 border-b px-5 py-[18px]">
-          <div className="bg-primary text-primary-foreground flex size-7 flex-none items-center justify-center rounded-[var(--radius-sm)]">
+          <div className="flex size-7 flex-none items-center justify-center rounded-[var(--radius-sm)] bg-[#111318] text-white">
             <LumenMark className="size-4" />
           </div>
           <span className="font-heading text-lg font-semibold">LUMEN ERP</span>
