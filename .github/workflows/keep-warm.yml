@@ -27,7 +27,7 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping healthcheck
+      - name: Ping para acordar a API
         env:
           API_HEALTH_URL: ${{ secrets.API_HEALTH_URL }}
         run: |
@@ -35,8 +35,12 @@ jobs:
             echo "::error::Secret API_HEALTH_URL não configurado."
             exit 1
           fi
-          # --retry acomoda o primeiro ping, que pode acordar a instância e
-          # demorar mais; até 5 tentativas com backoff, teto de 60s cada.
-          curl -fsS --retry 5 --retry-all-errors --retry-delay 10 --max-time 60 \
-            "$API_HEALTH_URL" > /dev/null
-          echo "API respondeu — acordada."
+          # O objetivo é só ACORDAR o container: qualquer resposta HTTP (mesmo
+          # 404) já prova que ele está de pé. Por isso NÃO usamos -f (que
+          # falharia em 4xx/5xx) — falhamos apenas se não houver resposta
+          # (timeout/conexão recusada), com algumas retentativas para o cold
+          # start, que pode levar ~20-30s na primeira chamada do dia.
+          code=$(curl -sS -o /dev/null -w '%{http_code}' \
+            --retry 5 --retry-connrefused --retry-delay 10 --max-time 90 \
+            "$API_HEALTH_URL")
+          echo "API respondeu HTTP $code — acordada."
