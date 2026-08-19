@@ -78,7 +78,7 @@
    ```
    NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=xxxxx
-   NEXT_PUBLIC_API_URL=https://lumen-erp.onrender.com/api/v1
+   NEXT_PUBLIC_API_URL=https://lumen-erp-lix1.onrender.com/api/v1
    ```
 
 3. **Deploy**
@@ -92,7 +92,7 @@
 
 ```
 Backend (Render):
-[ ] Acessar https://lumen-erp.onrender.com/api/v1/health → {"status":"ok"}
+[ ] Acessar https://lumen-erp-lix1.onrender.com/api/v1/health → {"status":"ok"}
 [ ] GET /api/v1/docs → 404 (Swagger desligado)
 [ ] GET /api/v1/me sem token → 401
 [ ] Migrations executadas sem erro
@@ -146,7 +146,7 @@ Integração:
 - API está fora do ar
 - Verificar URL em NEXT_PUBLIC_API_URL
 - Confirmar que Render API está rodando
-- Testar curl direto: `curl https://lumen-erp.onrender.com/api/v1/health`
+- Testar curl direto: `curl https://lumen-erp-lix1.onrender.com/api/v1/health`
 
 ---
 
@@ -155,9 +155,9 @@ Integração:
 | Serviço      | URL                                                      |
 | ------------ | -------------------------------------------------------- |
 | Frontend     | https://lumenerp.vercel.app                              |
-| Backend      | https://lumen-erp.onrender.com                           |
-| API Docs     | https://lumen-erp.onrender.com/api/v1/docs (404 em prod) |
-| Health Check | https://lumen-erp.onrender.com/api/v1/health             |
+| Backend      | https://lumen-erp-lix1.onrender.com                           |
+| API Docs     | https://lumen-erp-lix1.onrender.com/api/v1/docs (404 em prod) |
+| Health Check | https://lumen-erp-lix1.onrender.com/api/v1/health             |
 | Supabase     | https://app.supabase.com                                 |
 
 ---

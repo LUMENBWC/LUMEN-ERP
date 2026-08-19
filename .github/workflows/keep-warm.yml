@@ -7,7 +7,7 @@ name: keep-warm
 # Configuração necessária (uma vez):
 #   Settings > Secrets and variables > Actions > New repository secret
 #     Name:  API_HEALTH_URL
-#     Value: https://SUA-API.onrender.com/api/v1/health
+#     Value: https://lumen-erp-lix1.onrender.com/api/v1/health
 #
 # Observações:
 #   - O cron do GitHub Actions não é pontual (pode atrasar sob carga); para

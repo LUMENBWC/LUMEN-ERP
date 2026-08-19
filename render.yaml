@@ -1,11 +1,28 @@
+# Blueprint do serviço da API (NestJS) no Render.
+#
+# ATENÇÃO: hoje o serviço em produção ("LUMEN-ERP", srv-d9v6ldh42hec73896nhg)
+# foi criado manualmente pela UI do Render, NÃO por este blueprint. Este
+# arquivo documenta a configuração real do serviço para referência e para um
+# eventual recriar-via-blueprint. Ajuste antes de sincronizar.
+#
+# Config real observada no painel (2026-08):
+#   - Runtime Node (não Docker), plano Free (spin-down após inatividade)
+#   - Branch de deploy: feat/design-industry-frontend, auto-deploy on commit
+#   - Só builda/roda a API (@erp/api); o frontend fica no Vercel
+#   - URL pública: https://lumen-erp-lix1.onrender.com
 services:
   - type: web
-    name: lumen-erp-api
-    runtime: docker
-    dockerfilePath: docker/Dockerfile.api
-    dockerContext: .
-    plan: starter
+    name: LUMEN-ERP
+    runtime: node
+    plan: free # produção usa Free hoje; upgrade elimina o cold start
+    region: virginia
+    branch: feat/design-industry-frontend
     healthCheckPath: /api/v1/health
+    buildCommand: >-
+      corepack enable && pnpm install --frozen-lockfile &&
+      pnpm --filter @erp/api exec prisma generate &&
+      pnpm --filter @erp/api run build
+    startCommand: pnpm --filter @erp/api run start:prod
     envVars:
       - key: DATABASE_URL
         sync: false

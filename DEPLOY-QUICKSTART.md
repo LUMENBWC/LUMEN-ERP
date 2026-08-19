@@ -43,7 +43,7 @@
 
 ### PASSO 4: Verificação
 
-- [ ] `curl https://lumen-erp.onrender.com/api/v1/health` → OK
+- [ ] `curl https://lumen-erp-lix1.onrender.com/api/v1/health` → OK
 - [ ] Abrir `https://lumenerp.vercel.app`
 - [ ] Login funciona
 - [ ] Criar produto → venda → orçamento
@@ -81,7 +81,7 @@ NODE_ENV=production
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=eyJ...
-NEXT_PUBLIC_API_URL=https://lumen-erp.onrender.com/api/v1
+NEXT_PUBLIC_API_URL=https://lumen-erp-lix1.onrender.com/api/v1
 ```
 
 ---
@@ -103,8 +103,8 @@ NEXT_PUBLIC_API_URL=https://lumen-erp.onrender.com/api/v1
 | Serviço        | URL                                          |
 | -------------- | -------------------------------------------- |
 | **Frontend**   | https://lumenerp.vercel.app                  |
-| **Backend**    | https://lumen-erp.onrender.com               |
-| **API Health** | https://lumen-erp.onrender.com/api/v1/health |
+| **Backend**    | https://lumen-erp-lix1.onrender.com               |
+| **API Health** | https://lumen-erp-lix1.onrender.com/api/v1/health |
 
 ---
 
@@ -145,7 +145,7 @@ Ver: [docs/SECURITY.md](docs/SECURITY.md)
 
 - API está fora do ar
 - Verificar `NEXT_PUBLIC_API_URL`
-- Testar: `curl https://lumen-erp.onrender.com/api/v1/health`
+- Testar: `curl https://lumen-erp-lix1.onrender.com/api/v1/health`
 
 ---
 
