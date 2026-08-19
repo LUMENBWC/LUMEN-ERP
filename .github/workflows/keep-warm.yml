@@ -1,0 +1,42 @@
+name: keep-warm
+
+# Mantém a API do Render acordada, evitando o cold start da primeira
+# requisição do dia. Pinga o healthcheck a cada 10 min (o spin-down do
+# Render acontece após ~15 min de ociosidade, então há margem).
+#
+# Configuração necessária (uma vez):
+#   Settings > Secrets and variables > Actions > New repository secret
+#     Name:  API_HEALTH_URL
+#     Value: https://SUA-API.onrender.com/api/v1/health
+#
+# Observações:
+#   - O cron do GitHub Actions não é pontual (pode atrasar sob carga); para
+#     keep-warm com margem de 15 min costuma bastar.
+#   - workflow_dispatch permite disparar manualmente para testar.
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: keep-warm
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping healthcheck
+        env:
+          API_HEALTH_URL: ${{ secrets.API_HEALTH_URL }}
+        run: |
+          if [ -z "$API_HEALTH_URL" ]; then
+            echo "::error::Secret API_HEALTH_URL não configurado."
+            exit 1
+          fi
+          # --retry acomoda o primeiro ping, que pode acordar a instância e
+          # demorar mais; até 5 tentativas com backoff, teto de 60s cada.
+          curl -fsS --retry 5 --retry-all-errors --retry-delay 10 --max-time 60 \
+            "$API_HEALTH_URL" > /dev/null
+          echo "API respondeu — acordada."
